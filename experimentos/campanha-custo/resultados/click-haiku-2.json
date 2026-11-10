@@ -1,0 +1,51 @@
+{
+ "repo": "click",
+ "pilha": "haiku",
+ "rep": 2,
+ "pasta": "<BASE>/runs/click-haiku-2",
+ "segundos": 349.9,
+ "skill_commit": "e0e4d2b",
+ "repo_commit": "1d038f2",
+ "total_cost_usd": 0.056164340000000014,
+ "num_turns": 21,
+ "session_id": "79b3b700-6637-473b-9b24-d2cb041030df",
+ "is_error": false,
+ "subtype": "success",
+ "modelUsage": {
+  "claude-haiku-5-5": {
+   "inputTokens": 80,
+   "outputTokens": 30112,
+   "cacheReadInputTokens": 2435559,
+   "cacheCreationInputTokens": 95867,
+   "webSearchRequests": 0,
+   "costUSD": 0.056164340000000014,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 16950,
+   "cacheCreationEphemeral5mInputTokens": 32382,
+   "cacheCreationEphemeral1hInputTokens": 63485,
+   "canonicalModel": "claude-haiku-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "fim": "asses.\n  - The description for `utils.py` was written by me after the automated check rejected the generated one.\n- **Metrics:** none recorded. I found no measurement evidence in the repository, so `metricas/metricas.json` is empty.\n- **Not done:** the Graphviz `dot` binary is missing, so the optional static site was skipped. Changes are not committed; the skill's commit step is left to you.\n\nDONE",
+ "internas": {
+  "chamadas": 10,
+  "total_cost_usd": 0.031626,
+  "modelos": [
+   "claude-haiku-5-5"
+  ]
+ },
+ "custo_total_usd": 0.08779,
+ "mapa": true,
+ "qualidade_total": 94.2,
+ "componentes": 17,
+ "cobertura": "4 passed in 0.11s",
+ "cobertura_ok": true,
+ "explorador": true,
+ "cobertura_original": {
+  "cobertura": "ImportError while loading conftest '<BASE>/runs/click-haiku-2/tests/conftest.py'.\ntests\\conftest.py:3: in <module>\n    from click.testing import CliRunner\nE   ModuleNotFoundError: No module named 'click'\n",
+  "cobertura_ok": false
+ }
+}

@@ -1,0 +1,39 @@
+{
+ "repo": "chi",
+ "pilha": "sonnet",
+ "rep": 1,
+ "pasta": "<BASE>/runs/chi-sonnet-1",
+ "segundos": 515.8,
+ "skill_commit": "e0e4d2b",
+ "repo_commit": "3a33ba5",
+ "total_cost_usd": 0.7806133000000001,
+ "num_turns": 5,
+ "session_id": "31504dc6-0fe8-4a37-9e3b-4a078622fe9b",
+ "is_error": false,
+ "subtype": "success",
+ "modelUsage": {
+  "claude-sonnet-5-5": {
+   "inputTokens": 90,
+   "outputTokens": 23485,
+   "cacheReadInputTokens": 1836768,
+   "cacheCreationInputTokens": 122028,
+   "webSearchRequests": 0,
+   "costUSD": 0.7806133000000001,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 8534,
+   "cacheCreationEphemeral5mInputTokens": 84137,
+   "cacheCreationEphemeral1hInputTokens": 37891,
+   "canonicalModel": "claude-sonnet-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "fim": "`Pronto` because they are merged on main. Downgrade them if you disagree.\n- **Ignore list:** I set `ignorar` in `lodemap.json` by hand to the Go defaults (`**/*_test.go`, `**/_*/**`, `**/testdata/**`), because passing `--modulos` explicitly leaves it empty.\n- **Installs:** I installed `pytest` and `playwright` with Chromium into the Python environment, so the tests and the browser check could run.",
+ "mapa": true,
+ "qualidade_total": 94.3,
+ "componentes": 36,
+ "cobertura": "4 passed in 0.12s",
+ "cobertura_ok": true,
+ "explorador": true
+}

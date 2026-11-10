@@ -1,0 +1,93 @@
+{
+ "projeto": "axios",
+ "componentes": 72,
+ "total": 94.6,
+ "criterios": {
+  "descricao": {
+   "nota": 100.0,
+   "valor": 1.0,
+   "detalhe": "72 of 72 with 40+ characters"
+  },
+  "codigo": {
+   "nota": 100.0,
+   "valor": 1.0,
+   "detalhe": "72 of 72 with an existing path (0 Planejado/ramo left out)"
+  },
+  "observabilidade": {
+   "nota": 0.0,
+   "valor": 0.0,
+   "detalhe": "0 of 72"
+  },
+  "relacoes_media": {
+   "nota": 100.0,
+   "valor": 5.31,
+   "detalhe": "5.31 relationships per component (target 3)"
+  },
+  "orfaos": {
+   "nota": 100.0,
+   "valor": 1.0,
+   "detalhe": "0 orphans of 72; 2 also have no relationship in the code (source ast), they do not count"
+  },
+  "relacoes_qualificadas": {
+   "nota": 100.0,
+   "valor": 1.0,
+   "detalhe": "208 of 208 with a verb and a technology"
+  },
+  "status": {
+   "nota": 100.0,
+   "valor": 1.0,
+   "detalhe": "72 of 72"
+  },
+  "visoes_container": {
+   "nota": 100.0,
+   "valor": 1.0,
+   "detalhe": "1 of 1 containers with a component view"
+  },
+  "fluxos": {
+   "nota": 100.0,
+   "valor": 6,
+   "detalhe": "6 dynamic views (target 3)"
+  },
+  "passos_fluxo": {
+   "nota": 100.0,
+   "valor": 11.0,
+   "detalhe": "11.0 steps per flow (target 6)"
+  },
+  "agrupamento": {
+   "nota": 100.0,
+   "valor": 1.0,
+   "detalhe": "72 of 72"
+  },
+  "cobertura": {
+   "nota": 100.0,
+   "valor": 1.0,
+   "detalhe": "72 of 72 modules covered"
+  },
+  "recall_relacoes": {
+   "nota": 100.0,
+   "valor": 1.0,
+   "detalhe": "177 of 177 code pairs (confidence alta/media; ast: every import) in the model; source ast"
+  },
+  "precisao_relacoes": {
+   "nota": 94.1,
+   "valor": 0.9415,
+   "detalhe": "177 of 188 component->component relationships with an edge in the code; source ast"
+  }
+ },
+ "pesos": {
+  "descricao": 14,
+  "codigo": 12,
+  "observabilidade": 5,
+  "relacoes_media": 6,
+  "orfaos": 6,
+  "relacoes_qualificadas": 8,
+  "status": 5,
+  "visoes_container": 5,
+  "fluxos": 5,
+  "passos_fluxo": 3,
+  "agrupamento": 4,
+  "cobertura": 11,
+  "recall_relacoes": 10,
+  "precisao_relacoes": 6
+ }
+}

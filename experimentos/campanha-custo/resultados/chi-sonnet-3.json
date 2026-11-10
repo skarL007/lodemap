@@ -1,0 +1,49 @@
+{
+ "repo": "chi",
+ "pilha": "sonnet",
+ "rep": 3,
+ "pasta": "<BASE>/runs/chi-sonnet-3",
+ "segundos": 1256.9,
+ "skill_commit": "e0e4d2b",
+ "repo_commit": "3a33ba5",
+ "total_cost_usd": 0.9784559000000002,
+ "num_turns": 6,
+ "session_id": "f6b35b34-6d57-4ce1-9fd7-b3093f702ab4",
+ "is_error": false,
+ "subtype": "success",
+ "modelUsage": {
+  "claude-sonnet-5-5": {
+   "inputTokens": 108,
+   "outputTokens": 30048,
+   "cacheReadInputTokens": 2477789,
+   "cacheCreationInputTokens": 149286,
+   "webSearchRequests": 0,
+   "costUSD": 0.9784559000000002,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 6282,
+   "cacheCreationEphemeral5mInputTokens": 111442,
+   "cacheCreationEphemeral1hInputTokens": 37844,
+   "canonicalModel": "claude-sonnet-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "fim": "s the default.\n- **Weak spot:** the automatic description step (`descrever.py`) hung on its nested `claude -p` call. The modeling agent killed it after about 10 minutes and wrote all 36 descriptions itself, checking them against the code. Observability is filled in for only 8 of 36 components, because that gate criterion has no floor.\n- **Commit:** one local commit with the map and `tests/`.\n\nDONE",
+ "internas": {
+  "chamadas": 0,
+  "total_cost_usd": 0,
+  "modelos": []
+ },
+ "custo_total_usd": 0.978456,
+ "mapa": true,
+ "qualidade_total": 95.8,
+ "componentes": 36,
+ "cobertura": "4 passed in 0.12s",
+ "cobertura_ok": true,
+ "explorador": true,
+ "cobertura_original": {
+  "cobertura": "4 passed in 0.05s",
+  "cobertura_ok": true
+ }
+}

@@ -1,0 +1,51 @@
+{
+ "repo": "chi",
+ "pilha": "haiku",
+ "rep": 3,
+ "pasta": "<BASE>/runs/chi-haiku-3",
+ "segundos": 779.8,
+ "skill_commit": "e0e4d2b",
+ "repo_commit": "3a33ba5",
+ "total_cost_usd": 0.15130300500000007,
+ "num_turns": 3,
+ "session_id": "ca6d418e-371a-413b-b8b0-236722b73537",
+ "is_error": false,
+ "subtype": "success",
+ "modelUsage": {
+  "claude-haiku-5-5": {
+   "inputTokens": 184,
+   "outputTokens": 126632,
+   "cacheReadInputTokens": 4188753,
+   "cacheCreationInputTokens": 327260,
+   "webSearchRequests": 0,
+   "costUSD": 0.15130300500000007,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 80895,
+   "cacheCreationEphemeral5mInputTokens": 258279,
+   "cacheCreationEphemeral1hInputTokens": 68981,
+   "canonicalModel": "claude-haiku-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "fim": "hips.\n- I set `Pronto` on both containers, because the renderer required a container status.\n- I skipped metrics (step 8): the repo has no measurement evidence to curate.\n- No external systems or people beyond the `developer` role; the proxy headers in the code do not name a system.\n- The commit includes `docs/` and `tests/`. The `tests/` folder came from the install script at the repo root.\n\nDONE",
+ "internas": {
+  "chamadas": 4,
+  "total_cost_usd": 0.031126,
+  "modelos": [
+   "claude-haiku-5-5"
+  ]
+ },
+ "custo_total_usd": 0.182429,
+ "mapa": true,
+ "qualidade_total": 94.7,
+ "componentes": 36,
+ "cobertura": "4 passed in 0.13s",
+ "cobertura_ok": true,
+ "explorador": true,
+ "cobertura_original": {
+  "cobertura": "4 passed in 0.12s",
+  "cobertura_ok": true
+ }
+}

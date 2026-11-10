@@ -1,0 +1,51 @@
+{
+ "repo": "chi",
+ "pilha": "haiku",
+ "rep": 2,
+ "pasta": "<BASE>/runs/chi-haiku-2",
+ "segundos": 851.4,
+ "skill_commit": "e0e4d2b",
+ "repo_commit": "3a33ba5",
+ "total_cost_usd": 0.2062725250000001,
+ "num_turns": 7,
+ "session_id": "d5546d8d-d2df-4bc6-8af7-2e3e2f0d5259",
+ "is_error": false,
+ "subtype": "success",
+ "modelUsage": {
+  "claude-haiku-5-5": {
+   "inputTokens": 230,
+   "outputTokens": 147195,
+   "cacheReadInputTokens": 6286273,
+   "cacheCreationInputTokens": 354690,
+   "webSearchRequests": 0,
+   "costUSD": 0.2062725250000001,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 87183,
+   "cacheCreationEphemeral5mInputTokens": 287679,
+   "cacheCreationEphemeral1hInputTokens": 67011,
+   "canonicalModel": "claude-haiku-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "fim": " the repo has no evidence files, so `metricas/metricas.json` is empty.\n- Observability is 0 of 36. It counts toward the total but has no floor, so the gate still passes.\n- `codegraph init` was not run, so the relations come from the AST and not from the CodeGraph index.\n- The commit step was skipped because you did not ask for a commit. The map files are untracked under `docs/` and `tests/`.\n\nDONE",
+ "internas": {
+  "chamadas": 3,
+  "total_cost_usd": 0.031086,
+  "modelos": [
+   "claude-haiku-5-5"
+  ]
+ },
+ "custo_total_usd": 0.237359,
+ "mapa": true,
+ "qualidade_total": 94.6,
+ "componentes": 36,
+ "cobertura": "4 passed in 0.17s",
+ "cobertura_ok": true,
+ "explorador": true,
+ "cobertura_original": {
+  "cobertura": "4 passed in 0.12s",
+  "cobertura_ok": true
+ }
+}

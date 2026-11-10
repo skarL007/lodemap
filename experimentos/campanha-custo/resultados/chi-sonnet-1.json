@@ -1,0 +1,51 @@
+{
+ "repo": "chi",
+ "pilha": "sonnet",
+ "rep": 1,
+ "pasta": "<BASE>/runs/chi-sonnet-1",
+ "segundos": 483.8,
+ "skill_commit": "e0e4d2b",
+ "repo_commit": "3a33ba5",
+ "total_cost_usd": 0.9126199999999999,
+ "num_turns": 10,
+ "session_id": "0839cccc-0e60-474b-b3f2-d028b5967be9",
+ "is_error": false,
+ "subtype": "success",
+ "modelUsage": {
+  "claude-sonnet-5-5": {
+   "inputTokens": 108,
+   "outputTokens": 25122,
+   "cacheReadInputTokens": 2072695,
+   "cacheCreationInputTokens": 154792,
+   "webSearchRequests": 0,
+   "costUSD": 0.9126199999999999,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 6499,
+   "cacheCreationEphemeral5mInputTokens": 110169,
+   "cacheCreationEphemeral1hInputTokens": 44623,
+   "canonicalModel": "claude-sonnet-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "fim": "ed defaults:**\n  - No monthly budget was set, so the `verificar --escopo modelo` budget check returned 3 (\"confirm with the owner\"). I went ahead on the owner's pre-approved `modelo` scope.\n  - There is no metrics evidence in the repo, so the metrics file is empty (0 metrics).\n  - The optional static site was skipped.\n  - I did not run `codegraph init`, so relations come from the `ast` mode.\n\nDONE",
+ "internas": {
+  "chamadas": 4,
+  "total_cost_usd": 0.033389,
+  "modelos": [
+   "claude-haiku-5-5"
+  ]
+ },
+ "custo_total_usd": 0.946009,
+ "mapa": true,
+ "qualidade_total": 94.5,
+ "componentes": 36,
+ "cobertura": "4 passed in 0.07s",
+ "cobertura_ok": true,
+ "explorador": true,
+ "cobertura_original": {
+  "cobertura": "4 passed in 0.06s",
+  "cobertura_ok": true
+ }
+}

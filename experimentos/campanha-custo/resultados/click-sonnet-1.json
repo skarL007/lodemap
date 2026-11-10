@@ -1,0 +1,67 @@
+{
+ "repo": "click",
+ "pilha": "sonnet",
+ "rep": 1,
+ "pasta": "<BASE>/runs/click-sonnet-1",
+ "segundos": 459.4,
+ "skill_commit": "e0e4d2b",
+ "repo_commit": "1d038f2",
+ "total_cost_usd": 0.92560171,
+ "num_turns": 3,
+ "session_id": "e6e513e6-7f02-485a-93c5-0202967cda9f",
+ "is_error": false,
+ "subtype": "success",
+ "modelUsage": {
+  "claude-sonnet-5-5": {
+   "inputTokens": 104,
+   "outputTokens": 25075,
+   "cacheReadInputTokens": 2012158,
+   "cacheCreationInputTokens": 163739,
+   "webSearchRequests": 0,
+   "costUSD": 0.9196163000000002,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 8096,
+   "cacheCreationEphemeral5mInputTokens": 125009,
+   "cacheCreationEphemeral1hInputTokens": 38730,
+   "canonicalModel": "claude-sonnet-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  },
+  "claude-haiku-5-5": {
+   "inputTokens": 20,
+   "outputTokens": 6098,
+   "cacheReadInputTokens": 103591,
+   "cacheCreationInputTokens": 15188,
+   "webSearchRequests": 0,
+   "costUSD": 0.005985409999999999,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 2026,
+   "cacheCreationEphemeral5mInputTokens": 15188,
+   "cacheCreationEphemeral1hInputTokens": 0,
+   "canonicalModel": "claude-haiku-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "fim": "s/metricas.json` is empty, because the repo has no measurement evidence. The metrics-source test is skipped for that reason.\n- **Browser check:** the verifier saw no proof that each view fits or that the side panel opens on a node click. The flow and focus checks passed.\n- **Commit:** `34f285f`, local only. It includes the new `tests/` files and the `.claude/` folder, not just `docs/architecture`.",
+ "internas": {
+  "chamadas": 6,
+  "total_cost_usd": 0.026506,
+  "modelos": [
+   "claude-haiku-5-5"
+  ]
+ },
+ "custo_total_usd": 0.952108,
+ "mapa": true,
+ "qualidade_total": 95.0,
+ "componentes": 17,
+ "cobertura": "4 passed in 0.13s",
+ "cobertura_ok": true,
+ "explorador": true,
+ "cobertura_original": {
+  "cobertura": "ImportError while loading conftest '<BASE>/runs/click-sonnet-1/tests/conftest.py'.\ntests\\conftest.py:3: in <module>\n    from click.testing import CliRunner\nE   ModuleNotFoundError: No module named 'click'\n",
+  "cobertura_ok": false
+ }
+}

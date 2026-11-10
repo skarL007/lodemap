@@ -1,0 +1,49 @@
+{
+ "repo": "click",
+ "pilha": "sonnet",
+ "rep": 2,
+ "pasta": "<BASE>/runs/click-sonnet-2",
+ "segundos": 263.3,
+ "skill_commit": "e0e4d2b",
+ "repo_commit": "1d038f2",
+ "total_cost_usd": 0.6345805,
+ "num_turns": 5,
+ "session_id": "d0836a14-e383-4460-b976-da382f20a1ed",
+ "is_error": false,
+ "subtype": "success",
+ "modelUsage": {
+  "claude-sonnet-5-5": {
+   "inputTokens": 56,
+   "outputTokens": 23140,
+   "cacheReadInputTokens": 1196820,
+   "cacheCreationInputTokens": 93368,
+   "webSearchRequests": 0,
+   "costUSD": 0.6345805,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 6692,
+   "cacheCreationEphemeral5mInputTokens": 60057,
+   "cacheCreationEphemeral1hInputTokens": 33311,
+   "canonicalModel": "claude-sonnet-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "fim": "** 95.8 against a baseline of 82.2, so it passed.\n- **Final check:** `node --check` and the explorer run without console errors.\n- **Generated:** the explorer and the docs reader.\n\nTwo things are thin:\n\n- **Metrics:** none yet. There was no measurement evidence in the repo, so I skipped that step.\n- **Observability:** the observability criterion scores 20%, because Click has no logging or metrics.",
+ "internas": {
+  "chamadas": 0,
+  "total_cost_usd": 0,
+  "modelos": []
+ },
+ "custo_total_usd": 0.63458,
+ "mapa": true,
+ "qualidade_total": 95.8,
+ "componentes": 15,
+ "cobertura": "4 passed in 0.10s",
+ "cobertura_ok": true,
+ "explorador": true,
+ "cobertura_original": {
+  "cobertura": "ImportError while loading conftest '<BASE>/runs/click-sonnet-2/tests/conftest.py'.\ntests\\conftest.py:3: in <module>\n    from click.testing import CliRunner\nE   ModuleNotFoundError: No module named 'click'\n",
+  "cobertura_ok": false
+ }
+}

@@ -1,0 +1,51 @@
+{
+ "repo": "axios",
+ "pilha": "sonnet",
+ "rep": 2,
+ "pasta": "<BASE>/runs/axios-sonnet-2",
+ "segundos": 942.7,
+ "skill_commit": "e0e4d2b",
+ "repo_commit": "335e2f8",
+ "total_cost_usd": 1.7885138000000007,
+ "num_turns": 7,
+ "session_id": "fbb20152-0247-4dca-b546-192a4ac069aa",
+ "is_error": false,
+ "subtype": "success",
+ "modelUsage": {
+  "claude-sonnet-5-5": {
+   "inputTokens": 146,
+   "outputTokens": 63733,
+   "cacheReadInputTokens": 3974813,
+   "cacheCreationInputTokens": 274921,
+   "webSearchRequests": 0,
+   "costUSD": 1.7885138000000007,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 21072,
+   "cacheCreationEphemeral5mInputTokens": 230849,
+   "cacheCreationEphemeral1hInputTokens": 44072,
+   "canonicalModel": "claude-sonnet-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "fim": "folder in the home directory, and wrote only inside this repo.\n\nWhat passed:\n- **Coverage and related tests:** `pytest tests/test_*.py` gave 90 passed and 1 skipped.\n- **Quality gate:** total 95.0 against a baseline of 82.2 (minimum 72.2), approved.\n- **Explorer and reader:** `node --check` is clean, the explorer opens without JS errors, one flow was exercised and focus by `#libAxios` works.\n\nDONE",
+ "internas": {
+  "chamadas": 5,
+  "total_cost_usd": 0.055593,
+  "modelos": [
+   "claude-haiku-5-5"
+  ]
+ },
+ "custo_total_usd": 1.844107,
+ "mapa": true,
+ "qualidade_total": 95.0,
+ "componentes": 72,
+ "cobertura": "4 passed in 0.16s",
+ "cobertura_ok": true,
+ "explorador": true,
+ "cobertura_original": {
+  "cobertura": "4 passed in 0.07s",
+  "cobertura_ok": true
+ }
+}

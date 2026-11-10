@@ -1,0 +1,51 @@
+{
+ "repo": "axios",
+ "pilha": "sonnet",
+ "rep": 3,
+ "pasta": "<BASE>/runs/axios-sonnet-3",
+ "segundos": 612.8,
+ "skill_commit": "e0e4d2b",
+ "repo_commit": "335e2f8",
+ "total_cost_usd": 1.0311753,
+ "num_turns": 5,
+ "session_id": "9df0d22e-879f-4a4d-ace2-8feabe717c13",
+ "is_error": false,
+ "subtype": "success",
+ "modelUsage": {
+  "claude-sonnet-5-5": {
+   "inputTokens": 106,
+   "outputTokens": 33766,
+   "cacheReadInputTokens": 2202803,
+   "cacheCreationInputTokens": 162376,
+   "webSearchRequests": 0,
+   "costUSD": 1.0311753,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 9836,
+   "cacheCreationEphemeral5mInputTokens": 117654,
+   "cacheCreationEphemeral1hInputTokens": 44722,
+   "canonicalModel": "claude-sonnet-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "fim": "S errors.\n- **Explorer:** it is generated in `docs/architecture/structurizr/explorador/`.\n- **Metrics:** `metricas.json` stays empty because the repo has no measurement evidence to cite.\n- **Static site:** I didn't generate it (`--com-site` is off by default and Graphviz isn't on PATH).\n- **Extra edit:** I added a Maintenance entry to `PRE_RELEASE_CHANGELOG.md`, as AGENTS.md requires for every PR.",
+ "internas": {
+  "chamadas": 5,
+  "total_cost_usd": 0.059995,
+  "modelos": [
+   "claude-haiku-5-5"
+  ]
+ },
+ "custo_total_usd": 1.09117,
+ "mapa": true,
+ "qualidade_total": 94.9,
+ "componentes": 72,
+ "cobertura": "4 passed in 0.18s",
+ "cobertura_ok": true,
+ "explorador": true,
+ "cobertura_original": {
+  "cobertura": "4 passed in 0.11s",
+  "cobertura_ok": true
+ }
+}

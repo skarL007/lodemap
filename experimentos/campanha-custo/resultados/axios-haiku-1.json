@@ -1,0 +1,51 @@
+{
+ "repo": "axios",
+ "pilha": "haiku",
+ "rep": 1,
+ "pasta": "<BASE>/runs/axios-haiku-1",
+ "segundos": 1077.3,
+ "skill_commit": "e0e4d2b",
+ "repo_commit": "335e2f8",
+ "total_cost_usd": 0.628034485,
+ "num_turns": 10,
+ "session_id": "4377f28f-eeae-45b8-9098-7cd3bc41595c",
+ "is_error": false,
+ "subtype": "success",
+ "modelUsage": {
+  "claude-haiku-5-5": {
+   "inputTokens": 162,
+   "outputTokens": 179903,
+   "cacheReadInputTokens": 7042632,
+   "cacheCreationInputTokens": 431294,
+   "webSearchRequests": 0,
+   "costUSD": 0.628034485,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 89708,
+   "cacheCreationEphemeral5mInputTokens": 353485,
+   "cacheCreationEphemeral1hInputTokens": 77809,
+   "canonicalModel": "claude-haiku-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "fim": " work.\n- The lodemap test suite passed: 90 passed, 1 skipped.\n\n**Git:** the branch is `lodemap-architecture-map` with commit `8c502ce`. It includes the map folder and ten lodemap test files under `tests/`. Git printed CRLF warnings on every file; that's line-ending noise only.\n\nDONE — the architecture map for axios is generated, verified, and committed locally on branch `lodemap-architecture-map`.",
+ "internas": {
+  "chamadas": 5,
+  "total_cost_usd": 0.060664,
+  "modelos": [
+   "claude-haiku-5-5"
+  ]
+ },
+ "custo_total_usd": 0.688698,
+ "mapa": true,
+ "qualidade_total": 94.5,
+ "componentes": 72,
+ "cobertura": "4 passed in 0.07s",
+ "cobertura_ok": true,
+ "explorador": true,
+ "cobertura_original": {
+  "cobertura": "4 passed in 0.06s",
+  "cobertura_ok": true
+ }
+}

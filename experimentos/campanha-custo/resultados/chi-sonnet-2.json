@@ -1,0 +1,65 @@
+{
+ "repo": "chi",
+ "pilha": "sonnet",
+ "rep": 2,
+ "pasta": "<BASE>/runs/chi-sonnet-2",
+ "segundos": 368.4,
+ "skill_commit": "e0e4d2b",
+ "repo_commit": "3a33ba5",
+ "total_cost_usd": 0.7514767700000003,
+ "num_turns": 4,
+ "session_id": "214ddee5-0f29-431c-ba69-71059f6b6701",
+ "is_error": false,
+ "subtype": "success",
+ "modelUsage": {
+  "claude-sonnet-5-5": {
+   "inputTokens": 72,
+   "outputTokens": 26115,
+   "cacheReadInputTokens": 1666953,
+   "cacheCreationInputTokens": 101935,
+   "webSearchRequests": 0,
+   "costUSD": 0.7424203000000001,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 6489,
+   "cacheCreationEphemeral5mInputTokens": 62206,
+   "cacheCreationEphemeral1hInputTokens": 39729,
+   "canonicalModel": "claude-sonnet-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  },
+  "claude-haiku-5-5": {
+   "inputTokens": 22,
+   "outputTokens": 9984,
+   "cacheReadInputTokens": 143527,
+   "cacheCreationInputTokens": 21016,
+   "webSearchRequests": 0,
+   "costUSD": 0.00905647,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 4992,
+   "cacheCreationEphemeral5mInputTokens": 21016,
+   "cacheCreationEphemeral1hInputTokens": 0,
+   "canonicalModel": "claude-haiku-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "fim": "empty metrics. I ignored both, because the explorer's look is fixed by the skill and there is no evidence to curate.\n- **Defaults chosen:** I set `ignorar` to `**/*_test.go` so test files aren't counted as modules, and `repo_github` to `https://github.com/go-chi/chi` (no remote is configured, so that was my inference).\n- **Commit:** I committed locally as `82a22bc`, as the skill's final step asks.",
+ "internas": {
+  "chamadas": 0,
+  "total_cost_usd": 0,
+  "modelos": []
+ },
+ "custo_total_usd": 0.751477,
+ "mapa": true,
+ "qualidade_total": 94.7,
+ "componentes": 36,
+ "cobertura": "4 passed in 0.11s",
+ "cobertura_ok": true,
+ "explorador": true,
+ "cobertura_original": {
+  "cobertura": "4 passed in 0.06s",
+  "cobertura_ok": true
+ }
+}

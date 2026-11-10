@@ -1,0 +1,51 @@
+{
+ "repo": "chi",
+ "pilha": "haiku",
+ "rep": 1,
+ "pasta": "<BASE>/runs/chi-haiku-1",
+ "segundos": 719.4,
+ "skill_commit": "e0e4d2b",
+ "repo_commit": "3a33ba5",
+ "total_cost_usd": 0.13915315499999995,
+ "num_turns": 5,
+ "session_id": "8a0bb34f-07d3-4803-a749-1c3110b8fee5",
+ "is_error": false,
+ "subtype": "success",
+ "modelUsage": {
+  "claude-haiku-5-5": {
+   "inputTokens": 188,
+   "outputTokens": 120726,
+   "cacheReadInputTokens": 3822928,
+   "cacheCreationInputTokens": 294474,
+   "webSearchRequests": 0,
+   "costUSD": 0.13915315499999995,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 72321,
+   "cacheCreationEphemeral5mInputTokens": 244703,
+   "cacheCreationEphemeral1hInputTokens": 49771,
+   "canonicalModel": "claude-haiku-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "fim": " so `_examples` and test files stay out of the model.\n- **Metrics skipped (step 8):** the repo has no measurement evidence file to curate from; the only benchmark is a Go test. The metrics file is empty by design.\n- **Static site and Structurizr Lite not generated:** off by default, and Graphviz (`dot`) is not installed.\n- **No remote:** the repo has no git remote, so `repo_github` is empty.\n\nDONE",
+ "internas": {
+  "chamadas": 3,
+  "total_cost_usd": 0.029057,
+  "modelos": [
+   "claude-haiku-5-5"
+  ]
+ },
+ "custo_total_usd": 0.16821,
+ "mapa": true,
+ "qualidade_total": 94.0,
+ "componentes": 36,
+ "cobertura": "4 passed in 0.12s",
+ "cobertura_ok": true,
+ "explorador": true,
+ "cobertura_original": {
+  "cobertura": "4 passed in 0.05s",
+  "cobertura_ok": true
+ }
+}

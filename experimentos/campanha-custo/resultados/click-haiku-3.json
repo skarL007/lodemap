@@ -1,0 +1,51 @@
+{
+ "repo": "click",
+ "pilha": "haiku",
+ "rep": 3,
+ "pasta": "<BASE>/runs/click-haiku-3",
+ "segundos": 647.5,
+ "skill_commit": "e0e4d2b",
+ "repo_commit": "1d038f2",
+ "total_cost_usd": 0.16870398,
+ "num_turns": 2,
+ "session_id": "dd5e2549-dd32-4809-b9a4-6544840d537a",
+ "is_error": false,
+ "subtype": "success",
+ "modelUsage": {
+  "claude-haiku-5-5": {
+   "inputTokens": 162,
+   "outputTokens": 124442,
+   "cacheReadInputTokens": 3609446,
+   "cacheCreationInputTokens": 284192,
+   "webSearchRequests": 0,
+   "costUSD": 0.16870398,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 76249,
+   "cacheCreationEphemeral5mInputTokens": 228864,
+   "cacheCreationEphemeral1hInputTokens": 55328,
+   "canonicalModel": "claude-haiku-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "fim": "ier did not confirm the explorer's fit-to-view or the side panel on node click.\n- The verifier did not run the workspace checks or the metric source checks, which were outside its brief.\n\nDONE — map generated in English at `docs/architecture/structurizr`; coverage, quality gate and explorer checks pass. Metrics skipped (no evidence file); CliRunner flow and explorer fit/side-panel left unverified.",
+ "internas": {
+  "chamadas": 6,
+  "total_cost_usd": 0.02618,
+  "modelos": [
+   "claude-haiku-5-5"
+  ]
+ },
+ "custo_total_usd": 0.194884,
+ "mapa": true,
+ "qualidade_total": 94.2,
+ "componentes": 17,
+ "cobertura": "4 passed in 0.10s",
+ "cobertura_ok": true,
+ "explorador": true,
+ "cobertura_original": {
+  "cobertura": "ImportError while loading conftest '<BASE>/runs/click-haiku-3/tests/conftest.py'.\ntests\\conftest.py:3: in <module>\n    from click.testing import CliRunner\nE   ModuleNotFoundError: No module named 'click'\n",
+  "cobertura_ok": false
+ }
+}

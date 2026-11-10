@@ -1,0 +1,49 @@
+{
+ "repo": "click",
+ "pilha": "sonnet",
+ "rep": 3,
+ "pasta": "<BASE>/runs/click-sonnet-3",
+ "segundos": 376.9,
+ "skill_commit": "e0e4d2b",
+ "repo_commit": "1d038f2",
+ "total_cost_usd": 0.8310739999999998,
+ "num_turns": 5,
+ "session_id": "9dc4046b-6db7-45d1-9558-b6a1787dad1a",
+ "is_error": false,
+ "subtype": "success",
+ "modelUsage": {
+  "claude-sonnet-5-5": {
+   "inputTokens": 78,
+   "outputTokens": 29227,
+   "cacheReadInputTokens": 2054880,
+   "cacheCreationInputTokens": 112492,
+   "webSearchRequests": 0,
+   "costUSD": 0.8310739999999998,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 9595,
+   "cacheCreationEphemeral5mInputTokens": 77872,
+   "cacheCreationEphemeral1hInputTokens": 34620,
+   "canonicalModel": "claude-sonnet-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "fim": "clickInit` focus checks pass.\n- **Metrics:** left empty, because the repo has no measurement evidence to take numbers from.\n- **Commit:** `62e7827`, local only, nothing pushed.\n- **Extra files:** `novo_mapa.py` also put the lodemap test files into `tests/`, and they are in the commit.\n\nI used the skill's defaults for everything that would have needed a question, and I did not run `codegraph init`.",
+ "internas": {
+  "chamadas": 0,
+  "total_cost_usd": 0,
+  "modelos": []
+ },
+ "custo_total_usd": 0.831074,
+ "mapa": true,
+ "qualidade_total": 96.2,
+ "componentes": 17,
+ "cobertura": "4 passed in 0.09s",
+ "cobertura_ok": true,
+ "explorador": true,
+ "cobertura_original": {
+  "cobertura": "ImportError while loading conftest '<BASE>/runs/click-sonnet-3/tests/conftest.py'.\ntests\\conftest.py:3: in <module>\n    from click.testing import CliRunner\nE   ModuleNotFoundError: No module named 'click'\n",
+  "cobertura_ok": false
+ }
+}

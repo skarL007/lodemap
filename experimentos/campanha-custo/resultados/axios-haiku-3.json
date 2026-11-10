@@ -1,0 +1,51 @@
+{
+ "repo": "axios",
+ "pilha": "haiku",
+ "rep": 3,
+ "pasta": "<BASE>/runs/axios-haiku-3",
+ "segundos": 1993.7,
+ "skill_commit": "e0e4d2b",
+ "repo_commit": "335e2f8",
+ "total_cost_usd": 0.6926206299999997,
+ "num_turns": 2,
+ "session_id": "174134d4-4694-4bf5-be0b-68bafd3e452a",
+ "is_error": false,
+ "subtype": "success",
+ "modelUsage": {
+  "claude-haiku-5-5": {
+   "inputTokens": 228,
+   "outputTokens": 192986,
+   "cacheReadInputTokens": 9398046,
+   "cacheCreationInputTokens": 479850,
+   "webSearchRequests": 0,
+   "costUSD": 0.6926206299999997,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 131504,
+   "cacheCreationEphemeral5mInputTokens": 401394,
+   "cacheCreationEphemeral1hInputTokens": 78456,
+   "canonicalModel": "claude-haiku-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "fim": "Nothing left to act on: the map work is finished and committed locally (`55860f3`), the branch `main` has no pull request, and there is no remote, so there is no CI or review state to check. I've stopped the autonomous loop.",
+ "internas": {
+  "chamadas": 5,
+  "total_cost_usd": 0.066141,
+  "modelos": [
+   "claude-haiku-5-5"
+  ]
+ },
+ "custo_total_usd": 0.758762,
+ "mapa": true,
+ "qualidade_total": 94.9,
+ "componentes": 72,
+ "cobertura": "4 passed in 0.18s",
+ "cobertura_ok": true,
+ "explorador": true,
+ "cobertura_original": {
+  "cobertura": "4 passed in 0.07s",
+  "cobertura_ok": true
+ }
+}

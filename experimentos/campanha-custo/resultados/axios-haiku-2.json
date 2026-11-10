@@ -1,0 +1,51 @@
+{
+ "repo": "axios",
+ "pilha": "haiku",
+ "rep": 2,
+ "pasta": "<BASE>/runs/axios-haiku-2",
+ "segundos": 891.1,
+ "skill_commit": "e0e4d2b",
+ "repo_commit": "335e2f8",
+ "total_cost_usd": 0.15124872000000003,
+ "num_turns": 10,
+ "session_id": "934164b9-7c57-43ea-b56c-956aa8e27d94",
+ "is_error": false,
+ "subtype": "success",
+ "modelUsage": {
+  "claude-haiku-5-5": {
+   "inputTokens": 170,
+   "outputTokens": 114169,
+   "cacheReadInputTokens": 4475117,
+   "cacheCreationInputTokens": 357636,
+   "webSearchRequests": 0,
+   "costUSD": 0.15124872000000003,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 75123,
+   "cacheCreationEphemeral5mInputTokens": 295082,
+   "cacheCreationEphemeral1hInputTokens": 62554,
+   "canonicalModel": "claude-haiku-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "fim": "dor`. Results are as reported above.\n- **Commit:** nothing is committed. The new files are untracked: `docs/architecture/` and the lodemap test files under `tests/`.\n\nOne architecture issue for the owner: `lib/helpers/toFormData.js` imports the Node platform classes directly, bypassing `lib/platform/index.js`. That conflicts with the rule that helpers stay generic. I did not change the code.\n\nDONE",
+ "internas": {
+  "chamadas": 5,
+  "total_cost_usd": 0.060094,
+  "modelos": [
+   "claude-haiku-5-5"
+  ]
+ },
+ "custo_total_usd": 0.211343,
+ "mapa": true,
+ "qualidade_total": 95.0,
+ "componentes": 72,
+ "cobertura": "4 passed in 0.12s",
+ "cobertura_ok": true,
+ "explorador": true,
+ "cobertura_original": {
+  "cobertura": "4 passed in 0.06s",
+  "cobertura_ok": true
+ }
+}

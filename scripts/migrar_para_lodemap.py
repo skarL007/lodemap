@@ -15,6 +15,9 @@ import re
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from lodemap.idioma import opcao, t  # noqa: E402
+
 TROCAS = [
     ("structurize-map.json", "lodemap.json"),
     ("skills/structurize-map", "skills/lodemap"),
@@ -32,6 +35,7 @@ RENOMEAR = {"smap_diff.py": "lodemap_diff.py", "smap_gancho.py": "lodemap_gancho
 TEXTO = {".py", ".ps1", ".md", ".json", ".dsl", ".html", ".js", ".groovy", ".css", ".toml", ".txt", ".yml", ".yaml", ""}
 IGNORAR = {".git", "__pycache__", ".structurizr", "site", "node_modules"}
 PROPRIO = Path(__file__).name
+_TIPO = {"pasta": "folder", "arquivo": "file", "texto": "text"}  # rótulos só da exibição; os valores do plano não mudam
 
 
 def arquivos(raiz: Path):
@@ -87,16 +91,23 @@ def main(argv=None) -> int:
         sys.stdout.reconfigure(encoding="utf-8")
     except (AttributeError, ValueError):
         pass
-    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("pasta")
-    ap.add_argument("--aplicar", action="store_true")
-    ap.add_argument("--so-estado", action="store_true")
+    ap = argparse.ArgumentParser(description=t("Migra uma árvore do antigo structurize-map para o Lodemap: nomes de "
+                                               "arquivo, textos e estado local.",
+                                               "Migrate a tree from the old structurize-map to Lodemap: file names, "
+                                               "texts and local state."))
+    ap.add_argument("pasta", metavar=t("pasta", "folder"), help=t("pasta a migrar", "folder to migrate"))
+    ap.add_argument(*opcao("--apply", "--aplicar"), dest="aplicar", action="store_true",
+                    help=t("grava as mudanças (sem isto, só mostra o plano)", "write the changes (without it, only shows the plan)"))
+    ap.add_argument(*opcao("--state-only", "--so-estado"), dest="so_estado", action="store_true",
+                    help=t("só .smap -> .lodemap e o JSON de configuração", "only .smap -> .lodemap and the config JSON"))
     a = ap.parse_args(argv)
     raiz = Path(a.pasta).resolve()
     ops = planejar(raiz, a.so_estado)
     for tipo, p, d in ops:
-        print(f"{tipo:8} {p.relative_to(raiz)}" + (f" -> {d.name}" if d else ""))
-    print(f"{len(ops)} operações" + ("" if a.aplicar else " (plano; use --aplicar)"))
+        print(f"{_TIPO.get(tipo, tipo) if t('pt', 'en') == 'en' else tipo:8} {p.relative_to(raiz)}"
+              + (f" -> {d.name}" if d else ""))
+    print(t(f"{len(ops)} operações", f"{len(ops)} operations")
+          + ("" if a.aplicar else t(" (plano; use --aplicar)", " (plan; use --apply)")))
     if a.aplicar:
         aplicar(ops)
     return 0

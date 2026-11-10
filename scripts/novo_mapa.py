@@ -20,6 +20,9 @@ import sys
 from datetime import date
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from lodemap.idioma import opcao, t  # noqa: E402
+
 SKILL = Path(__file__).resolve().parent.parent
 TEMPLATES = SKILL / "templates"
 TEXTO = {".dsl", ".json", ".md", ".py", ".ps1", ".html", ".groovy", ".gitignore"}
@@ -136,23 +139,43 @@ def copiar(origem: Path, destino: Path, trocas: dict[str, str], forcar: bool,
 
 
 def main(argv=None) -> int:
-    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--repo", required=True)
-    ap.add_argument("--projeto", required=True)
-    ap.add_argument("--descricao", default="")
-    ap.add_argument("--raiz-codigo")
-    ap.add_argument("--modulos", help="globs separados por vírgula; terminado em / casa pastas")
-    ap.add_argument("--ignorar", help="globs de 'ignorar' separados por vírgula (candidatos que não são módulos, ex. "
-                                      "'**/*_test.go'); substitui o padrão da linguagem; vazio = nenhum")
-    ap.add_argument("--destino", default="docs/architecture/structurizr")
-    ap.add_argument("--testes", default="tests")
-    ap.add_argument("--github", default="")
-    ap.add_argument("--ramo", default="main")
-    ap.add_argument("--porta-lite", type=int, default=8790, help="porta do Structurizr Lite (troque se o projeto já usa 8790)")
-    ap.add_argument("--porta-explorador", type=int, default=8791, help="porta do servidor do explorador (padrão 8791)")
-    ap.add_argument("--idioma", choices=("pt", "en"), default="pt",
-                    help="idioma das saídas geradas e do texto do modelo (padrão pt; en disponível)")
-    ap.add_argument("--forcar", action="store_true")
+    ap = argparse.ArgumentParser(description=t("Cria o mapa de arquitetura (Structurizr + explorador + leitor + métricas) "
+                                               "num repositório.",
+                                               "Create the architecture map (Structurizr + explorer + reader + metrics) "
+                                               "in a repository."))
+    ap.add_argument("--repo", required=True, help=t("raiz do repositório", "repository root"))
+    ap.add_argument(*opcao("--project", "--projeto"), dest="projeto", required=True,
+                    help=t("nome do projeto", "project name"))
+    ap.add_argument(*opcao("--description", "--descricao"), dest="descricao", default="",
+                    help=t("descrição curta do projeto", "short description of the project"))
+    ap.add_argument(*opcao("--code-root", "--raiz-codigo"), dest="raiz_codigo",
+                    help=t("pasta do código (padrão: detectada)", "code folder (default: detected)"))
+    ap.add_argument(*opcao("--modules", "--modulos"), dest="modulos",
+                    help=t("globs separados por vírgula; terminado em / casa pastas",
+                           "comma separated globs; a trailing / matches folders"))
+    ap.add_argument(*opcao("--ignore", "--ignorar"), dest="ignorar",
+                    help=t("globs de 'ignorar' separados por vírgula (candidatos que não são módulos, ex. "
+                           "'**/*_test.go'); substitui o padrão da linguagem; vazio = nenhum",
+                           "comma separated 'ignore' globs (candidates that are not modules, e.g. '**/*_test.go'); "
+                           "replaces the language default; empty = none"))
+    ap.add_argument(*opcao("--destination", "--destino"), dest="destino", default="docs/architecture/structurizr",
+                    help=t("pasta do mapa dentro do repositório (padrão: %(default)s)",
+                           "map folder inside the repository (default: %(default)s)"))
+    ap.add_argument(*opcao("--tests", "--testes"), dest="testes", default="tests",
+                    help=t("pasta dos testes do mapa (padrão: %(default)s)", "folder for the map's tests (default: %(default)s)"))
+    ap.add_argument("--github", default="", help=t("URL do repositório no GitHub", "the repository's GitHub URL"))
+    ap.add_argument(*opcao("--branch", "--ramo"), dest="ramo", default="main",
+                    help=t("ramo principal (padrão: %(default)s)", "main branch (default: %(default)s)"))
+    ap.add_argument(*opcao("--lite-port", "--porta-lite"), dest="porta_lite", type=int, default=8790,
+                    help=t("porta do Structurizr Lite (troque se o projeto já usa 8790)",
+                           "Structurizr Lite port (change it if the project already uses 8790)"))
+    ap.add_argument(*opcao("--explorer-port", "--porta-explorador"), dest="porta_explorador", type=int, default=8791,
+                    help=t("porta do servidor do explorador (padrão 8791)", "explorer server port (default 8791)"))
+    ap.add_argument(*opcao("--language", "--idioma"), dest="idioma", choices=("pt", "en"), default="pt",
+                    help=t("idioma das saídas geradas e do texto do modelo (padrão pt; en disponível)",
+                           "language of the generated outputs and of the model text (default pt; en available)"))
+    ap.add_argument(*opcao("--force", "--forcar"), dest="forcar", action="store_true",
+                    help=t("sobrescreve arquivos que já existem", "overwrite files that already exist"))
     a = ap.parse_args(argv)
     try:
         sys.stdout.reconfigure(encoding="utf-8")
@@ -193,10 +216,10 @@ def main(argv=None) -> int:
     if (camada / "structurizr").is_dir():
         c3, _ = copiar(camada / "structurizr", repo / a.destino, trocas, a.forcar, set(c1))
         c1 += [c for c in c3 if c not in c1]
-    print(f"{len(c1) + len(c2)} arquivos criados em {repo}")
+    print(t(f"{len(c1) + len(c2)} arquivos criados em {repo}", f"{len(c1) + len(c2)} files created in {repo}"))
     for p in p1 + p2:
-        print(f"  já existia, mantido: {p.relative_to(repo)}")
-    print(f"Próximo passo: python {SKILL / 'scripts' / 'inventario.py'} --repo \"{repo}\" --arq {a.destino}")
+        print(t("  já existia, mantido:", "  already existed, kept:"), p.relative_to(repo))
+    print(t("Próximo passo:", "Next step:"), f"python {SKILL / 'scripts' / 'inventario.py'} --repo \"{repo}\" --arq {a.destino}")
     return 0
 
 

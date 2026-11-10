@@ -29,6 +29,7 @@ Código de saída: 0; 1 se a pasta não é um repositório git ou se a aprovaç�
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import shlex
 import shutil
@@ -52,6 +53,31 @@ MSG = {
     "fim": "Log de cada atualização: {log}. Para tirar: --remover.",
     "gancho_linha2": "atualiza a arquitetura em segundo plano (instalado por instalar_gancho.py)",
 }
+
+
+MSG_EN = {
+    "nao_git": "{arq} is not inside a git repository; nothing installed.",
+    "removido": "removed: {alvo}",
+    "instalado": "installed: {alvo}",
+    "alheio": "WARNING: {alvo} already exists and is not lodemap's; I left it alone (use --force to replace it).",
+    "aprovacao": "ERROR: could not approve the launcher ({motivo}).",
+    "fim": "Log of each update: {log}. To remove: --remover.",
+}
+
+
+def _en(arq: Path) -> bool:
+    """Mapa em inglês? LODEMAP_IDIOMA vence o "idioma" do lodemap.json."""
+    i = (os.environ.get("LODEMAP_IDIOMA") or "").strip().lower()
+    if not i:
+        try:
+            i = str(json.loads((arq / "lodemap.json").read_text(encoding="utf-8")).get("idioma") or "")
+        except (OSError, ValueError, AttributeError):
+            i = ""
+    return i == "en"
+
+
+def _msg(base: Path, chave: str, **kw) -> str:
+    return (MSG_EN.get(chave) if _en(base) and chave in MSG_EN else MSG[chave]).format(**kw)
 
 
 def _git(arq: Path, *args: str) -> str | None:
@@ -100,7 +126,7 @@ def _eh_nosso(alvo: Path) -> bool:
 def instalar(arq: Path, scripts: Path, python: str, ferramentas: str, remover: bool = False, forcar: bool = False) -> int:
     hooks = pasta_dos_ganchos(arq)
     if hooks is None:
-        print(MSG["nao_git"].format(arq=arq), file=sys.stderr)
+        print(_msg(arq, "nao_git", arq=arq), file=sys.stderr)
         return 1
     hooks.mkdir(parents=True, exist_ok=True)
     lanca_copia = hooks / LANCA
@@ -110,7 +136,8 @@ def instalar(arq: Path, scripts: Path, python: str, ferramentas: str, remover: b
         shutil.copyfile(scripts / LANCA, lanca_copia)
         r = subprocess.run([python, str(lanca_copia), "--aprovar", str(scripts)], capture_output=True, text=True)
         if r.returncode != 0:
-            print(MSG["aprovacao"].format(motivo=(r.stderr or r.stdout or f"código {r.returncode}").strip()),
+            print(_msg(arq, "aprovacao", motivo=(r.stderr or r.stdout
+                                                 or (f"code {r.returncode}" if _en(arq) else f"código {r.returncode}")).strip()),
                   file=sys.stderr)
             return 1
 
@@ -120,34 +147,46 @@ def instalar(arq: Path, scripts: Path, python: str, ferramentas: str, remover: b
         if remover:
             if nosso:
                 alvo.unlink()
-                print(MSG["removido"].format(alvo=alvo))
+                print(_msg(arq, "removido", alvo=alvo))
             continue
         if alvo.exists() and not nosso and not forcar:
-            print(MSG["alheio"].format(alvo=alvo), file=sys.stderr)
+            print(_msg(arq, "alheio", alvo=alvo), file=sys.stderr)
             continue
         # bytes: o gancho tem de sair com LF em qualquer sistema (o sh não lê CRLF)
         alvo.write_bytes(corpo_do_gancho(tipo, python, lanca_copia, ferramentas).encode("utf-8"))
         if os.name != "nt":
             alvo.chmod(alvo.stat().st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
-        print(MSG["instalado"].format(alvo=alvo))
+        print(_msg(arq, "instalado", alvo=alvo))
 
     if remover:
         lanca_copia.unlink(missing_ok=True)
         (hooks / PIN).unlink(missing_ok=True)
     else:
-        print(MSG["fim"].format(log=arq / ".lodemap" / "ultimo-atualizar.log"))
+        print(_msg(arq, "fim", log=arq / ".lodemap" / "ultimo-atualizar.log"))
     return 0
 
 
 def parse_args(argv=None, env=None) -> argparse.Namespace:
     env = os.environ if env is None else env
     ferr = env.get("STRUCTURIZR_FERRAMENTAS") or str(Path.home() / ".structurizr")
-    ap = argparse.ArgumentParser(prog="instalar_gancho.py", description=__doc__.splitlines()[0])
-    ap.add_argument("--python", default=sys.executable, help="executável do Python que o gancho usa (padrão: %(default)s)")
-    ap.add_argument("--ferramentas", default=ferr, help="pasta do Structurizr CLI que o gancho passa ao atualizar.py "
-                                                       "(o gancho roda sem as variáveis da sua sessão; padrão: %(default)s)")
-    ap.add_argument("--remover", action="store_true", help="tira os ganchos instalados por este script (e só eles)")
-    ap.add_argument("--forcar", action="store_true", help="sobrescreve um gancho que já existe e não é deste script")
+    en = _en(Path(__file__).resolve().parent.parent)
+    ap = argparse.ArgumentParser(prog="instalar_gancho.py",
+                                 description=("Lodemap: installs (opt-in) the git hooks that update the architecture at each "
+                                              "checkpoint." if en else __doc__.splitlines()[0]))
+    ap.add_argument("--python", default=sys.executable,
+                    help=("Python executable the hook uses (default: %(default)s)" if en
+                          else "executável do Python que o gancho usa (padrão: %(default)s)"))
+    ap.add_argument("--ferramentas", "--tools", default=ferr,
+                    help=("Structurizr CLI folder the hook passes to atualizar.py (the hook runs without your session's "
+                          "variables; default: %(default)s)" if en
+                          else "pasta do Structurizr CLI que o gancho passa ao atualizar.py "
+                               "(o gancho roda sem as variáveis da sua sessão; padrão: %(default)s)"))
+    ap.add_argument("--remover", "--remove", action="store_true",
+                    help=("remove the hooks installed by this script (and only those)" if en
+                          else "tira os ganchos instalados por este script (e só eles)"))
+    ap.add_argument("--forcar", "--force", action="store_true",
+                    help=("overwrite a hook that already exists and is not this script's" if en
+                          else "sobrescreve um gancho que já existe e não é deste script"))
     return ap.parse_args(argv)
 
 

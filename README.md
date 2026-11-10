@@ -90,12 +90,12 @@ Requires Python 3.11+ and git. On Debian/Ubuntu the interpreter is `python3`.
 
 ```bash
 git clone https://github.com/skarL007/lodemap && cd lodemap
-python -m lodemap instalar --perfil padrao            # dry run: prints every change, writes nothing
-python -m lodemap instalar --perfil padrao --aplicar  # applies, with backups and a manifest
+python -m lodemap install --profile padrao            # dry run: prints every change, writes nothing
+python -m lodemap install --profile padrao --apply    # applies, with backups and a manifest
 python -m lodemap doctor                              # checks Python, git, Java, Structurizr CLI, Graphviz, claude
 ```
 
-Undo with `python -m lodemap reverter`: it restores the exact bytes of every file the install touched, newest install
+Undo with `python -m lodemap revert`: it restores the exact bytes of every file the install touched, newest install
 first. It is all-or-nothing: if a touched file changed after the install, it refuses and names the file.
 
 | Profile | What it installs |
@@ -103,7 +103,7 @@ first. It is all-or-nothing: if a touched file changed after the install, it ref
 | `minimo` | The skill (a link from `~/.claude/skills/lodemap` to this folder) and six `lodemap-*` agents in `~/.claude/agents/`. |
 | `padrao` | The above, plus a one-time hint (`SessionStart` hook) in repositories that have no map. |
 
-The installer never overwrites a file, key or link owned by someone else unless you pass `--forcar`, and never touches
+The installer never overwrites a file, key or link owned by someone else unless you pass `--force`, and never touches
 the hooks of other tools. `python -m lodemap status` shows what is installed.
 
 Generating a map also needs Java 21, the [Structurizr CLI](https://docs.structurizr.com/cli) and Graphviz. `doctor`
@@ -115,10 +115,15 @@ In Claude Code, inside your repository, ask for the map ("lodemap", "architectur
 The skill always starts with a plan that spends no tokens, and waits for your OK:
 
 ```bash
-python -m lodemap plano --repo .       # modules found, estimated cost and time, files that would be written
-python -m lodemap consentir --repo . --escopos gerar,modelo --orcamento-mensal 5
-python -m lodemap revogar --repo .
+python -m lodemap plan --repo .        # modules found, estimated cost and time, files that would be written
+python -m lodemap consent --repo . --scopes gerar,modelo --monthly-budget 5
+python -m lodemap revoke --repo .
 ```
+
+The Portuguese command names and options still work (`instalar`, `reverter`, `plano`, `consentir`, `revogar`,
+`verificar`, `diagnostico`; `--perfil`, `--aplicar`, `--sem`, `--com`, `--forcar`, `--manifesto`, `--escopos`,
+`--orcamento-mensal`, `--escopo`, `--custo`, `--todos`), so existing scripts keep running. The scope values
+(`gerar`, `gancho`, `modelo`) are the same in both languages.
 
 After the first generation:
 
@@ -198,9 +203,14 @@ Suggested edges are never written to the model automatically; the modeler confir
 
 Generated pages, docs, DSL labels and views come in Portuguese by default and in English with `"idioma": "en"` in
 `lodemap.json` (or `novo_mapa.py --idioma en`); the explorer and the reader have a PT | EN switch. The prompts of the
-skill, its command names (`instalar`, `plano`, `consentir`) and most terminal messages are in Brazilian Portuguese;
-the coverage test and the update pipeline (`rascunho`, `renderizar`, `descrever.py --resumo`, `atualizar.py`) print in
-the map language.
+skill are in Brazilian Portuguese.
+
+Terminal output comes in both languages, chosen once for the whole CLI, `scripts/` and the scripts copied into your
+repository: `LODEMAP_IDIOMA=pt|en` wins; otherwise the `"idioma"` of the map's `lodemap.json` (when the command points
+at one with `--repo` / `--arq`); otherwise the system locale (`pt*` gives Portuguese); otherwise English. `--help`
+and every message follow it. Command names and options exist in both languages, the active one is listed first.
+The coverage test and the update pipeline (`draft`/`rascunho`, `render`/`renderizar`, `descrever.py --resumo`,
+`atualizar.py`) print in the map language.
 
 ## Limits
 
@@ -255,7 +265,7 @@ the map language.
 SKILL.md       what Claude Code reads on every run (the operational core)
 references/    read on demand: modeling guide, gate criteria, pitfalls, measurements
 agents/        the six lodemap-* agents
-lodemap/       CLI: python -m lodemap (instalar, reverter, status, doctor, plano, consentir, revogar, verificar)
+lodemap/       CLI: python -m lodemap (install, revert, status, doctor, plan, consent, revoke, check)
 scripts/       inventory, skeleton, lean descriptions, quality gate, bridges
 templates/     what a new map copies into your repository (DSL, explorer, reader, scripts, tests)
 hooks/         the one-time hint hook

@@ -109,11 +109,23 @@ def executar(checkpoint: str, ferramentas: str = "") -> int:
 
 
 def main(argv=None) -> int:
-    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("tipo", nargs="?", choices=["post-commit", "post-merge"])
-    ap.add_argument("--executar", action="store_true")
-    ap.add_argument("--checkpoint", default="")
-    ap.add_argument("--ferramentas", default="", help="pasta do Structurizr CLI (gravada pelo instalar_gancho.py)")
+    en = (os.environ.get("LODEMAP_IDIOMA") or "").strip().lower() == "en"
+    if not os.environ.get("LODEMAP_IDIOMA"):
+        try:
+            en = json.loads((ARQ / "lodemap.json").read_text(encoding="utf-8")).get("idioma") == "en"
+        except (OSError, ValueError, AttributeError):
+            en = False
+    ap = argparse.ArgumentParser(description=("Git hook (post-commit and post-merge) that updates the architecture in the "
+                                              "background." if en else __doc__.splitlines()[0]))
+    ap.add_argument("tipo", nargs="?", choices=["post-commit", "post-merge"],
+                    help="post-commit | post-merge")
+    ap.add_argument("--executar", "--run", action="store_true",
+                    help=("(internal) run atualizar.py with a lock and a log" if en
+                          else "(interno) roda o atualizar.py com trava e log"))
+    ap.add_argument("--checkpoint", default="", help=("checkpoint label" if en else "rótulo do checkpoint"))
+    ap.add_argument("--ferramentas", "--tools", default="",
+                    help=("Structurizr CLI folder (recorded by instalar_gancho.py)" if en
+                          else "pasta do Structurizr CLI (gravada pelo instalar_gancho.py)"))
     a = ap.parse_args(argv)
     if a.executar:
         return executar(a.checkpoint, a.ferramentas)

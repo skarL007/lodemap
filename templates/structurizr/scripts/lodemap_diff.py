@@ -46,7 +46,8 @@ def git(repo: Path, *args: str) -> tuple[int, str]:
 def raiz_repo(arq: Path) -> Path:
     cod, out = git(arq, "rev-parse", "--show-toplevel")
     if cod:
-        raise SystemExit("lodemap_diff: a pasta não está num repositório git")
+        raise SystemExit("lodemap_diff: the folder is not inside a git repository" if _en(arq)
+                         else "lodemap_diff: a pasta não está num repositório git")
     return Path(out.strip())
 
 
@@ -261,15 +262,26 @@ def main(argv=None) -> int:
         sys.stdout.reconfigure(encoding="utf-8")
     except (AttributeError, ValueError):
         pass
-    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--arq", default=str(Path(__file__).resolve().parent.parent))
-    ap.add_argument("--workspace")
-    ap.add_argument("--trabalho", action="store_true", help="inclui mudanças não commitadas e arquivos novos")
-    ap.add_argument("--marcar", action="store_true", help="grava ultimoCommit = HEAD e geradoEm")
-    ap.add_argument("--checkpoint", default="", help="rótulo do checkpoint, com --marcar")
+    en = _en(Path(__file__).resolve().parent.parent)
+    ap = argparse.ArgumentParser(description=("What changed in the code since the last generation of the architecture map."
+                                              if en else __doc__.splitlines()[0]))
+    ap.add_argument("--arq", "--arch", default=str(Path(__file__).resolve().parent.parent),
+                    help=("the architecture folder (default: the one above scripts/)" if en
+                          else "pasta da arquitetura (padrão: a acima de scripts/)"))
+    ap.add_argument("--workspace", help=("path of workspace.json" if en else "caminho do workspace.json"))
+    ap.add_argument("--trabalho", "--working-tree", action="store_true",
+                    help=("include uncommitted changes and new files" if en
+                          else "inclui mudanças não commitadas e arquivos novos"))
+    ap.add_argument("--marcar", "--mark", action="store_true",
+                    help=("record ultimoCommit = HEAD and geradoEm" if en else "grava ultimoCommit = HEAD e geradoEm"))
+    ap.add_argument("--checkpoint", default="",
+                    help=("checkpoint label, with --mark" if en else "rótulo do checkpoint, com --marcar"))
     ap.add_argument("--checkpoint-env", action="store_true",
-                    help="lê o rótulo da variável LODEMAP_CHECKPOINT (UTF-8 intacto; é o que o atualizar.ps1 usa)")
-    ap.add_argument("--relevante", action="store_true", help="código de saída 0 se há o que regenerar")
+                    help=("read the label from the LODEMAP_CHECKPOINT variable (UTF-8 intact; what atualizar.ps1 uses)"
+                          if en else "lê o rótulo da variável LODEMAP_CHECKPOINT (UTF-8 intacto; é o que o atualizar.ps1 usa)"))
+    ap.add_argument("--relevante", "--relevant", action="store_true",
+                    help=("exit code 0 if there is something to regenerate" if en
+                          else "código de saída 0 se há o que regenerar"))
     a = ap.parse_args(argv)
     arq = Path(a.arq)
     if a.marcar:

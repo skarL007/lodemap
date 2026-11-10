@@ -30,7 +30,9 @@ from datetime import datetime
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import codegraph_ponte as cp  # noqa: E402
+from lodemap.idioma import opcao, t, usar_mapa  # noqa: E402
 
 STATUS = ("Pronto", "EmAndamento", "Aguardando", "Planejado", "ForaDoFoco")
 TAGS_EXTRAS = {"Dados", "Gate", "Privacidade", "Barramento", "WebBrowser", "Janela", "Modelo", "Externo", "Nuvem"}
@@ -540,7 +542,8 @@ def sugerir(repo: Path, arq: Path, fonte: str = "auto", db: Path | None = None) 
     """Componentes e relações sugeridos pelo código, sem decisão nenhuma."""
     globs = cp._globs_modulos(arq)
     if not globs:
-        raise ValueError(f"{arq / 'lodemap.json'} não tem 'modulos': rode novo_mapa.py antes")
+        raise ValueError(t(f"{arq / 'lodemap.json'} não tem 'modulos': rode novo_mapa.py antes",
+                           f"{arq / 'lodemap.json'} has no 'modulos': run novo_mapa.py first"))
     inv = cp.rascunho_inventario(repo, arq, fonte, db)
     # Todo módulo dos globs entra, mesmo os que o inventário não lê (.sh, .ps1, .html): é o que o gate de cobertura cobra.
     ignorar = cp._globs_ignorar(arq)
@@ -664,40 +667,49 @@ def validar(d: dict) -> list[str]:
     erros = []
     conts = {c.get("id") for c in d.get("containers", [])}
     if not conts:
-        erros.append("nenhum container em 'containers'")
+        erros.append(t("nenhum container em 'containers'", "no container in 'containers'"))
     for c in d.get("containers", []):
         for campo in ("id", "nome", "descricao", "tecnologia", "status"):
             if not c.get(campo):
-                erros.append(f"container {c.get('id', '?')}: falta '{campo}'")
+                erros.append(t(f"container {c.get('id', '?')}: falta '{campo}'",
+                               f"container {c.get('id', '?')}: missing '{campo}'"))
         if c.get("status") and c["status"] not in STATUS:
-            erros.append(f"container {c.get('id')}: status '{c['status']}' fora de {STATUS}")
+            erros.append(t(f"container {c.get('id')}: status '{c['status']}' fora de {STATUS}",
+                           f"container {c.get('id')}: status '{c['status']}' not in {STATUS}"))
     areas = d.get("areas", {})
     ids = Counter(c["id"] for c in d.get("componentes", []))
-    erros += [f"id repetido: {i}" for i, n in ids.items() if n > 1]
+    erros += [t(f"id repetido: {i}", f"duplicate id: {i}") for i, n in ids.items() if n > 1]
     donos = {c["id"] for c in d.get("componentes", []) if not c.get("fundir_em")}
     for c in d.get("componentes", []):
         if c.get("fundir_em"):
             if c["fundir_em"] not in donos:
-                erros.append(f"{c['modulo']}: fundir_em '{c['fundir_em']}' não é um componente que fica")
+                erros.append(t(f"{c['modulo']}: fundir_em '{c['fundir_em']}' não é um componente que fica",
+                               f"{c['modulo']}: fundir_em '{c['fundir_em']}' is not a component that stays"))
             continue
         faltam = [k for k in CAMPOS_COMPONENTE if not c.get(k)]
         if faltam:
-            erros.append(f"{c['modulo']}: falta {', '.join(faltam)}")
+            erros.append(t(f"{c['modulo']}: falta {', '.join(faltam)}", f"{c['modulo']}: missing {', '.join(faltam)}"))
             continue
         if c["container"] not in conts:
-            erros.append(f"{c['modulo']}: container '{c['container']}' não existe")
+            erros.append(t(f"{c['modulo']}: container '{c['container']}' não existe",
+                           f"{c['modulo']}: container '{c['container']}' does not exist"))
         if c["area"] not in areas:
-            erros.append(f"{c['modulo']}: área '{c['area']}' não está em 'areas'")
+            erros.append(t(f"{c['modulo']}: área '{c['area']}' não está em 'areas'",
+                           f"{c['modulo']}: area '{c['area']}' is not in 'areas'"))
         if c["status"] not in STATUS:
-            erros.append(f"{c['modulo']}: status '{c['status']}' fora de {STATUS}")
+            erros.append(t(f"{c['modulo']}: status '{c['status']}' fora de {STATUS}",
+                           f"{c['modulo']}: status '{c['status']}' not in {STATUS}"))
         ruins = set(c.get("tags", [])) - TAGS_EXTRAS
         if ruins:
-            erros.append(f"{c['modulo']}: tags desconhecidas {sorted(ruins)}")
+            erros.append(t(f"{c['modulo']}: tags desconhecidas {sorted(ruins)}",
+                           f"{c['modulo']}: unknown tags {sorted(ruins)}"))
     for r in d.get("relacoes", []):
         if r.get("manter") is None:
-            erros.append(f"relação {r['de']} -> {r['para']}: decida manter=true ou false")
+            erros.append(t(f"relação {r['de']} -> {r['para']}: decida manter=true ou false",
+                           f"relationship {r['de']} -> {r['para']}: decide manter=true or false"))
         elif r["manter"] and not r.get("verbo"):
-            erros.append(f"relação {r['de']} -> {r['para']}: falta o verbo")
+            erros.append(t(f"relação {r['de']} -> {r['para']}: falta o verbo",
+                           f"relationship {r['de']} -> {r['para']}: missing the verb"))
     return erros
 
 
@@ -722,7 +734,7 @@ def renderizar(arq: Path, decisoes: Path | None = None) -> dict:
     d = json.loads((decisoes or caminho_decisoes(arq)).read_text(encoding="utf-8"))
     erros = validar(d)
     if erros:
-        raise ValueError("decisões incompletas:\n  - " + "\n  - ".join(erros))
+        raise ValueError(t("decisões incompletas:", "incomplete decisions:") + "\n  - " + "\n  - ".join(erros))
     modelo = arq / "model"
     modelo.mkdir(parents=True, exist_ok=True)
     por_cont: dict[str, dict[str, list]] = defaultdict(lambda: defaultdict(list))
@@ -771,7 +783,8 @@ def renderizar(arq: Path, decisoes: Path | None = None) -> dict:
             f.unlink()
             escritos.append(f"model/{f.name} (removido)")
         else:
-            avisos.append(f"model/{f.name} foi escrito à mão e não é incluído por containers.dsl")
+            avisos.append(t(f"model/{f.name} foi escrito à mão e não é incluído por containers.dsl",
+                            f"model/{f.name} was written by hand and is not included by containers.dsl"))
     ids = {c["modulo"]: c.get("fundir_em") or c["id"] for c in d["componentes"]}
     linhas = [CABECALHO]
     mantidas = 0
@@ -803,7 +816,9 @@ def renderizar(arq: Path, decisoes: Path | None = None) -> dict:
         (decisoes or caminho_decisoes(arq)).write_text(json.dumps(d, ensure_ascii=False, indent=1) + "\n",
                                                        encoding="utf-8", newline="\n")
     if re.search(r"->\s*appEntrada\b", texto) and "appEntrada" not in ids.values():
-        avisos.append("model/relacoes.dsl ainda tem as setas de exemplo do template (appEntrada): troque pelas reais")
+        avisos.append(t("model/relacoes.dsl ainda tem as setas de exemplo do template (appEntrada): troque pelas reais",
+                        "model/relacoes.dsl still has the template's example arrows (appEntrada): replace them with "
+                        "the real ones"))
     return {"componentes": sum(not c.get("fundir_em") for c in d["componentes"]), "containers": len(d["containers"]), "relacoes": mantidas,
             "escritos": escritos, "avisos": avisos}
 
@@ -873,8 +888,10 @@ def _renderizar_visoes(arq: Path, d: dict, por_cont: dict, idioma: str, avisos: 
         manual.write_text("        !include visoes-geradas.dsl\n\n" + corpo, encoding="utf-8", newline="\n")
         escritos.append("views/visoes.dsl (include, sem o exemplo)")
     else:
-        avisos.append("views/visoes.dsl foi escrito à mão: para usar as visões geradas, tire de lá as estáticas "
-                      "e acrescente '!include visoes-geradas.dsl'")
+        avisos.append(t("views/visoes.dsl foi escrito à mão: para usar as visões geradas, tire de lá as estáticas "
+                        "e acrescente '!include visoes-geradas.dsl'",
+                        "views/visoes.dsl was written by hand: to use the generated views, remove the static ones "
+                        "from it and add '!include visoes-geradas.dsl'"))
     return escritos
 
 
@@ -884,30 +901,51 @@ def main(argv=None) -> int:
         sys.stdout.reconfigure(encoding="utf-8")
     except (AttributeError, ValueError):
         pass
-    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    sub = ap.add_subparsers(dest="cmd", required=True)
-    r = sub.add_parser("rascunho", help="grava/atualiza .lodemap/decisoes-modelo.json")
-    r.add_argument("--arq", required=True, help="pasta structurizr do projeto")
-    r.add_argument("--repo", help="raiz do repositório (padrão: raiz do git de --arq)")
-    r.add_argument("--fonte", choices=["auto", "codegraph", "ast"], default="auto")
-    r.add_argument("--db", help="índice do CodeGraph em outro lugar")
-    q = sub.add_parser("pendencias", help="o que o rascunho acharia pendente, em JSON, sem gravar nada")
-    q.add_argument("--arq", required=True, help="pasta structurizr do projeto")
-    q.add_argument("--repo", help="raiz do repositório (padrão: raiz do git de --arq)")
-    q.add_argument("--fonte", choices=["auto", "codegraph", "ast"], default="auto")
-    q.add_argument("--db", help="índice do CodeGraph em outro lugar")
-    v = sub.add_parser("renderizar", help="escreve o DSL a partir das decisões")
-    v.add_argument("--arq", required=True)
-    v.add_argument("--decisoes", help="arquivo de decisões (padrão: <arq>/.lodemap/decisoes-modelo.json)")
+    ap = argparse.ArgumentParser(description=t("Esqueleto do modelo C4 por script: o modelador decide em JSON curto, "
+                                               "o script escreve o DSL.",
+                                               "C4 model skeleton by script: the modeler decides in short JSON, "
+                                               "the script writes the DSL."))
+    sub = ap.add_subparsers(dest="cmd", required=True, title=t("subcomandos", "subcommands"),
+                            metavar=t("{rascunho,pendencias,renderizar}", "{draft,pending,render}"))
+
+    def comando(en: str, pt: str, ajuda: str):
+        nome, apelido = opcao(en, pt)
+        return sub.add_parser(nome, aliases=[apelido], help=ajuda, description=ajuda)
+
+    def pasta(p, obrigatorio=True):
+        p.add_argument("--arq", "--arch", required=obrigatorio,
+                       help=t("pasta structurizr do projeto", "the project's structurizr folder"))
+
+    def origem(p):
+        pasta(p)
+        p.add_argument("--repo", help=t("raiz do repositório (padrão: raiz do git de --arq)",
+                                        "repository root (default: the git root of --arq)"))
+        p.add_argument(*opcao("--source", "--fonte"), dest="fonte", choices=["auto", "codegraph", "ast"],
+                       default="auto", help=t("de onde vêm as arestas do código", "where the code edges come from"))
+        p.add_argument("--db", help=t("índice do CodeGraph em outro lugar", "CodeGraph index somewhere else"))
+
+    r = comando("draft", "rascunho", t("grava/atualiza .lodemap/decisoes-modelo.json",
+                                       "write/update .lodemap/decisoes-modelo.json"))
+    origem(r)
+    q = comando("pending", "pendencias", t("o que o rascunho acharia pendente, em JSON, sem gravar nada",
+                                           "what the draft would find pending, as JSON, writing nothing"))
+    origem(q)
+    v = comando("render", "renderizar", t("escreve o DSL a partir das decisões", "write the DSL from the decisions"))
+    pasta(v)
+    v.add_argument(*opcao("--decisions", "--decisoes"), dest="decisoes",
+                   help=t("arquivo de decisões (padrão: <arq>/.lodemap/decisoes-modelo.json)",
+                          "decisions file (default: <arq>/.lodemap/decisoes-modelo.json)"))
     a = ap.parse_args(argv)
     arq = Path(a.arq).resolve()
+    usar_mapa(arq)
+    a.cmd = {"draft": "rascunho", "pending": "pendencias", "render": "renderizar"}.get(a.cmd, a.cmd)
     if a.cmd == "pendencias":
         repo = Path(a.repo).resolve() if a.repo else cp.raiz_repo(arq)
         sem_decisoes = not caminho_decisoes(arq).is_file()
         try:
             d = rascunho(repo, arq, a.fonte, Path(a.db) if a.db else None, gravar=False)
         except ValueError as e:
-            print(f"erro: {e}", file=sys.stderr)
+            print(t("erro:", "error:"), e, file=sys.stderr)
             return 2
         p = d["pendentes"]
         saida = {"componentes_novos": p["componentes_novos"], "componentes_revisar": p["componentes_revisar"],
@@ -921,10 +959,10 @@ def main(argv=None) -> int:
         try:
             d = rascunho(repo, arq, a.fonte, Path(a.db) if a.db else None)
         except ValueError as e:
-            print(f"erro: {e}")
+            print(t("erro:", "error:"), e)
             return 2
         p = d["pendentes"]
-        if _idioma(arq) == "en":
+        if t("pt", "en") == "en":
             print(f"decisions ({d['fonte_arestas']}): {len(d['componentes'])} components, {len(d['relacoes'])} "
                   f"suggested relationships; new {len(p['componentes_novos'])}, to review (public surface changed) "
                   f"{len(p['componentes_revisar'])}, new relationships {len(p['relacoes_novas'])}, "
@@ -938,16 +976,16 @@ def main(argv=None) -> int:
     try:
         res = renderizar(arq, Path(a.decisoes) if a.decisoes else None)
     except ValueError as e:
-        print(f"erro: {e}")
+        print(t("erro:", "error:"), e)
         return 3
-    if _idioma(arq) == "en":
+    if t("pt", "en") == "en":
         print(f"DSL: {res['containers']} containers, {res['componentes']} components, {res['relacoes']} "
               "relationships -> " + ", ".join(res["escritos"]))
     else:
         print(f"DSL: {res['containers']} containers, {res['componentes']} componentes, {res['relacoes']} relações -> "
               + ", ".join(res["escritos"]))
     for aviso in res["avisos"]:
-        print(f"aviso: {aviso}")
+        print(t("aviso:", "warning:"), aviso)
     return 0
 
 

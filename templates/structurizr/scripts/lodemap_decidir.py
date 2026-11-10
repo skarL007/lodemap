@@ -86,6 +86,7 @@ def ler_config(arq: Path) -> dict:
 
 def ler_pendentes(arq: Path, estrito: bool = False) -> dict:
     """{módulo: {"desde", "commit"}}. Arquivo ausente ou ilegível vira {} (com estrito=True, o ilegível levanta)."""
+    en = _en(arq)
     p = arq / PENDENTES
     if not p.is_file():
         return {}
@@ -93,11 +94,11 @@ def ler_pendentes(arq: Path, estrito: bool = False) -> dict:
         dados = json.loads(p.read_text(encoding="utf-8-sig"))
         mods = dados["modulos"]
         if not isinstance(mods, dict):
-            raise ValueError("modulos não é um objeto")
+            raise ValueError("'modulos' is not an object" if en else "modulos não é um objeto")
         return {k: v for k, v in mods.items() if isinstance(v, dict)}
     except (OSError, ValueError, KeyError, TypeError) as e:
         if estrito:
-            raise ValueError(f"{p} ilegível: {e}") from e
+            raise ValueError(f"{p} unreadable: {e}" if en else f"{p} ilegível: {e}") from e
         return {}
 
 
@@ -142,7 +143,7 @@ def sinais_skill(arq: Path, skill: Path | None, t) -> tuple[int | None, int | No
     try:
         dados = json.loads(r.stdout)
         if r.returncode or not isinstance(dados, dict):
-            raise ValueError(f"código {r.returncode}")
+            raise ValueError(f"exit code {r.returncode}" if _en(arq) else f"código {r.returncode}")
         if dados.get("sem_decisoes"):
             return None, None, t("n/d: ainda não há .lodemap/decisoes-modelo.json; revisões e relações novas ficam sem medida",
                                  "n/a: there is no .lodemap/decisoes-modelo.json yet; reviews and new relationships are not measured")
@@ -380,14 +381,25 @@ def main(argv=None) -> int:
         sys.stdout.reconfigure(encoding="utf-8")
     except (AttributeError, ValueError):
         pass
-    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--arq", default=str(Path(__file__).resolve().parent.parent))
-    ap.add_argument("--skill", help="pasta da skill Lodemap (padrão: LODEMAP_SKILL, ou ~/.claude/skills/lodemap)")
+    en = _en(Path(__file__).resolve().parent.parent)
+    ap = argparse.ArgumentParser(description=("Update policy of the lodemap: measures the map's debt and names the cheapest "
+                                              "action that is enough, spending no tokens." if en
+                                              else __doc__.splitlines()[0]))
+    ap.add_argument("--arq", "--arch", default=str(Path(__file__).resolve().parent.parent),
+                    help=("the architecture folder (default: the one above scripts/)" if en
+                          else "pasta da arquitetura (padrão: a acima de scripts/)"))
+    ap.add_argument("--skill", help=("Lodemap skill folder (default: LODEMAP_SKILL, or ~/.claude/skills/lodemap)" if en
+                                     else "pasta da skill Lodemap (padrão: LODEMAP_SKILL, ou ~/.claude/skills/lodemap)"))
     modo = ap.add_mutually_exclusive_group()
-    modo.add_argument("--resumo", action="store_true", help="uma linha com a ação, o motivo e o que espera")
-    modo.add_argument("--adiar", action="store_true", help="registra os módulos fora do modelo em pendentes.json")
-    modo.add_argument("--gancho", choices=["post-commit", "post-merge"],
-                      help="sai 0 se o gancho deve regenerar por scripts agora, 1 se não")
+    modo.add_argument("--resumo", "--summary", action="store_true",
+                      help=("one line with the action, the reason and what it expects" if en
+                            else "uma linha com a ação, o motivo e o que espera"))
+    modo.add_argument("--adiar", "--defer", action="store_true",
+                      help=("record the modules outside the model in pendentes.json" if en
+                            else "registra os módulos fora do modelo em pendentes.json"))
+    modo.add_argument("--gancho", "--hook", choices=["post-commit", "post-merge"],
+                      help=("exit 0 if the hook should regenerate by scripts now, 1 if not" if en
+                            else "sai 0 se o gancho deve regenerar por scripts agora, 1 se não"))
     a = ap.parse_args(argv)
     arq = Path(a.arq).resolve()
     try:

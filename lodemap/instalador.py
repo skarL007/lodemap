@@ -21,6 +21,7 @@ from hashlib import sha256
 from pathlib import Path
 
 from lodemap import MARCA, PASTA_HOOKS, RAIZ
+from lodemap.idioma import t as tr
 
 OPCOES = {
     "skill": "skill Lodemap em ~/.claude/skills/lodemap e os seus seis agentes do mapa",
@@ -45,7 +46,7 @@ def ler_json(p: Path) -> dict:
     try:
         return json.loads(p.read_text(encoding="utf-8-sig"))
     except json.JSONDecodeError as e:
-        raise ValueError(f"{p}: JSON inválido ({e})") from e
+        raise ValueError(tr(f"{p}: JSON inválido ({e})", f"{p}: invalid JSON ({e})")) from e
 
 
 def texto_json(dado: dict) -> str:
@@ -54,10 +55,12 @@ def texto_json(dado: dict) -> str:
 
 def opcoes_do(perfil: str, sem: list[str] = (), com: list[str] = ()) -> list[str]:
     if perfil not in PERFIS:
-        raise ValueError(f"perfil desconhecido: {perfil} (use {', '.join(PERFIS)})")
+        raise ValueError(tr(f"perfil desconhecido: {perfil} (use {', '.join(PERFIS)})",
+                            f"unknown profile: {perfil} (use {', '.join(PERFIS)})"))
     desconhecidas = (set(sem) | set(com)) - set(OPCOES)
     if desconhecidas:
-        raise ValueError(f"opção desconhecida: {', '.join(sorted(desconhecidas))}")
+        raise ValueError(tr(f"opção desconhecida: {', '.join(sorted(desconhecidas))}",
+                            f"unknown option: {', '.join(sorted(desconhecidas))}"))
     pedidas = (set(PERFIS[perfil]) | set(com)) - set(sem)
     return [o for o in OPCOES if o in pedidas]
 
@@ -109,7 +112,8 @@ def planejar(perfil: str = "padrao", home: Path | None = None, *, sem=(), com=()
         if atual == conteudo.encode("utf-8"):
             return
         if atual is not None and not nosso and not forcar:
-            conflitos.append(f"{alvo} já existe e não é do Lodemap; use --forcar")
+            conflitos.append(tr(f"{alvo} já existe e não é do Lodemap; use --forcar",
+                                f"{alvo} already exists and is not Lodemap's; use --force"))
             return
         textos.append({"alvo": str(alvo), "conteudo": conteudo})
         ops.append({"opcao": opcao, "tipo": "arquivo", "alvo": str(alvo),
@@ -123,7 +127,9 @@ def planejar(perfil: str = "padrao", home: Path | None = None, *, sem=(), com=()
                     links.append({"alvo": str(alvo), "origem": str(RAIZ), "mover_existente": True})
                     ops.append({"opcao": "skill", "tipo": "link", "alvo": str(alvo), "acao": "troca (backup)"})
                 else:
-                    conflitos.append(f"{alvo} já existe e não aponta para {RAIZ}; use --forcar (move para o backup)")
+                    conflitos.append(tr(f"{alvo} já existe e não aponta para {RAIZ}; use --forcar (move para o backup)",
+                                        f"{alvo} already exists and does not point to {RAIZ}; use --force (moves it "
+                                        f"to the backup)"))
         else:
             links.append({"alvo": str(alvo), "origem": str(RAIZ), "mover_existente": False})
             ops.append({"opcao": "skill", "tipo": "link", "alvo": str(alvo), "acao": "cria"})
@@ -155,7 +161,8 @@ def planejar(perfil: str = "padrao", home: Path | None = None, *, sem=(), com=()
 
 def aplicar(plano: dict) -> Path | None:
     if plano["conflitos"]:
-        raise SystemExit("conflitos; nada foi aplicado:\n  " + "\n  ".join(plano["conflitos"]))
+        raise SystemExit(tr("conflitos; nada foi aplicado:", "conflicts; nothing was applied:") + "\n  "
+                         + "\n  ".join(plano["conflitos"]))
     if not plano["ops"]:
         return None
     home = Path(plano["home"])
@@ -203,19 +210,23 @@ def aplicar(plano: dict) -> Path | None:
 def reverter(manifesto: Path) -> list[str]:
     manifesto = Path(manifesto)
     if not manifesto.is_file():
-        raise SystemExit(f"manifesto não encontrado: {manifesto}")
+        raise SystemExit(tr(f"manifesto não encontrado: {manifesto}", f"manifest not found: {manifesto}"))
     m = ler_json(manifesto)
     if m.get("revertido_em"):
-        raise SystemExit(f"{manifesto} já foi revertido em {m['revertido_em']}")
+        raise SystemExit(tr(f"{manifesto} já foi revertido em {m['revertido_em']}",
+                            f"{manifesto} was already reverted on {m['revertido_em']}"))
     for t in m.get("arquivos", []):
         p = Path(t["alvo"])
         if sha(p) != t["sha_depois"]:
-            como = f"a partir de {t['backup']}" if t["backup"] else "(o instalador criou este arquivo: apague-o)"
-            raise SystemExit(f"{p} mudou depois da instalação; reverta à mão {como}")
+            como = (tr(f"a partir de {t['backup']}", f"from {t['backup']}") if t["backup"]
+                    else tr("(o instalador criou este arquivo: apague-o)", "(the installer created this file: delete it)"))
+            raise SystemExit(tr(f"{p} mudou depois da instalação; reverta à mão {como}",
+                                f"{p} changed after the install; revert by hand {como}"))
     for ln in m.get("links", []):
         alvo = Path(ln["alvo"])
         if not _e_link(alvo) or not _mesmo(alvo, Path(ln["origem"])):
-            raise SystemExit(f"{alvo} não é mais o link do Lodemap; reverta à mão")
+            raise SystemExit(tr(f"{alvo} não é mais o link do Lodemap; reverta à mão",
+                                f"{alvo} is no longer Lodemap's link; revert by hand"))
     feitos = []
     for t in m.get("arquivos", []):
         p = Path(t["alvo"])

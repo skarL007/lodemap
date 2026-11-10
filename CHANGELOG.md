@@ -2,6 +2,17 @@
 
 All notable changes to Lodemap. Dates are when the change landed on `main`.
 
+## Unreleased
+
+- **Terminal in English:** the `python -m lodemap` CLI, `scripts/` and the scripts copied into a repository
+  (`templates/structurizr/scripts/`) print their messages and `--help` in English or Portuguese. One rule, in
+  `lodemap/idioma.py`: `LODEMAP_IDIOMA=pt|en` wins; else the map's `"idioma"` in `lodemap.json` when the command
+  points at a map; else the system locale (`pt*` gives Portuguese); else English. Commands and options gained English
+  names (`install`, `revert`, `plan`, `consent`, `revoke`, `check`; `--profile`, `--apply`, `--without`, `--with`,
+  `--force`, `--scopes`, `--monthly-budget`, `--scope`, `--cost`, `--all`, `--manifest`, `--source`, ...) and the
+  Portuguese ones keep working as aliases. Data (JSON keys, scope values `gerar`/`gancho`/`modelo`, files) is unchanged.
+  Tests set `LODEMAP_IDIOMA` explicitly; `tests/conftest.py` defaults it to `pt`.
+
 ## 0.1.0 (unreleased, first public version)
 
 - **Validation round (repetition, Linux, Go):** the axios update was repeated three times (US$ 0.29 to 0.47,

@@ -1,0 +1,568 @@
+{
+ "execucoes": 96,
+ "falhas": [],
+ "tarefas": 16,
+ "por_tarefa": [
+  {
+   "tarefa": "C1",
+   "tipo": "localizar",
+   "n": [
+    3,
+    3
+   ],
+   "tokens": [
+    20807,
+    18933
+   ],
+   "saida": [
+    713,
+    549
+   ],
+   "turnos": [
+    5.3,
+    3.7
+   ],
+   "seg": [
+    11.8,
+    10.1
+   ],
+   "recall": [
+    1.0,
+    1.0
+   ],
+   "errados": [
+    0,
+    0
+   ]
+  },
+  {
+   "tarefa": "C2",
+   "tipo": "localizar",
+   "n": [
+    3,
+    3
+   ],
+   "tokens": [
+    19462,
+    19052
+   ],
+   "saida": [
+    448,
+    447
+   ],
+   "turnos": [
+    4,
+    4
+   ],
+   "seg": [
+    11.1,
+    9.2
+   ],
+   "recall": [
+    1.0,
+    1.0
+   ],
+   "errados": [
+    0,
+    0
+   ]
+  },
+  {
+   "tarefa": "C3",
+   "tipo": "localizar",
+   "n": [
+    3,
+    3
+   ],
+   "tokens": [
+    18573,
+    19958
+   ],
+   "saida": [
+    661,
+    551
+   ],
+   "turnos": [
+    4.3,
+    3.7
+   ],
+   "seg": [
+    10.6,
+    9.5
+   ],
+   "recall": [
+    1.0,
+    1.0
+   ],
+   "errados": [
+    0,
+    0
+   ]
+  },
+  {
+   "tarefa": "C4",
+   "tipo": "localizar",
+   "n": [
+    3,
+    3
+   ],
+   "tokens": [
+    19600,
+    15262
+   ],
+   "saida": [
+    523,
+    387
+   ],
+   "turnos": [
+    4.3,
+    3.3
+   ],
+   "seg": [
+    8.5,
+    7.9
+   ],
+   "recall": [
+    1.0,
+    1.0
+   ],
+   "errados": [
+    0,
+    0
+   ]
+  },
+  {
+   "tarefa": "C5",
+   "tipo": "localizar",
+   "n": [
+    3,
+    3
+   ],
+   "tokens": [
+    21275,
+    26427
+   ],
+   "saida": [
+    581,
+    631
+   ],
+   "turnos": [
+    4,
+    5.3
+   ],
+   "seg": [
+    10.3,
+    10.8
+   ],
+   "recall": [
+    1.0,
+    1.0
+   ],
+   "errados": [
+    0,
+    0
+   ]
+  },
+  {
+   "tarefa": "C6",
+   "tipo": "localizar",
+   "n": [
+    3,
+    3
+   ],
+   "tokens": [
+    23300,
+    14834
+   ],
+   "saida": [
+    683,
+    531
+   ],
+   "turnos": [
+    4.7,
+    4
+   ],
+   "seg": [
+    11.0,
+    9.4
+   ],
+   "recall": [
+    1.0,
+    1.0
+   ],
+   "errados": [
+    0,
+    0
+   ]
+  },
+  {
+   "tarefa": "A1",
+   "tipo": "localizar",
+   "n": [
+    3,
+    3
+   ],
+   "tokens": [
+    26046,
+    32751
+   ],
+   "saida": [
+    934,
+    923
+   ],
+   "turnos": [
+    6,
+    6
+   ],
+   "seg": [
+    13.3,
+    12.9
+   ],
+   "recall": [
+    1.0,
+    0.889
+   ],
+   "errados": [
+    0,
+    0
+   ]
+  },
+  {
+   "tarefa": "A2",
+   "tipo": "localizar",
+   "n": [
+    3,
+    3
+   ],
+   "tokens": [
+    15390,
+    14947
+   ],
+   "saida": [
+    578,
+    402
+   ],
+   "turnos": [
+    4.3,
+    3.7
+   ],
+   "seg": [
+    10.1,
+    7.9
+   ],
+   "recall": [
+    1.0,
+    1.0
+   ],
+   "errados": [
+    0,
+    0
+   ]
+  },
+  {
+   "tarefa": "A3",
+   "tipo": "localizar",
+   "n": [
+    3,
+    3
+   ],
+   "tokens": [
+    22433,
+    16962
+   ],
+   "saida": [
+    781,
+    466
+   ],
+   "turnos": [
+    4.7,
+    3.7
+   ],
+   "seg": [
+    11.4,
+    8.4
+   ],
+   "recall": [
+    1.0,
+    1.0
+   ],
+   "errados": [
+    0,
+    0
+   ]
+  },
+  {
+   "tarefa": "A4",
+   "tipo": "localizar",
+   "n": [
+    3,
+    3
+   ],
+   "tokens": [
+    22407,
+    25153
+   ],
+   "saida": [
+    613,
+    730
+   ],
+   "turnos": [
+    5.7,
+    6
+   ],
+   "seg": [
+    9.3,
+    10.9
+   ],
+   "recall": [
+    1.0,
+    1.0
+   ],
+   "errados": [
+    0,
+    0
+   ]
+  },
+  {
+   "tarefa": "A5",
+   "tipo": "localizar",
+   "n": [
+    3,
+    3
+   ],
+   "tokens": [
+    24725,
+    25773
+   ],
+   "saida": [
+    755,
+    684
+   ],
+   "turnos": [
+    5.3,
+    4.7
+   ],
+   "seg": [
+    12.9,
+    11.4
+   ],
+   "recall": [
+    1.0,
+    1.0
+   ],
+   "errados": [
+    0,
+    0
+   ]
+  },
+  {
+   "tarefa": "A6",
+   "tipo": "localizar",
+   "n": [
+    3,
+    3
+   ],
+   "tokens": [
+    22747,
+    20215
+   ],
+   "saida": [
+    670,
+    639
+   ],
+   "turnos": [
+    4.3,
+    4
+   ],
+   "seg": [
+    10.1,
+    9.9
+   ],
+   "recall": [
+    1.0,
+    1.0
+   ],
+   "errados": [
+    0,
+    0
+   ]
+  },
+  {
+   "tarefa": "C7",
+   "tipo": "impacto",
+   "n": [
+    3,
+    3
+   ],
+   "tokens": [
+    23442,
+    33147
+   ],
+   "saida": [
+    973,
+    1098
+   ],
+   "turnos": [
+    5,
+    5.7
+   ],
+   "seg": [
+    12.4,
+    15.5
+   ],
+   "recall": [
+    1.0,
+    1.0
+   ],
+   "errados": [
+    3,
+    3
+   ]
+  },
+  {
+   "tarefa": "C8",
+   "tipo": "impacto",
+   "n": [
+    3,
+    3
+   ],
+   "tokens": [
+    14155,
+    15777
+   ],
+   "saida": [
+    768,
+    708
+   ],
+   "turnos": [
+    4,
+    3.3
+   ],
+   "seg": [
+    11.0,
+    9.5
+   ],
+   "recall": [
+    1.0,
+    0.933
+   ],
+   "errados": [
+    0,
+    0
+   ]
+  },
+  {
+   "tarefa": "A7",
+   "tipo": "impacto",
+   "n": [
+    3,
+    3
+   ],
+   "tokens": [
+    25325,
+    18990
+   ],
+   "saida": [
+    1249,
+    704
+   ],
+   "turnos": [
+    5.7,
+    3.7
+   ],
+   "seg": [
+    17.0,
+    9.7
+   ],
+   "recall": [
+    0.917,
+    0.861
+   ],
+   "errados": [
+    0,
+    0
+   ]
+  },
+  {
+   "tarefa": "A8",
+   "tipo": "impacto",
+   "n": [
+    3,
+    3
+   ],
+   "tokens": [
+    21157,
+    22472
+   ],
+   "saida": [
+    1393,
+    1461
+   ],
+   "turnos": [
+    3.7,
+    3.7
+   ],
+   "seg": [
+    13.8,
+    15.2
+   ],
+   "recall": [
+    0.941,
+    0.941
+   ],
+   "errados": [
+    0,
+    0
+   ]
+  }
+ ],
+ "subgrupos": {
+  "impacto": {
+   "tarefas": 4,
+   "mediana_razao_tokens": 0.919,
+   "recall": [
+    0.965,
+    0.934
+   ],
+   "errados": [
+    0.75,
+    0.75
+   ]
+  },
+  "localizar": {
+   "tarefas": 12,
+   "mediana_razao_tokens": 1.026,
+   "recall": [
+    1.0,
+    0.991
+   ],
+   "errados": [
+    0,
+    0
+   ]
+  }
+ },
+ "H1": {
+  "tarefas_com_menos_tokens_em_A": 8,
+  "p_sinal": 0.5982,
+  "mediana_razao_tokens_A_sobre_B": 0.99,
+  "demonstrada": false
+ },
+ "H2": {
+  "recall_medio": [
+   0.991,
+   0.977
+  ],
+  "errados_medio": [
+   0.19,
+   0.19
+  ],
+  "demonstrada": true
+ },
+ "H3": {
+  "tarefas_A_melhor": 3,
+  "tarefas_A_pior": 0,
+  "p_sinal": 0.125,
+  "demonstrada": false
+ }
+}

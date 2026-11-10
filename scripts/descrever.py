@@ -59,14 +59,20 @@ SO_FERRAMENTA = {
 INSTRUCAO = {
     "pt": ("Você documenta componentes de uma arquitetura C4, em português do Brasil.\nÁreas permitidas:\n{areas}\n\n"
            "Exemplos do estilo da casa:\n{exemplos}\n\nPara cada módulo recebido, escreva nome (2 a 5 palavras), descricao "
-           "(UMA frase de 80 a 200 caracteres, começando por verbo no presente, com o fato que diferencia este módulo e o "
-           "porquê; não comece por \"Este componente/módulo\", não use \"garantindo\", \"facilitando\" nem \"de forma "
-           "eficiente\", não repita o nome) e area (uma das permitidas). Responda para todos os itens, mantendo o campo i."),
+           "(UMA frase de 80 a 200 caracteres, começando por verbo no presente, com o fato que diferencia este módulo; o "
+           "porquê só entra se uma docstring ou comentário da ficha o disser, nunca deduzido; não comece por \"Este componente/módulo\", não use \"garantindo\", \"facilitando\" nem \"de forma "
+           "eficiente\", não repita o nome), area (uma das permitidas) e evidencia (1 a 3 trechos copiados LITERALMENTE "
+           "da ficha, até 160 caracteres cada, que provam o que a frase afirma). Só afirme o que a ficha mostra: se um "
+           "comportamento, cabeçalho, função ou motivo não aparece nela, não o escreva. Responda para todos os itens, "
+           "mantendo o campo i."),
     "en": ("You document components of a C4 architecture, in English.\nAllowed areas:\n{areas}\n\nHouse style examples:\n"
            "{exemplos}\n\nFor each module, write nome (2 to 5 words), descricao (ONE sentence of 80 to 200 characters, "
-           "starting with a present-tense verb, stating the fact that sets this module apart and why; do not start with "
-           "\"This component/module\", do not use \"ensuring\" or \"seamless\", do not repeat the name) and area (one of "
-           "the allowed ones). Answer for every item and keep the field i."),
+           "starting with a present-tense verb, stating the fact that sets this module apart; add the reason only when a "
+           "docstring or comment in the record states it, never inferred; do not start with "
+           "\"This component/module\", do not use \"ensuring\" or \"seamless\", do not repeat the name), area (one of "
+           "the allowed ones) and evidencia (1 to 3 excerpts copied VERBATIM from the record, up to 160 characters each, "
+           "that prove what the sentence claims). Only claim what the record shows: if a behaviour, header, function or "
+           "reason does not appear in it, do not write it. Answer for every item and keep the field i."),
 }
 EXEMPLOS_PADRAO = {
     "pt": [{"nome": "Gate de qualidade", "descricao": "Mede o modelo exportado contra a linha de base e reprova o mapa "
@@ -163,7 +169,66 @@ def ficha(repo: Path, c: dict, rels: list[dict], teto: int = TETO_FICHA) -> str:
     return corpo[: teto + 400]
 
 
-def gate(o: dict, ficha_txt: str, modulo: str) -> str:
+def codigo(repo: Path, c: dict) -> str:
+    """Texto inteiro dos arquivos do módulo: é contra ele que o gate confere os nomes citados na frase."""
+    return "\n".join(_texto(f) for f in _arquivos(repo, c["modulo"]))
+
+
+# Nomes com cara de código numa frase: `crase`, a.b, snake_case, camelCase, PascalCase com 2+ partes, ACRONIMOMisto e
+# cabeçalhos HTTP X-Algo. Medido no chi (2026-11-09): das frases falsas do Haiku, a maioria citava um cabeçalho, uma
+# função ou um mecanismo que o módulo não tem; um nome inventado é o sinal mais barato de frase falsa.
+_NOMES = [re.compile(p) for p in (
+    r"`([^`]{2,60})`",
+    r"\b([A-Za-z_]\w*\.[A-Za-z_]\w+)(?:\(\))?",
+    r"\b([a-z0-9]+_[a-z0-9_]+)\b",
+    r"\b([a-z]+[A-Z]\w*)\b",
+    r"\b([A-Z][a-z0-9]+[A-Z]\w*)\b",
+    r"\b([A-Z]{2,}[a-z]\w*)\b",
+    r"\b([Xx]-[A-Za-z][A-Za-z-]+)\b",
+)]
+_NOMES_COMUNS = {"JavaScript", "TypeScript", "GitHub", "WebSocket", "WebSockets", "PowerShell", "NodeJS", "macOS",
+                 "iOS", "OAuth", "GraphQL", "PostgreSQL", "MySQL", "SQLite", "YouTube", "OpenAPI", "McDonald"}
+
+
+def nomes_citados(d: str) -> list[str]:
+    vistos = []
+    for p in _NOMES:
+        for m in p.finditer(d):
+            n = m.group(1).strip()
+            partes = n.split(".")
+            if n in _NOMES_COMUNS or n in vistos or (len(partes) > 1 and min(len(x) for x in partes) < 2) \
+                    or re.fullmatch(r"[A-Z]{2,}s", n):  # plural de sigla (URLs, IDs) é prosa, não código
+                continue
+            vistos.append(n)
+    return vistos
+
+
+def _junta(s: str) -> str:
+    """Espaços colapsados e marcas de comentário no começo da linha tiradas, para um trecho de comentário em várias
+    linhas casar com a citação em uma linha só."""
+    s = re.sub(r"(?m)^\s*(?://+|/\*+|\*+/?|#+|--)\s?", "", s)
+    return re.sub(r"\s+", " ", s).strip()
+
+
+def _evidencia(o: dict, ficha_txt: str, codigo_txt: str) -> str:
+    ev = o.get("evidencia")
+    if not isinstance(ev, list) or not [e for e in ev if isinstance(e, str) and e.strip()]:
+        return "sem evidência: copie da ficha 1 a 3 trechos literais que provem a frase"
+    alvo = _junta(ficha_txt + "\n" + codigo_txt)
+    for e in ev:
+        if not isinstance(e, str) or not e.strip():
+            continue
+        t = _junta(e).strip(".…\"' ")
+        if len(t) < 12:
+            return f"evidência curta demais para provar algo: \"{t}\""
+        if t not in alvo:
+            return f"a evidência \"{t[:80]}\" não aparece na ficha: copie o trecho literalmente"
+    return ""
+
+
+def gate(o: dict, ficha_txt: str, modulo: str, codigo_txt: str | None = None) -> str:
+    """Forma (genérica, tamanho, termo concreto) e, quando há código, verdade checável sem modelo: a evidência tem de
+    estar na ficha e todo nome com cara de código citado na frase tem de existir no módulo."""
     d = (o.get("descricao") or "").strip()
     if GENERICO.search(d):
         return "frase genérica ou enchimento"
@@ -173,7 +238,16 @@ def gate(o: dict, ficha_txt: str, modulo: str) -> str:
         return "não cita nenhum termo concreto do código"
     if not (o.get("nome") or "").strip():
         return "nome vazio"
-    return ""
+    if codigo_txt is None:
+        return ""
+    base = ficha_txt + "\n" + codigo_txt + "\n" + modulo
+    baixo = base.lower()
+    for n in nomes_citados(d):
+        achou = n in base or (n.lower().startswith("x-") and n.lower() in baixo) or \
+            ("." in n and n.split(".")[-1] in base and n.split(".")[0] in base)
+        if not achou:
+            return f"a frase cita \"{n}\", que não aparece no código do módulo"
+    return _evidencia(o, ficha_txt, codigo_txt)
 
 
 def alvos(d: dict, todos: bool) -> list[dict]:
@@ -198,8 +272,10 @@ def _exemplos(d: dict, idioma: str, excluir: set[str]) -> str:
 
 def schema(areas: list[str]) -> dict:
     item = {"type": "object", "properties": {"i": {"type": "integer"}, "nome": {"type": "string"},
-                                              "descricao": {"type": "string"}, "area": {"type": "string", "enum": areas}},
-            "required": ["i", "nome", "descricao", "area"]}
+                                              "descricao": {"type": "string"}, "area": {"type": "string", "enum": areas},
+                                              "evidencia": {"type": "array", "items": {"type": "string"},
+                                                            "minItems": 1, "maxItems": 3}},
+            "required": ["i", "nome", "descricao", "area", "evidencia"]}
     return {"type": "object", "properties": {"itens": {"type": "array", "items": item}}, "required": ["itens"]}
 
 
@@ -257,8 +333,107 @@ def _pedido(idioma: str, itens: list[tuple[int, str, str]], anteriores: dict[int
     return cab + "\n\n" + "\n\n".join(partes)
 
 
+# Conferência: um segundo passo lê o código inteiro do módulo (não a ficha) e procura afirmação falsa em cada frase.
+# Medido no chi (2026-11-10): 5 das 36 frases do Haiku eram falsas por detalhe ("só quando a saída é um terminal",
+# "com o ID da requisição", "define Retry-After nas recusadas"); nenhum nome inventado, então só ler o código pega.
+TETO_CODIGO = 16000
+TETO_LOTE_CONFERIR = 110000
+CONFERIR = {
+    "pt": ("Você revisa documentação de arquitetura contra o código. Para cada item há o código de um módulo e uma frase "
+           "que o descreve. Separe a frase em afirmações e confira cada uma no código:\n"
+           "- \"falsa\" se alguma afirmação contradiz o código ou não tem apoio nele (comportamento, condição, cabeçalho, "
+           "função, tipo ou motivo que o código não mostra; palavras como \"só\", \"sempre\" e \"nunca\" contam; uma "
+           "finalidade ou causa (\"para que...\", \"porque...\", \"evitando...\") é afirmação e só vale se o código ou um "
+           "comentário dele a mostrar; um detalhe impreciso, como \"tamanho fixo\" quando o código só limita, também "
+           "torna a frase falsa);\n"
+           "- \"incerta\" se a afirmação pode depender de código cortado (marcado [cortado]);\n"
+           "- \"ok\" se tudo bate.\n"
+           "Para \"falsa\": em afirmacao diga o que está errado e o que o código faz; em correcao escreva a frase "
+           "corrigida (português do Brasil, uma frase de 80 a 200 caracteres, começando por verbo, só com o que o código "
+           "mostra); em evidencia copie literalmente do código 1 a 3 trechos curtos que provam a correção. Para \"ok\" e "
+           "\"incerta\", deixe afirmacao e correcao vazias e evidencia como lista vazia. Responda para todos os itens, "
+           "mantendo o campo i."),
+    "en": ("You review architecture documentation against the code. For each item you get a module's code and a "
+           "sentence describing it. Split the sentence into claims and check each one in the code:\n"
+           "- \"falsa\" if any claim contradicts the code or has no support in it (a behaviour, condition, header, "
+           "function, type or reason the code does not show; words like \"only\", \"always\" and \"never\" count; a "
+           "purpose or cause (\"so ...\", \"because ...\", \"to keep ...\") is a claim and holds only if the code or one of "
+           "its comments shows it; an imprecise detail, such as \"fixed size\" where the code only caps the size, also "
+           "makes the sentence false);\n"
+           "- \"incerta\" if the claim may depend on code that was cut (marked [cut]);\n"
+           "- \"ok\" if everything holds.\n"
+           "For \"falsa\": in afirmacao say what is wrong and what the code does; in correcao write the corrected "
+           "sentence (English, one sentence of 80 to 200 characters, starting with a verb, only what the code shows); in "
+           "evidencia copy verbatim from the code 1 to 3 short excerpts that prove the correction. For \"ok\" and "
+           "\"incerta\", leave afirmacao and correcao empty and evidencia as an empty list. Answer for every item and "
+           "keep the field i."),
+}
+SCHEMA_CONFERIR = {"type": "object", "properties": {"itens": {"type": "array", "items": {
+    "type": "object", "properties": {"i": {"type": "integer"},
+                                     "veredito": {"type": "string", "enum": ["ok", "falsa", "incerta"]},
+                                     "afirmacao": {"type": "string"}, "correcao": {"type": "string"},
+                                     "evidencia": {"type": "array", "items": {"type": "string"}}},
+    "required": ["i", "veredito", "afirmacao", "correcao", "evidencia"]}}}, "required": ["itens"]}
+
+
+def _lotes_conferir(itens: list[tuple[int, str, str, str]]) -> list[list[tuple[int, str, str, str]]]:
+    lotes, atual, tam = [], [], 0
+    for it in itens:
+        n = len(it[2]) + len(it[3]) + 200
+        if atual and tam + n > TETO_LOTE_CONFERIR:
+            lotes.append(atual)
+            atual, tam = [], 0
+        atual.append(it)
+        tam += n
+    return lotes + ([atual] if atual else [])
+
+
+def conferir(itens: list[tuple[int, str, str, str]], idioma: str, modelo: str, esforco: str = "medium"
+             ) -> tuple[dict[int, dict], list[dict]]:
+    """itens: (i, módulo, frase, código). Devolve {i: veredito} e o uso de cada chamada. Erro do CLI não reprova nada:
+    o item fica sem veredito e a frase segue como estava (o gate de forma já passou)."""
+    cortado = "[cortado]" if idioma == "pt" else "[cut]"
+    vereditos, chamadas = {}, []
+    with tempfile.TemporaryDirectory(prefix="lodemap-conferir-") as tmp:
+        sp = Path(tmp) / "sistema.txt"
+        sp.write_text(CONFERIR[idioma] + "\n\n" + SO_FERRAMENTA[idioma], encoding="utf-8")
+        cmd = comando(modelo, esforco, sp, SCHEMA_CONFERIR)
+        for lote in _lotes_conferir(itens):
+            pedido = "\n\n".join(
+                f"### i={i}\n{'Módulo' if idioma == 'pt' else 'Module'}: {m}\n"
+                f"{'Frase' if idioma == 'pt' else 'Sentence'}: {frase}\n```\n"
+                + (cod[:TETO_CODIGO] + f"\n{cortado}" if len(cod) > TETO_CODIGO else cod) + "\n```"
+                for i, m, frase, cod in lote)
+            try:
+                res, uso = chamar(cmd, pedido, Path(tmp))
+            except (RuntimeError, ValueError, json.JSONDecodeError, subprocess.TimeoutExpired, OSError) as e:
+                chamadas.append({"itens": len(lote), "erro": str(e)[:300], "conferir": True})
+                continue
+            chamadas.append({"itens": len(lote), "conferir": True, **uso})
+            idx = {i for i, *_ in lote}
+            for o in res:
+                if isinstance(o, dict) and o.get("i") in idx:
+                    vereditos[o["i"]] = o
+    return vereditos, chamadas
+
+
+def auditar(arq: Path, repo: Path, modelo: str = "haiku", esforco: str = "medium") -> dict:
+    """Confere as frases já gravadas, sem mudar nada: lista as que o código contradiz."""
+    d = json.loads(esqueleto.caminho_decisoes(arq).read_text(encoding="utf-8"))
+    idioma = esqueleto._idioma(arq)
+    comps = [c for c in d.get("componentes", []) if not c.get("fundir_em") and c.get("descricao")]
+    itens = [(i, c["modulo"], c["descricao"], codigo(repo, c)) for i, c in enumerate(comps)]
+    vereditos, chamadas = conferir([x for x in itens if x[3]], idioma, modelo, esforco)
+    falsas = [{"modulo": comps[i]["modulo"], "descricao": comps[i]["descricao"], "afirmacao": v.get("afirmacao", ""),
+               "correcao": v.get("correcao", "")} for i, v in sorted(vereditos.items()) if v.get("veredito") == "falsa"]
+    tot = {k: sum(ch.get(k, 0) or 0 for ch in chamadas) for k in ("input", "cache_criado", "cache_lido", "output")}
+    return {"conferidas": len(vereditos), "componentes": len(comps), "falsas": falsas,
+            "incertas": sum(1 for v in vereditos.values() if v.get("veredito") == "incerta"),
+            "chamadas": chamadas, "tokens": {**tot, "total": sum(tot.values())}}
+
+
 def descrever(arq: Path, repo: Path, todos: bool = False, lote: int = 76, modelo: str = "haiku",
-              esforco: str = "medium", simular: bool = False) -> dict:
+              esforco: str = "medium", simular: bool = False, conferir_com: str | None = "haiku") -> dict:
     destino = esqueleto.caminho_decisoes(arq)
     if not destino.is_file():
         raise ValueError(f"{destino} não existe: rode esqueleto.py rascunho antes")
@@ -270,6 +445,7 @@ def descrever(arq: Path, repo: Path, todos: bool = False, lote: int = 76, modelo
     lista = alvos(d, todos)
     rels = d.get("relacoes", [])
     fichas = [ficha(repo, c, rels) for c in lista]
+    codigos = [codigo(repo, c) for c in lista]
     # Com --todos o dono pediu para refazer tudo; sem ele, quem já tem nome, descrição e área válida é uma revisão.
     anteriores = {} if todos else {i: c["descricao"] for i, c in enumerate(lista)
                                    if c.get("descricao") and c.get("nome") and c.get("area") in areas}
@@ -312,7 +488,7 @@ def descrever(arq: Path, repo: Path, todos: bool = False, lote: int = 76, modelo
                 if not o:
                     erros[i] = "item ausente"
                     continue
-                e = gate(o, fichas[i], c["modulo"])
+                e = gate(o, fichas[i], c["modulo"], codigos[i])
                 chave = (o.get("descricao") or "").strip().lower()
                 if not e and chave in vistas:
                     e = f"descrição idêntica à do módulo {lista[vistas[chave]]['modulo']}"
@@ -327,6 +503,27 @@ def descrever(arq: Path, repo: Path, todos: bool = False, lote: int = 76, modelo
             rel["reenviados"] = len(erros)
             rodada(sorted(erros), erros)
             erros = reprovados()
+    if conferir_com:
+        ok_idx = [i for i in range(len(lista)) if i not in erros and codigos[i]]
+        vered, ch = conferir([(i, lista[i]["modulo"], saidas[i]["descricao"], codigos[i]) for i in ok_idx],
+                             idioma, conferir_com, esforco)
+        rel["chamadas"] += ch
+        conf = rel["conferencia"] = {"modelo": conferir_com, "conferidas": len(vered), "falsas": 0, "corrigidas": 0,
+                                     "incertas": 0}
+        for i, v in vered.items():
+            if v.get("veredito") == "incerta":
+                conf["incertas"] += 1
+            if v.get("veredito") != "falsa":
+                continue
+            conf["falsas"] += 1
+            novo = dict(saidas[i], descricao=(v.get("correcao") or "").strip(), evidencia=v.get("evidencia") or [])
+            e = gate(novo, fichas[i], lista[i]["modulo"], codigos[i])
+            if e:
+                erros[i] = (f"a conferência achou afirmação falsa ({(v.get('afirmacao') or '')[:160]}) e a correção "
+                            f"foi reprovada: {e}")
+            else:
+                saidas[i] = novo
+                conf["corrigidas"] += 1
     for i, c in enumerate(lista):
         if i in erros:
             rel["para_modelador"].append({"modulo": c["modulo"], "motivo": erros[i]})
@@ -397,11 +594,24 @@ def main(argv=None) -> int:
     ap.add_argument("--esforco", default="medium", choices=["low", "medium", "high"])
     ap.add_argument("--simular", action="store_true", help="monta as fichas e o prompt sem chamar o modelo")
     ap.add_argument("--resumo", action="store_true", help="imprime uma linha de resumo em vez do relatório em JSON")
+    ap.add_argument("--conferir", default="haiku",
+                    help="modelo que confere cada frase contra o código inteiro do módulo (padrão haiku)")
+    ap.add_argument("--sem-conferir", action="store_true", help="pula a conferência (só o gate de forma e evidência)")
+    ap.add_argument("--auditar", action="store_true",
+                    help="só confere as frases já gravadas contra o código e lista as falsas; não muda nada")
     a = ap.parse_args(argv)
     arq = Path(a.arq).resolve()
     repo = Path(a.repo).resolve() if a.repo else _repo_de(arq)
+    if a.auditar:
+        if not esqueleto.caminho_decisoes(arq).is_file():
+            print(f"erro: {esqueleto.caminho_decisoes(arq)} não existe")
+            return 2
+        r = auditar(arq, repo, a.conferir, a.esforco)
+        print(json.dumps(r, ensure_ascii=False, indent=1))
+        return 3 if r["falsas"] else 0
     try:
-        rel = descrever(arq, repo, a.todos, max(1, a.lote), a.modelo, a.esforco, a.simular)
+        rel = descrever(arq, repo, a.todos, max(1, a.lote), a.modelo, a.esforco, a.simular,
+                        None if a.sem_conferir else a.conferir)
     except ValueError as e:
         print(f"erro: {e}")
         return 2

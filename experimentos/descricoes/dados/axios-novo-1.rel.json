@@ -1,0 +1,87 @@
+{
+ "alvos": 72,
+ "descritos": 69,
+ "revisados": 0,
+ "mantidos": 0,
+ "reenviados": 9,
+ "para_modelador": [
+  {
+   "modulo": "lib/helpers/buildURL.js",
+   "motivo": "a conferência achou afirmação falsa (The serializer options are not read only from own properties: the code uses getSafeProp, and its comment says own and class/template prototype methods are honor) e a correção foi reprovada: a evidência \"values injected onto a polluted Object.prototype are ignored\" não aparece na ficha: copie o trecho literalmente"
+  },
+  {
+   "modulo": "lib/helpers/fromDataURI.js",
+   "motivo": "a frase cita \"URLs\", que não aparece no código do módulo"
+  },
+  {
+   "modulo": "lib/helpers/null.js",
+   "motivo": "a conferência achou afirmação falsa (The sentence says adapters.js and toFormData.js import this stub. The module does not show any importers, and the toFormData.js code shown imports platform Form) e a correção foi reprovada: a evidência \"import PlatformFormData from '../platform/node/classes/FormData.js';\" não aparece na ficha: copie o trecho literalmente"
+  }
+ ],
+ "chamadas": [
+  {
+   "itens": 72,
+   "input": 2,
+   "cache_criado": 39159,
+   "cache_lido": 0,
+   "output": 28669,
+   "turnos": 2,
+   "seg": 97.6
+  },
+  {
+   "itens": 9,
+   "input": 2,
+   "cache_criado": 6586,
+   "cache_lido": 1219,
+   "output": 8733,
+   "turnos": 2,
+   "seg": 35.1
+  },
+  {
+   "itens": 8,
+   "conferir": true,
+   "input": 2,
+   "cache_criado": 22879,
+   "cache_lido": 1022,
+   "output": 3473,
+   "turnos": 2,
+   "seg": 16.5
+  },
+  {
+   "itens": 33,
+   "conferir": true,
+   "input": 2,
+   "cache_criado": 43285,
+   "cache_lido": 1022,
+   "output": 10427,
+   "turnos": 2,
+   "seg": 40.6
+  },
+  {
+   "itens": 30,
+   "conferir": true,
+   "input": 2,
+   "cache_criado": 29387,
+   "cache_lido": 1022,
+   "output": 8803,
+   "turnos": 2,
+   "seg": 34.5
+  }
+ ],
+ "simulado": false,
+ "conferencia": {
+  "modelo": "haiku",
+  "conferidas": 70,
+  "falsas": 10,
+  "corrigidas": 8,
+  "incertas": 1
+ },
+ "sem_container_ou_status": 0,
+ "tokens": {
+  "input": 10,
+  "cache_criado": 141296,
+  "cache_lido": 4285,
+  "output": 60105,
+  "total": 205696
+ }
+}

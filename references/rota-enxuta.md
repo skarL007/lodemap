@@ -86,13 +86,61 @@ second run with the rule kept 14 of 16 (26,660 tokens, 37 s): it also added to `
 stacks are now inlined. The request is larger because it carries the 16 current sentences. `--todos` turns the rule off and
 describes everything from scratch.
 
+## Truth check (evidence + code review)
+
+The score above measures form and agreement with a reference, not truth. Read against the code, Haiku's sentences
+were false often enough to matter. The false claims came in two shapes:
+- a detail that does not hold: "colors only on a TTY", "logs the request ID", "fixed chunk size";
+- a purpose the code never states: "so runtimes without AbortController can cancel".
+
+Since 2026-11-10 every sentence goes through three checks before it is written:
+
+1. **Evidence.** The model returns 1 to 3 excerpts copied verbatim from the module card. The gate rejects a sentence
+   whose evidence is not in the card or the code, whitespace and comment markers aside. The prompt also stops asking
+   for "the why" unless a docstring or comment states it.
+2. **Code names.** Every code-like name in the sentence must exist in the module:
+   - backticked names;
+   - dotted names such as `path.Clean`;
+   - `snake_case`, `camelCase` and `PascalCase` names;
+   - `X-` headers.
+3. **Code review.** A second call (Haiku by default, `--conferir <model>`) reads the module's full code, capped at
+   16,000 characters, and marks each sentence as `ok`, `falsa` or `incerta`. A `falsa` sentence is replaced by the
+   reviewer's correction only if the correction passes checks 1 and 2. Otherwise the module goes to
+   `descricoes_para_modelador`.
+
+`--sem-conferir` skips step 3. `--auditar` runs step 3 on the sentences already in the map and lists the false ones
+without changing anything; it exits with 3 when it finds one.
+
+How it was measured:
+- Each run described every module from scratch (`--todos`) on a fresh copy.
+- A Sonnet judge with Read, Grep and Glob opened the code and labelled every written sentence. The judge is a different
+  model from the writer.
+- Scripts and raw verdicts: `experimentos/descricoes/`.
+
+| Run | Sentences written | False (judge) | Left for the modeler | Tokens |
+|---|---:|---:|---:|---:|
+| chi, before | 36 | 5 (13.9%) | 0 | 32,288 |
+| chi, with the check, run 1 | 36 | 2 (5.6%) | 0 | 123,016 |
+| chi, with the check, run 2 | 36 | 1 (2.8%) | 0 | 119,904 |
+| axios, before | 72 | 10 (13.9%) | 0 | 56,127 |
+| axios, with the check, run 1 | 69 | 2 (2.9%) | 3 | 205,696 |
+| axios, with the check, run 2 | 72 | 0 | 0 | 205,743 |
+
+- **Before:** 15 false of 108 (13.9%).
+- **With the check:** 5 of 213 (2.3%).
+
+One of the 5 is disputable: the `logger.go` TTY claim is stated in the file's doc comment and checked in
+`terminal.go`.
+
+The check costs about 3.7 times the tokens of the description call, because the reviewer reads whole files. That is
+still one Haiku call per ~110,000 characters of code, with no subagent.
+
 ## Limits
 
 - Two repositories with a reference, Python and JavaScript. Rust, Java and monorepos are not measured.
-- **Truth of the sentences, Go:** on go-chi/chi (35 modules, 31,213 tokens, 34 s) the modeler opened the files and
-  checked every sentence: 6 of 35 stated something false about the module and 2 were vague. The score above
-  measures form and agreement with a Sonnet reference, not truth, and on rich and axios the sentences were not
-  checked against the code one by one. Treat the lean route as a draft the modeler confirms in phase B.
+- **Truth of the sentences.** Even with the check, some sentences are false: 0 to 6% per run, 2.3% overall. Phase B
+  still asks the modeler to confirm sentences against the code. Since the reviewer reads at most 16,000 characters per
+  module, claims about the end of a very long file can only be marked `incerta`.
 - Only Windows was run end to end; the call is the same `claude` CLI on Linux and macOS but was not exercised there.
 - The reference is a Sonnet run, not a human gold set.
 - Token counts come from the CLI's `usage` field. They are tokens, not money: billing is the subscription.

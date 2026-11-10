@@ -21,9 +21,27 @@ modo = os.environ.get("LODEMAP_FALSO_MODO", "ok")
 if modo == "erro":
     print("sem login", file=sys.stderr); sys.exit(1)
 sch = json.loads(args[args.index("--json-schema") + 1])
-area = sch["properties"]["itens"]["items"]["properties"]["area"]["enum"][0]
 sys.stdin.reconfigure(encoding="utf-8"); sys.stdout.reconfigure(encoding="utf-8")
 texto = sys.stdin.read()
+uso = {"input_tokens": 3, "cache_creation_input_tokens": 1000, "cache_read_input_tokens": 0, "output_tokens": 50}
+if "veredito" in sch["properties"]["itens"]["items"]["properties"]:
+    conf = os.environ.get("LODEMAP_FALSO_CONFERIR", "ok")
+    itens = []
+    for i, mod in re.findall(r"### i=(\d+)\n(?:Módulo|Module): (\S+)", texto):
+        if conf == "ok" or not mod.endswith("regras.py"):
+            itens.append({"i": int(i), "veredito": "ok", "afirmacao": "", "correcao": "", "evidencia": []})
+        elif conf == "falsa":
+            itens.append({"i": int(i), "veredito": "falsa", "afirmacao": "o módulo não lê o repositório",
+                          "correcao": "Define calcular, que devolve o valor da regra local sem tocar em estado global.",
+                          "evidencia": ["def calcular"]})
+        else:
+            itens.append({"i": int(i), "veredito": "falsa", "afirmacao": "o módulo não lê o repositório",
+                          "correcao": "Chama `buscarNoBanco` para ler as regras do repositório remoto antes de calcular.",
+                          "evidencia": ["def calcular"]})
+    print(json.dumps({"type": "result", "is_error": False, "num_turns": 2, "structured_output": {"itens": itens},
+                      "usage": uso}))
+    sys.exit(0)
+area = sch["properties"]["itens"]["items"]["properties"]["area"]["enum"][0]
 retry = "reprovada" in texto
 itens = []
 blocos = re.split(r"(?=### i=\d+\n)", texto)
@@ -36,20 +54,22 @@ for b in blocos:
 for i, mod in re.findall(r"### i=(\d+)\nMódulo: (\S+)", texto):
     base = mod.strip("/").split("/")[-1].replace(".py", "")
     if modo == "mantem" and int(i) in atual:
-        itens.append({"i": int(i), "nome": "Outro nome", "descricao": atual[int(i)], "area": area})
+        itens.append({"i": int(i), "nome": "Outro nome", "descricao": atual[int(i)], "area": area,
+                      "evidencia": [f"Módulo: {mod}"]})
         continue
     if modo == "generico" and not retry:
         d = "Este componente faz coisas de forma eficiente para o sistema inteiro funcionar bem."
     else:
         d = f"Calcula {base} a partir das regras locais e devolve o valor para quem chama, sem estado global."
-    itens.append({"i": int(i), "nome": f"Peça {base}", "descricao": d, "area": area})
+    ev = ["trecho que não está em lugar nenhum da ficha"] if modo == "sem_prova" and not retry else [f"Módulo: {mod}"]
+    itens.append({"i": int(i), "nome": f"Peça {base}", "descricao": d, "area": area, "evidencia": ev})
 print(json.dumps({"type": "result", "is_error": False, "num_turns": 2, "structured_output": {"itens": itens},
                   "usage": {"input_tokens": 3, "cache_creation_input_tokens": 1000, "cache_read_input_tokens": 0,
                             "output_tokens": 50 * len(itens)}}))
 '''
 
 
-def _preparar(projeto, tmp_path, monkeypatch, modo="ok"):
+def _preparar(projeto, tmp_path, monkeypatch, modo="ok", conferir="ok"):
     arq = _arq(projeto)
     d = esqueleto.rascunho(projeto, arq, fonte="ast")
     d["areas"] = {"AreaNucleo": "Núcleo"}
@@ -60,7 +80,12 @@ def _preparar(projeto, tmp_path, monkeypatch, modo="ok"):
     monkeypatch.setenv("LODEMAP_CLAUDE", str(falso))
     monkeypatch.setenv("LODEMAP_FALSO_LOG", str(log))
     monkeypatch.setenv("LODEMAP_FALSO_MODO", modo)
+    monkeypatch.setenv("LODEMAP_FALSO_CONFERIR", conferir)
     return arq, log
+
+
+def _so_descrever(chamadas):
+    return [a for a in chamadas if "veredito" not in a[a.index("--json-schema") + 1]]
 
 
 def _chamadas(log: Path) -> list[list[str]]:
@@ -72,7 +97,9 @@ def test_descreve_os_pendentes_numa_chamada_enxuta(projeto, tmp_path, monkeypatc
     rel = descrever.descrever(arq, projeto)
     assert rel["alvos"] == 3 and rel["descritos"] == 3 and rel["para_modelador"] == []
     chamadas = _chamadas(log)
-    assert len(chamadas) == 1
+    assert len(chamadas) == 2, "uma chamada para descrever e uma para conferir"
+    assert "veredito" in chamadas[1][chamadas[1].index("--json-schema") + 1]
+    assert rel["conferencia"] == {"modelo": "haiku", "conferidas": 3, "falsas": 0, "corrigidas": 0, "incertas": 0}
     a = chamadas[0]
     for flag in ("--tools", "--strict-mcp-config", "--setting-sources", "--no-session-persistence", "--json-schema",
                  "--system-prompt-file"):
@@ -97,7 +124,7 @@ def test_area_fora_das_decididas_e_recusada_no_schema(projeto, tmp_path, monkeyp
 def test_gate_reenvia_so_os_reprovados_uma_vez(projeto, tmp_path, monkeypatch):
     arq, log = _preparar(projeto, tmp_path, monkeypatch, modo="generico")
     rel = descrever.descrever(arq, projeto)
-    assert len(_chamadas(log)) == 2 and rel["reenviados"] == 3 and rel["descritos"] == 3
+    assert len(_so_descrever(_chamadas(log))) == 2 and rel["reenviados"] == 3 and rel["descritos"] == 3
 
 
 def test_falha_do_cli_devolve_tudo_ao_modelador(projeto, tmp_path, monkeypatch):
@@ -130,7 +157,7 @@ def test_so_os_marcados_ou_vazios_sao_alvo(projeto, tmp_path, monkeypatch):
     d["pendentes"]["componentes_revisar"] = ["app/api.py"]
     esqueleto.caminho_decisoes(arq).write_text(json.dumps(d, ensure_ascii=False), encoding="utf-8")
     rel = descrever.descrever(arq, projeto)
-    assert rel["alvos"] == 1 and len(_chamadas(log)) == 1
+    assert rel["alvos"] == 1 and len(_so_descrever(_chamadas(log))) == 1
 
 
 def test_ficha_traz_superficie_e_relacoes_sem_o_corpo_inteiro(projeto):
@@ -146,6 +173,83 @@ def test_gate_pega_generico_tamanho_e_termo():
     assert "tamanho" in descrever.gate({"nome": "x", "descricao": "Calcula."}, f, "app/regras.py")
     assert "termo" in descrever.gate({"nome": "x", "descricao": "Faz uma operação simples e rápida sobre os números do dia a dia."}, f, "app/regras.py")
     assert descrever.gate({"nome": "x", "descricao": "Calcula o valor final a partir das regras locais, sem estado global."}, f, "app/regras.py") == ""
+
+
+def test_gate_com_codigo_recusa_nome_inventado_e_evidencia_que_nao_esta_na_ficha():
+    f = "Módulo: app/regras.py\n- calcular\ndef calcular(x):"
+    cod = "def calcular(x):\n    return x * TAXA_PADRAO\n"
+    base = {"nome": "x", "evidencia": ["def calcular(x):"]}
+    ok = "Calcula o valor final a partir das regras locais com TAXA_PADRAO, sem estado global."
+    assert descrever.gate(dict(base, descricao=ok), f, "app/regras.py", cod) == ""
+    inventado = "Calcula o valor final com `aplicarDesconto` e as regras locais, sem estado global nenhum."
+    assert "aplicarDesconto" in descrever.gate(dict(base, descricao=inventado), f, "app/regras.py", cod)
+    cab = "Calcula o valor final das regras locais e lê o cabeçalho X-Forwarded-For de cada pedido."
+    assert "X-Forwarded-For" in descrever.gate(dict(base, descricao=cab), f, "app/regras.py", cod)
+    sem = {"nome": "x", "descricao": ok, "evidencia": []}
+    assert "sem evidência" in descrever.gate(sem, f, "app/regras.py", cod)
+    falsa = {"nome": "x", "descricao": ok, "evidencia": ["def calcular_tudo(x, y):"]}
+    assert "não aparece na ficha" in descrever.gate(falsa, f, "app/regras.py", cod)
+    # sem código (chamada antiga), o gate continua só de forma
+    assert descrever.gate({"nome": "x", "descricao": inventado}, f, "app/regras.py") == ""
+
+
+def test_nomes_citados_ignora_palavras_comuns_e_abreviacoes():
+    n = descrever.nomes_citados("Usa path.Clean e read_config em JavaScript, e.g. no GitHub, via onUploadProgress, "
+                                "para URLs e IDs.")
+    assert n == ["path.Clean", "read_config", "onUploadProgress"]
+
+
+def test_evidencia_casa_comentario_quebrado_em_varias_linhas():
+    """Medido no axios: a conferência citou numa linha um comentário que o código quebra em duas."""
+    cod = ("  // class/template prototype are honored, but values injected onto a polluted\n"
+           "  // Object.prototype are ignored.\n")
+    o = {"evidencia": ["values injected onto a polluted Object.prototype are ignored"]}
+    assert descrever._evidencia(o, "", cod) == ""
+
+
+def test_evidencia_falsa_reenvia_e_depois_passa(projeto, tmp_path, monkeypatch):
+    arq, log = _preparar(projeto, tmp_path, monkeypatch, modo="sem_prova")
+    rel = descrever.descrever(arq, projeto)
+    assert rel["reenviados"] == 3 and rel["descritos"] == 3 and rel["para_modelador"] == []
+
+
+def test_conferencia_troca_frase_falsa_pela_correcao(projeto, tmp_path, monkeypatch):
+    arq, log = _preparar(projeto, tmp_path, monkeypatch, conferir="falsa")
+    rel = descrever.descrever(arq, projeto)
+    assert rel["conferencia"]["falsas"] == 1 and rel["conferencia"]["corrigidas"] == 1
+    d = json.loads(esqueleto.caminho_decisoes(arq).read_text(encoding="utf-8"))
+    c = next(c for c in d["componentes"] if c["modulo"] == "app/regras.py")
+    assert c["descricao"].startswith("Define calcular")
+
+
+def test_correcao_reprovada_vai_para_o_modelador(projeto, tmp_path, monkeypatch):
+    arq, log = _preparar(projeto, tmp_path, monkeypatch, conferir="falsa_ruim")
+    rel = descrever.descrever(arq, projeto)
+    assert [p["modulo"] for p in rel["para_modelador"]] == ["app/regras.py"]
+    assert "buscarNoBanco" in rel["para_modelador"][0]["motivo"]
+    d = json.loads(esqueleto.caminho_decisoes(arq).read_text(encoding="utf-8"))
+    assert d["pendentes"]["descricoes_para_modelador"][0]["modulo"] == "app/regras.py"
+    c = next(c for c in d["componentes"] if c["modulo"] == "app/regras.py")
+    assert not c.get("descricao"), "frase que a conferência reprovou não é gravada"
+
+
+def test_sem_conferir_faz_uma_chamada_so(projeto, tmp_path, monkeypatch):
+    arq, log = _preparar(projeto, tmp_path, monkeypatch)
+    assert descrever.main(["--arq", str(arq), "--repo", str(projeto), "--sem-conferir"]) == 0
+    assert len(_chamadas(log)) == 1
+
+
+def test_auditar_lista_as_falsas_sem_mudar_nada(projeto, tmp_path, monkeypatch, capsys):
+    arq, log = _preparar(projeto, tmp_path, monkeypatch)
+    descrever.descrever(arq, projeto, conferir_com=None)
+    destino = esqueleto.caminho_decisoes(arq)
+    antes = destino.read_text(encoding="utf-8")
+    monkeypatch.setenv("LODEMAP_FALSO_CONFERIR", "falsa")
+    capsys.readouterr()
+    assert descrever.main(["--arq", str(arq), "--repo", str(projeto), "--auditar"]) == 3
+    r = json.loads(capsys.readouterr().out)
+    assert [f["modulo"] for f in r["falsas"]] == ["app/regras.py"] and r["conferidas"] == 3
+    assert destino.read_text(encoding="utf-8") == antes
 
 
 def _marcar_revisao(arq, modulo="app/regras.py"):

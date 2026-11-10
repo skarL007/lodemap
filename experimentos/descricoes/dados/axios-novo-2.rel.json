@@ -1,0 +1,74 @@
+{
+ "alvos": 72,
+ "descritos": 72,
+ "revisados": 0,
+ "mantidos": 0,
+ "reenviados": 8,
+ "para_modelador": [],
+ "chamadas": [
+  {
+   "itens": 72,
+   "input": 2,
+   "cache_criado": 642,
+   "cache_lido": 38516,
+   "output": 28063,
+   "turnos": 2,
+   "seg": 97.6
+  },
+  {
+   "itens": 8,
+   "input": 2,
+   "cache_criado": 4548,
+   "cache_lido": 1219,
+   "output": 10420,
+   "turnos": 2,
+   "seg": 45.3
+  },
+  {
+   "itens": 8,
+   "conferir": true,
+   "input": 2,
+   "cache_criado": 22858,
+   "cache_lido": 1022,
+   "output": 2422,
+   "turnos": 2,
+   "seg": 12.2
+  },
+  {
+   "itens": 33,
+   "conferir": true,
+   "input": 2,
+   "cache_criado": 43402,
+   "cache_lido": 1022,
+   "output": 12715,
+   "turnos": 2,
+   "seg": 51.7
+  },
+  {
+   "itens": 31,
+   "conferir": true,
+   "input": 2,
+   "cache_criado": 30439,
+   "cache_lido": 1022,
+   "output": 7423,
+   "turnos": 2,
+   "seg": 30.6
+  }
+ ],
+ "simulado": false,
+ "conferencia": {
+  "modelo": "haiku",
+  "conferidas": 72,
+  "falsas": 6,
+  "corrigidas": 6,
+  "incertas": 3
+ },
+ "sem_container_ou_status": 0,
+ "tokens": {
+  "input": 10,
+  "cache_criado": 101889,
+  "cache_lido": 42801,
+  "output": 61043,
+  "total": 205743
+ }
+}

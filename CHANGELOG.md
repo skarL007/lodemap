@@ -2,7 +2,24 @@
 
 All notable changes to Lodemap. Dates are when the change landed on `main`.
 
-## 0.1.0 (unreleased, first public version)
+## Unreleased
+
+- **Truth check for descriptions:** `descrever.py` now checks every sentence before it is written.
+  - The model quotes verbatim evidence from the module card.
+  - The gate rejects a sentence whose evidence is not found, or that names code the module does not contain.
+  - A second Haiku call reads the module's code and corrects or rejects false sentences.
+  - The prompts no longer ask for "the why" unless the code states it.
+  - New flags: `--conferir <model>`, `--sem-conferir`, and `--auditar`, which checks an existing map read-only and
+    exits 3 when it finds a false sentence.
+  - Measured with a Sonnet judge on chi and axios: false sentences fell from 15 of 108 to 5 of 213, at about 3.7
+    times the tokens. See `experimentos/descricoes/`.
+- **Experiment: does the map make an agent cheaper?** Pre-registered, 16 tasks, 2 repositories, 3 repetitions, Sonnet
+  with and without the map.
+  - Tokens: no difference (median ratio 0.99).
+  - Accuracy: did not get worse (recall 0.991 vs 0.977).
+  - The README now says so. See `experimentos/com-sem-mapa/`.
+
+## 0.1.0 (first public version)
 
 - **Validation round (repetition, Linux, Go):** the axios update was repeated three times (US$ 0.29 to 0.47,
   same structure each time); the suite, the full regeneration, the delivered tests, the quality gate and the real

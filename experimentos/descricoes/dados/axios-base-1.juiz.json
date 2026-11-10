@@ -1,0 +1,514 @@
+{
+ "contagem": {
+  "verdadeira": 62,
+  "falsa": 10,
+  "vaga": 0,
+  "sem_resposta": 0
+ },
+ "itens": [
+  {
+   "modulo": "lib/adapters/adapters.js",
+   "descricao": "Resolves the first usable transport adapter from a list of names or functions, failing with a descriptive AxiosError when none fits, so misconfigured environments surface early.",
+   "veredito": "verdadeira",
+   "motivo": "getAdapter itera sobre nomes ou funções, resolve via knownAdapters, devolve o primeiro utilizável e lança AxiosError (ERR_NOT_SUPPORT) com razões por adaptador quando nenhum serve.",
+   "trecho": "`There is no suitable adapter to dispatch the request ` + s,"
+  },
+  {
+   "modulo": "lib/adapters/fetch.js",
+   "descricao": "Sends requests through the Fetch API with streamed upload progress and multipart bodies, letting runtimes without XMLHttpRequest or Node http still use axios.",
+   "veredito": "verdadeira",
+   "motivo": "O adaptador usa fetch, envolve o corpo da requisição com trackStream para o progresso de upload e monta corpos multipart com createMultipartBody. Só existe quando há fetch disponível.",
+   "trecho": "data = createMultipartBody("
+  },
+  {
+   "modulo": "lib/adapters/http.js",
+   "descricao": "Sends Node requests via http and https with proxy tunneling, redirects and keep-alive socket tracking, since Node exposes these controls that browser transports hide.",
+   "veredito": "verdadeira",
+   "motivo": "Usa http/https com follow-redirects, túnel CONNECT via HttpsProxyAgent no setProxy e rastreamento de sockets keep-alive (kAxiosCurrentReq, boundSockets).",
+   "trecho": "socket[kAxiosCurrentReq] = req;"
+  },
+  {
+   "modulo": "lib/adapters/xhr.js",
+   "descricao": "Sends browser requests through XMLHttpRequest, adding XSRF cookie headers and a Firefox status-zero fallback that settles navigation-canceled requests as empty successes.",
+   "veredito": "falsa",
+   "motivo": "Em requisições canceladas por navegação, o Firefox dispara status 0 sem onerror/onabort. O código não as resolve como sucesso vazio: rejeita com AxiosError 'Request aborted' (ECONNABORTED). O comentário diz que o comportamento antigo era o sucesso vazio, e este código o evita.",
+   "trecho": "reject(new AxiosError('Request aborted', AxiosError.ECONNABORTED, config, request));"
+  },
+  {
+   "modulo": "lib/axios.js",
+   "descricao": "Builds the default axios instance and its factory, exposing helpers such as isCancel, spread and toFormData from one module, so consumers get a single import surface.",
+   "veredito": "verdadeira",
+   "motivo": "createInstance constrói a instância padrão e o create. O módulo anexa isCancel, spread, toFormData, CancelToken, AxiosError e outros itens ao axios, com export default único.",
+   "trecho": "axios.isCancel = isCancel;"
+  },
+  {
+   "modulo": "lib/cancel/CancelToken.js",
+   "descricao": "Provides the CancelToken API whose promise settles once cancellation is requested, letting callers abort requests in runtimes without AbortController support.",
+   "veredito": "falsa",
+   "motivo": "A promise do token resolve quando o cancelamento é pedido, mas a finalidade declarada não aparece no código. O CancelToken não oferece alternativa para runtimes sem AbortController: toAbortSignal usa AbortController e o token existe como API própria e legada.",
+   "trecho": "const controller = new AbortController();"
+  },
+  {
+   "modulo": "lib/cancel/CanceledError.js",
+   "descricao": "Defines the error thrown when an operation is aborted, tagging it with a cancel flag so callers can tell cancellation apart from genuine network or server failures.",
+   "veredito": "verdadeira",
+   "motivo": "CanceledError estende AxiosError com código ERR_CANCELED e define __CANCEL__ = true, o que permite distinguir cancelamento de falhas de rede ou servidor.",
+   "trecho": "this.__CANCEL__ = true;"
+  },
+  {
+   "modulo": "lib/cancel/isCancel.js",
+   "descricao": "Checks the cancel flag on a thrown value with one truthy test that tolerates any input type, so catch blocks separate cancellation from real failures without instanceof checks.",
+   "veredito": "verdadeira",
+   "motivo": "Um único teste de veracidade sobre value.__CANCEL__ aceita qualquer entrada (null, undefined, primitivos) sem usar instanceof.",
+   "trecho": "return !!(value && value.__CANCEL__);"
+  },
+  {
+   "modulo": "lib/core/Axios.js",
+   "descricao": "Owns the request lifecycle by merging per-request config, running interceptors and reconstructing caller stack frames on errors, so every method alias funnels through one dispatch path.",
+   "veredito": "verdadeira",
+   "motivo": "request() delega a _request, que faz mergeConfig, monta e executa a cadeia de interceptors e chama dispatchRequest. No catch, request() reconstrói os frames do chamador no stack do erro. Os aliases (get, post etc.) chamam this.request.",
+   "trecho": "return this.request("
+  },
+  {
+   "modulo": "lib/core/AxiosError.js",
+   "descricao": "Extends Error with a code, config, request and response, plus optional config redaction and inlined cause stacks, so logged errors expose the root failure without leaking secrets.",
+   "veredito": "verdadeira",
+   "motivo": "AxiosError estende Error e guarda code, config, request e response. toJSON redige chaves de config quando há `redact`, e from() anexa o stack da causa sob 'Caused by:' (appendCauseStack).",
+   "trecho": "const CAUSED_BY_SEPARATOR = '\\nCaused by: ';"
+  },
+  {
+   "modulo": "lib/core/AxiosHeaders.js",
+   "descricao": "Stores headers under case-insensitive keys with safe handling of __proto__ and value sanitization, so lookups and merges behave the same across every adapter.",
+   "veredito": "verdadeira",
+   "motivo": "As buscas usam findKey com o nome em minúsculas, então são insensíveis a maiúsculas. __proto__ é guardado no slot '__Proto__' (headerSlot), e normalizeValue chama sanitizeHeaderValue.",
+   "trecho": "const PROTO_HEADER_SLOT = '__Proto__';"
+  },
+  {
+   "modulo": "lib/core/InterceptorManager.js",
+   "descricao": "Stores request and response interceptors by numeric ID and tolerates removal during iteration, so ejecting an interceptor mid-request does not skip or repeat the others.",
+   "veredito": "verdadeira",
+   "motivo": "use() devolve um id numérico crescente (nextId++), guardado em um Map. eject() põe null no índice em vez de remover, e só apara os nulos quando iterationDepth é 0. Assim o forEach em andamento não pula nem repete itens.",
+   "trecho": "if (!internals.iterationDepth) {"
+  },
+  {
+   "modulo": "lib/core/assertParamsAcyclic.js",
+   "descricao": "Walks params with an explicit stack to reject circular references before merging, so a self-referencing params object fails with ERR_BAD_OPTION_VALUE instead of exhausting the call stack.",
+   "veredito": "falsa",
+   "motivo": "A travessia com pilha explícita e o ERR_BAD_OPTION_VALUE estão corretos. Mas a função não roda antes do merge. mergeParams já construiu a cópia de forma iterativa e só chama assertParamsAcyclic(result) no final, sobre o resultado.",
+   "trecho": "assertParamsAcyclic(result);"
+  },
+  {
+   "modulo": "lib/core/buildFullPath.js",
+   "descricao": "Joins baseURL with the request path and redacts credentials, query values and fragments from error messages, so logged URLs stay identifiable without exposing secrets.",
+   "veredito": "verdadeira",
+   "motivo": "buildFullPath junta baseURL e URL relativa com combineURLs. As mensagens de erro de URL inválida passam por redactSensitiveURLParts, que oculta userinfo, valores de query e conteúdo do fragmento, mantendo esquema, host, caminho e nomes de parâmetros.",
+   "trecho": "`Invalid URL ${JSON.stringify(redactSensitiveURLParts(normalizedURL))}: missing \"//\" after protocol`"
+  },
+  {
+   "modulo": "lib/core/createMultipartBody.js",
+   "descricao": "Builds a multipart Blob from FormData with a generated boundary and a size limit, failing with ERR_NOT_SUPPORT when Blob or secure random bytes are missing rather than guessing.",
+   "veredito": "verdadeira",
+   "motivo": "Gera um boundary e delega a formDataToBlob com limite. Sem Blob lança ERR_NOT_SUPPORT. Sem platform.generateString e sem crypto.getRandomValues lança ERR_NOT_SUPPORT em vez de usar um fallback inseguro.",
+   "trecho": "throw new AxiosError('Random byte generation is not supported', AxiosError.ERR_NOT_SUPPORT);"
+  },
+  {
+   "modulo": "lib/core/dispatchRequest.js",
+   "descricao": "Runs request transforms, selects the adapter, checks cancellation and times adapter execution with a monotonic clock, so each request reports elapsed time that wall-clock jumps cannot skew.",
+   "veredito": "verdadeira",
+   "motivo": "Executa transformRequest, escolhe o adapter e checa cancelamento. Mede a duração com performance.now(), que é monotônico, e só cai para Date.now quando performance.now não existe. O resultado vai em response.duration.",
+   "trecho": "response.duration = elapsedSince(now, start);"
+  },
+  {
+   "modulo": "lib/core/mergeConfig.js",
+   "descricao": "Merges two config objects with per-key strategies for headers, params and transitional flags, so defaults and call options combine predictably.",
+   "veredito": "falsa",
+   "motivo": "Há estratégias específicas para headers (mergeHeaders) e params (mergeParams). Não existe estratégia por chave para transitional: ele não está em mergeMap e cai em mergeDeepProperties. getMergedTransitionalOption serve só para decidir o comportamento de validateStatus undefined.",
+   "trecho": "const merge = utils.hasOwnProp(mergeMap, prop) ? mergeMap[prop] : mergeDeepProperties;"
+  },
+  {
+   "modulo": "lib/core/methodList.js",
+   "descricao": "Freezes the list of supported HTTP method names used to generate shorthand request methods, so the set cannot be extended at runtime through a shared mutable array.",
+   "veredito": "verdadeira",
+   "motivo": "A lista de métodos é um array protegido por Object.freeze, e defaults/index.js a usa para criar os headers por método. Por isso o conjunto não pode ser alterado em tempo de execução.",
+   "trecho": "const methodList = Object.freeze(["
+  },
+  {
+   "modulo": "lib/core/setFormDataHeaders.js",
+   "descricao": "Copies FormData-generated headers into requests, limiting the copy to content-type and content-length under the content-only policy so custom headers are not overwritten.",
+   "veredito": "verdadeira",
+   "motivo": "Com a política 'content-only' copia apenas content-type e content-length. Com outra política faz headers.set(formHeaders) completo.",
+   "trecho": "const FORM_DATA_CONTENT_HEADERS = ['content-type', 'content-length'];"
+  },
+  {
+   "modulo": "lib/core/settle.js",
+   "descricao": "Resolves or rejects a response based on validateStatus, mapping 4xx to ERR_BAD_REQUEST and other failures to ERR_BAD_RESPONSE, so all adapters share one status policy.",
+   "veredito": "verdadeira",
+   "motivo": "Resolve se não há status, se não há validateStatus ou se validateStatus aceita. Caso contrário rejeita com ERR_BAD_REQUEST para 400–499 e ERR_BAD_RESPONSE para o restante.",
+   "trecho": "response.status >= 400 && response.status < 500 ? AxiosError.ERR_BAD_REQUEST : AxiosError.ERR_BAD_RESPONSE"
+  },
+  {
+   "modulo": "lib/core/transformData.js",
+   "descricao": "Applies transform functions in sequence to request or response data with normalized headers, so each hook receives the same config context and header view.",
+   "veredito": "verdadeira",
+   "motivo": "Itera sobre fns em sequência. Cada função é chamada com o mesmo config (this) e com headers normalizados, a partir de AxiosHeaders.from(context.headers).",
+   "trecho": "data = fn.call(config, data, headers.normalize(), response ? response.status : undefined);"
+  },
+  {
+   "modulo": "lib/defaults/index.js",
+   "descricao": "Defines the default config, including JSON parsing, form serialization and validateStatus, and reads only own properties so prototype pollution cannot inject defaults.",
+   "veredito": "verdadeira",
+   "motivo": "Define adapter, transformRequest (JSON, form e urlencoded), transformResponse e validateStatus 2xx. Lê formSerializer, env, transitional, responseType e parseReviver por meio do helper own(), que só retorna propriedades próprias.",
+   "trecho": "const own = (obj, key) => (obj != null && utils.hasOwnProp(obj, key) ? obj[key] : undefined);"
+  },
+  {
+   "modulo": "lib/defaults/transitional.js",
+   "descricao": "Holds boolean flags for opt-in behavior changes such as JSON parsing and interceptor ordering, letting upgrades keep legacy behavior until a flag is deliberately flipped.",
+   "veredito": "verdadeira",
+   "motivo": "Exporta flags booleanas, como forcedJSONParsing e legacyInterceptorReqResOrdering, que controlam mudanças de comportamento e podem ser alteradas pelo usuário.",
+   "trecho": "legacyInterceptorReqResOrdering: true,"
+  },
+  {
+   "modulo": "lib/env/classes/FormData.js",
+   "descricao": "Exports the global form data constructor when present and falls back to the form-data package otherwise, so Node and browsers share one constructor reference.",
+   "veredito": "verdadeira",
+   "motivo": "Exporta o FormData global se existir. Caso contrário usa o pacote form-data, então os dois ambientes acabam com um único construtor de referência.",
+   "trecho": "export default typeof FormData !== 'undefined' ? FormData : _FormData;"
+  },
+  {
+   "modulo": "lib/env/data.js",
+   "descricao": "Exports the library version string as a single constant, so the user agent and validator messages report the same release without reading package metadata at runtime.",
+   "veredito": "verdadeira",
+   "motivo": "data.js exporta só VERSION como constante literal; fetch.js e http.js a usam no User-Agent ('axios/'+VERSION) e validator.js a inclui nas mensagens, sem ler package.json em runtime.",
+   "trecho": "export const VERSION = \"1.21.1\";"
+  },
+  {
+   "modulo": "lib/helpers/AxiosTransformStream.js",
+   "descricao": "Throttles a Node stream to a maximum byte rate and emits progress per time window, so transfers can be capped without buffering the whole payload in memory.",
+   "veredito": "verdadeira",
+   "motivo": "Transform stream que limita a taxa (maxRate por timeWindow, adiando com setTimeout e fatiando chunks) e emite 'progress' com bytesSeen; processa chunk a chunk com backpressure, sem acumular o payload.",
+   "trecho": "internals.isCaptured && this.emit('progress', internals.bytesSeen);"
+  },
+  {
+   "modulo": "lib/helpers/AxiosURLSearchParams.js",
+   "descricao": "Encodes query parameters by percent-encoding the characters encodeURIComponent leaves alone and writing spaces as plus, so the fallback matches URLSearchParams output.",
+   "veredito": "verdadeira",
+   "motivo": "encode() aplica encodeURIComponent e depois troca !'()~ por seus escapes percentuais e %20 por '+', imitando a saída do URLSearchParams; a classe é o fallback de serialização de params.",
+   "trecho": "'%20': '+',"
+  },
+  {
+   "modulo": "lib/helpers/Http2Sessions.js",
+   "descricao": "Caches Node HTTP/2 sessions per authority and options so repeated requests reuse live connections, and must never be imported from browser-reachable code.",
+   "veredito": "verdadeira",
+   "motivo": "Guarda sessões http2 por authority, reutiliza as não destruídas/fechadas com opções deepEqual, e o comentário no topo proíbe importar em código alcançável pelo navegador.",
+   "trecho": "util.isDeepStrictEqual(sessionOptions, options)"
+  },
+  {
+   "modulo": "lib/helpers/HttpStatusCode.js",
+   "descricao": "Maps readable names to numeric HTTP status codes and marks superseded names as deprecated, so callers compare statuses without scattering magic numbers through their code.",
+   "veredito": "verdadeira",
+   "motivo": "Objeto com nomes legíveis para códigos numéricos; PayloadTooLarge e UnprocessableEntity têm @deprecated apontando para os novos nomes (ContentTooLarge, UnprocessableContent); também cria o mapa reverso.",
+   "trecho": "* @deprecated Use `ContentTooLarge` instead."
+  },
+  {
+   "modulo": "lib/helpers/ZlibHeaderTransformStream.js",
+   "descricao": "Prepends a default zlib header when a deflate stream lacks one, because some servers send raw deflate data that Node inflate rejects without the two-byte header.",
+   "veredito": "falsa",
+   "motivo": "O código só prepende o cabeçalho 78 9C quando o primeiro byte do primeiro chunk não é 0x78, mas isso é uma heurística sobre zlib header, não uma checagem de 'deflate cru'. A descrição, porém, está essencialmente correta quanto ao cabeçalho de dois bytes; o erro é afirmar que o Node inflate rejeita — o código não mostra esse motivo, apenas adiciona o header padrão. Sem evidência da causa no código.",
+   "trecho": "if (chunk[0] !== 120) {"
+  },
+  {
+   "modulo": "lib/helpers/bind.js",
+   "descricao": "Wraps a function so it always runs with a fixed this value, using a small dependency-free helper instead of Function.prototype.bind so wrapped functions keep a plain signature.",
+   "veredito": "falsa",
+   "motivo": "bind.js de fato usa fn.apply(thisArg, arguments), mas a justificativa 'para manter assinatura simples' não aparece no código; o wrapper perde length/name e a razão alegada contra Function.prototype.bind não é mostrada.",
+   "trecho": "return fn.apply(thisArg, arguments);"
+  },
+  {
+   "modulo": "lib/helpers/buildURL.js",
+   "descricao": "Appends serialized params to a URL with a custom encoder and reads serializer options only from own properties, so polluted prototypes cannot change the query output.",
+   "veredito": "verdadeira",
+   "motivo": "Anexa params serializados à URL (removendo hash, escolhendo ? ou &), usa encoder customizável e lê encode/serialize via utils.getSafeProp, ignorando valores injetados em Object.prototype.",
+   "trecho": "const _encode = utils.getSafeProp(_options, 'encode') || encode;"
+  },
+  {
+   "modulo": "lib/helpers/callbackify.js",
+   "descricao": "Converts async functions into Node-style callback functions and passes results through an optional reducer, so socket lookup hooks work with callback-based Node APIs.",
+   "veredito": "verdadeira",
+   "motivo": "Converte funções async em estilo callback, com reducer opcional que espalha o resultado; é usado em http.js para o lookup de socket (callbackLookup).",
+   "trecho": "reducer ? cb(null, ...reducer(value)) : cb(null, value);"
+  },
+  {
+   "modulo": "lib/helpers/combineURLs.js",
+   "descricao": "Joins a base URL and a relative path with exactly one slash by trimming trailing slashes from the base and leading slashes from the path, avoiding doubled separators.",
+   "veredito": "verdadeira",
+   "motivo": "Remove barras finais da base (loop com charCode 47) e iniciais do path (regex /^\\/+/) e junta com uma única '/'.",
+   "trecho": "return baseURL.slice(0, end) + '/' + relativeURL.replace(/^\\/+/, '');"
+  },
+  {
+   "modulo": "lib/helpers/composeSignals.js",
+   "descricao": "Merges several abort signals and an optional timeout into one AbortSignal, wrapping reasons as cancellation or timeout errors, so a single request honors every cancellation source.",
+   "veredito": "verdadeira",
+   "motivo": "Cria um AbortController, escuta vários signals e um timeout opcional; aborta com AxiosError ou CanceledError (ETIMEDOUT no timeout) e devolve um único signal.",
+   "trecho": "onabort(new AxiosError(`timeout of ${timeout}ms exceeded`, AxiosError.ETIMEDOUT));"
+  },
+  {
+   "modulo": "lib/helpers/cookies.js",
+   "descricao": "Reads and writes cookies for XSRF protection by splitting document.cookie on separators instead of building a RegExp from the name, which avoids ReDoS and wrong matches.",
+   "veredito": "verdadeira",
+   "motivo": "read divide document.cookie por ';' e compara o nome por igualdade, sem montar RegExp (comentário cita ReDoS e match errado); write/remove manipulam document.cookie, usados para XSRF.",
+   "trecho": "const cookies = cookieString.split(';');"
+  },
+  {
+   "modulo": "lib/helpers/deprecatedMethod.js",
+   "descricao": "Prints a one-line console warning for deprecated methods, naming the replacement and docs link, and swallows console failures so a warning never breaks a request.",
+   "veredito": "falsa",
+   "motivo": "Não é um aviso de uma linha: emite um console.warn com o método e a substituição e, se houver docs, um segundo console.warn separado com o link. O try/catch que ignora falhas do console existe.",
+   "trecho": "console.warn('For more information about usage see ' + docs);"
+  },
+  {
+   "modulo": "lib/helpers/estimateDataURLDecodedBytes.js",
+   "descricao": "Estimates the decoded byte size of data URLs without allocating buffers, so size limits can reject oversized inline payloads before memory is spent decoding them.",
+   "veredito": "verdadeira",
+   "motivo": "Calcula bytes de data URLs base64 e não-base64 somente por aritmética sobre charCodes, sem criar buffers, para checagem prévia de limite.",
+   "trecho": "// a byte buffer (TextEncoder.encode would defeat the DoS guard on large bodies)."
+  },
+  {
+   "modulo": "lib/helpers/formDataToBlob.js",
+   "descricao": "Serializes form fields into a multipart Blob by counting UTF-8 bytes without encoding copies and enforcing a size limit, so large uploads are rejected before allocation.",
+   "veredito": "verdadeira",
+   "motivo": "stringBytes conta bytes UTF-8 sem codificar, checkLength lança limitError antes de montar o Blob, e o Blob só é criado no fim.",
+   "trecho": "if (length + extra > limit) throw limitError();"
+  },
+  {
+   "modulo": "lib/helpers/formDataToJSON.js",
+   "descricao": "Converts form keys such as foo[x][y] into nested objects with a depth limit, keeping names with dashes or spaces literal, so form submissions round-trip cleanly into JSON.",
+   "veredito": "verdadeira",
+   "motivo": "parsePropPath divide por . e [..] mantendo '-' e espaço literais, e throwIfDepthExceeded impõe MAX_DEPTH.",
+   "trecho": "const pattern = /[^.[\\]]+|\\[([^.[\\]]*)]/g;"
+  },
+  {
+   "modulo": "lib/helpers/formDataToStream.js",
+   "descricao": "Streams form fields and Blob parts as a multipart body with a computed content length, so large uploads avoid building the whole body in memory first.",
+   "veredito": "verdadeira",
+   "motivo": "Calcula Content-Length somando partes e boundaries e devolve um Readable gerado por async generator que lê Blobs via readBlob, sem montar o corpo inteiro.",
+   "trecho": "return Readable.from("
+  },
+  {
+   "modulo": "lib/helpers/fromDataURI.js",
+   "descricao": "Decodes RFC 2397 data URIs into a Buffer or Blob, treating the base64 token case-insensitively as browsers do, so inline payloads behave the same in Node and fetch.",
+   "veredito": "verdadeira",
+   "motivo": "Regex com flag i torna ;base64 case-insensitive; retorna Buffer ou Blob conforme asBlob.",
+   "trecho": "const DATA_URL_PATTERN = /^([^,;/]+\\/[^,;/]+)?((?:;[^,;=]+=[^,;]+)*)(;base64)?,([\\s\\S]*)$/i;"
+  },
+  {
+   "modulo": "lib/helpers/isAbsoluteURL.js",
+   "descricao": "Tests whether a string starts with a scheme or double slash per RFC 3986, so absolute URLs skip baseURL joining while protocol-relative ones are still recognized.",
+   "veredito": "falsa",
+   "motivo": "O regex exige scheme seguido de '//' (ou apenas '//'), não apenas um scheme; 'mailto:x' ou 'data:...' não são consideradas absolutas. A descrição 'começa com um scheme' é imprecisa.",
+   "trecho": "return /^([a-z][a-z\\d+\\-.]*:)?\\/\\//i.test(url);"
+  },
+  {
+   "modulo": "lib/helpers/isAxiosError.js",
+   "descricao": "Checks for the axios error flag on any value, letting callers narrow an unknown catch variable to an Axios error without an instanceof check that breaks across bundles.",
+   "veredito": "verdadeira",
+   "motivo": "Verifica apenas que o valor é objeto com isAxiosError === true, sem instanceof, aceitando qualquer valor.",
+   "trecho": "return utils.isObject(payload) && payload.isAxiosError === true;"
+  },
+  {
+   "modulo": "lib/helpers/isURLSameOrigin.js",
+   "descricao": "Compares protocol, host and port of a URL against the page origin in browsers and always returns true elsewhere, so XSRF tokens go only to same-origin requests.",
+   "veredito": "verdadeira",
+   "motivo": "Em ambiente de browser padrão compara protocol, host e port com a origem; fora dele retorna () => true.",
+   "trecho": "origin.protocol === url.protocol && origin.host === url.host && origin.port === url.port"
+  },
+  {
+   "modulo": "lib/helpers/normalizeURLForProtocolCheck.js",
+   "descricao": "Strips leading control characters and embedded tabs or newlines the way WHATWG URL parsing does, so protocol checks cannot be bypassed with hidden whitespace.",
+   "veredito": "verdadeira",
+   "motivo": "Remove caracteres iniciais <= 0x20 e remove \\t, \\n, \\r em qualquer posição, como o pré-processamento WHATWG.",
+   "trecho": "const urlParserControlCharacters = /[\\t\\n\\r]/g;"
+  },
+  {
+   "modulo": "lib/helpers/null.js",
+   "descricao": "Exports null as a stand-in module that bundlers substitute for Node-only files, letting browser builds drop the http adapter without breaking imports.",
+   "veredito": "verdadeira",
+   "motivo": "O módulo apenas exporta null, servindo de substituto (via mapeamento browser) para módulos só de Node.",
+   "trecho": "export default null;"
+  },
+  {
+   "modulo": "lib/helpers/parseHeaders.js",
+   "descricao": "Parses raw header text into an object, dropping duplicates for headers Node ignores and keeping names as plain data so a __proto__ name never triggers inherited setters.",
+   "veredito": "verdadeira",
+   "motivo": "Ignora duplicatas de cabeçalhos em ignoreDuplicateOf e usa Object.create(null) para que __proto__ seja apenas dado.",
+   "trecho": "const parsed = Object.create(null);"
+  },
+  {
+   "modulo": "lib/helpers/parseProtocol.js",
+   "descricao": "Extracts the lowercase scheme from a URL with a single regex and returns an empty string when none is present, so adapters can route by protocol without throwing.",
+   "veredito": "verdadeira",
+   "motivo": "A single regex extracts the scheme, lowercases it, and falls back to '' when there is no match.",
+   "trecho": "return (match && match[1].toLowerCase()) || '';"
+  },
+  {
+   "modulo": "lib/helpers/progressEventReducer.js",
+   "descricao": "Turns raw loaded counts into throttled progress events with clamped byte deltas, speed and time estimates, so progress listeners do not fire on every chunk.",
+   "veredito": "verdadeira",
+   "motivo": "The throttled reducer clamps loaded and bytes with Math.max/min, computes rate via the speedometer and estimated time, and calls the listener at most freq times per second.",
+   "trecho": "const progressBytes = Math.max(0, loaded - bytesNotified);"
+  },
+  {
+   "modulo": "lib/helpers/readBlob.js",
+   "descricao": "Yields a Blob's contents through stream, arrayBuffer or async iterator, whichever the runtime offers, so multipart code reads files without knowing the Blob implementation.",
+   "veredito": "verdadeira",
+   "motivo": "The async generator tries blob.stream, then arrayBuffer, then the async iterator (and finally yields the blob itself), depending on what the object provides.",
+   "trecho": "} else if (blob[asyncIterator]) {"
+  },
+  {
+   "modulo": "lib/helpers/resolveConfig.js",
+   "descricao": "Finalizes config before dispatch by building the full URL, basic auth, XSRF header and form headers, with same-origin and strict boolean checks against prototype gadgets.",
+   "veredito": "verdadeira",
+   "motivo": "resolveConfig builds the URL, sets the Basic auth header, handles FormData headers, and adds the XSRF header. It reads only own properties, and it applies a strict boolean check on withXSRFToken together with a same-origin check.",
+   "trecho": "withXSRFToken === true || (withXSRFToken == null && isURLSameOrigin(newConfig.url));"
+  },
+  {
+   "modulo": "lib/helpers/sanitizeHeaderValue.js",
+   "descricao": "Trims spaces and tabs and strips control characters from header values, with byte-string variants for fetch, so invalid values are cleaned before reaching the transport.",
+   "veredito": "verdadeira",
+   "motivo": "The helper trims SP/HTAB, removes C0/DEL characters, and has byte-string variants (sanitizeByteStringHeaderValue, toByteStringHeaderObject) that the fetch adapter uses.",
+   "trecho": "headers: toByteStringHeaderObject(headers.normalize()),"
+  },
+  {
+   "modulo": "lib/helpers/shouldBypassProxy.js",
+   "descricao": "Decides whether NO_PROXY rules cover a host by canonicalizing IPv4 shorthand, octal, hex and IPv4-mapped IPv6 forms, failing closed when parsing is ambiguous.",
+   "veredito": "verdadeira",
+   "motivo": "The code canonicalizes IPv4 shorthand, octal and hex forms and unmaps IPv4-mapped IPv6. It returns the input unchanged on ambiguous or invalid forms, so there is no bypass.",
+   "trecho": "const ipv4 = normalizeIPAddress(trimmed);"
+  },
+  {
+   "modulo": "lib/helpers/speedometer.js",
+   "descricao": "Computes bytes per second over a rolling ring buffer of samples, withholding the first reading until a minimum window passes, so reported rates are not inflated by startup.",
+   "veredito": "verdadeira",
+   "motivo": "The speedometer keeps ring buffers of bytes and timestamps, and returns undefined until min ms have passed since the first sample.",
+   "trecho": "if (now - firstSampleTS < min) {"
+  },
+  {
+   "modulo": "lib/helpers/spread.js",
+   "descricao": "Wraps a function so it receives an array as its argument list, letting callers destructure results from Promise.all without manually calling apply.",
+   "veredito": "verdadeira",
+   "motivo": "spread returns a wrapper that calls the callback with the array as its arguments via apply.",
+   "trecho": "return callback.apply(null, arr);"
+  },
+  {
+   "modulo": "lib/helpers/throttle.js",
+   "descricao": "Limits a function to a set frequency while keeping the latest trailing call, and exposes flush methods so pending progress updates are delivered at completion.",
+   "veredito": "verdadeira",
+   "motivo": "throttle limits calls to freq per second and stores the latest args for a trailing timer call. It also returns flush and flushWith.",
+   "trecho": "return [throttled, flush, flushWith];"
+  },
+  {
+   "modulo": "lib/helpers/toFormData.js",
+   "descricao": "Serializes nested objects into form data or URL search params with bracket or dot key notation and a depth cap of 100, so payloads round-trip with the reverse converter.",
+   "veredito": "verdadeira",
+   "motivo": "toFormData handles nested objects with bracket or dot keys (the dots option) and enforces maxDepth, which defaults to 100. formDataToJSON imports the same constant for symmetry.",
+   "trecho": "export const DEFAULT_FORM_DATA_MAX_DEPTH = 100;"
+  },
+  {
+   "modulo": "lib/helpers/toURLEncodedForm.js",
+   "descricao": "Serializes objects into application x-www-form-urlencoded bodies and encodes Buffers as base64 text, so form posts carry binary values without raw byte corruption.",
+   "veredito": "verdadeira",
+   "motivo": "toURLEncodedForm calls toFormData with a URLSearchParams target, and its visitor encodes Buffers as base64 strings when running on Node.",
+   "trecho": "this.append(key, value.toString('base64'));"
+  },
+  {
+   "modulo": "lib/helpers/trackStream.js",
+   "descricao": "Wraps a ReadableStream to report bytes read and fire a finish callback exactly once, re-chunking input to a fixed size, so fetch uploads expose progress without buffering.",
+   "veredito": "falsa",
+   "motivo": "trackStream does not re-chunk to a fixed size. streamChunk only splits chunks larger than chunkSize, and smaller chunks pass through unchanged and are never merged. Chunk sizes are capped, not fixed. The stream also uses highWaterMark 2.",
+   "trecho": "if (!chunkSize || len < chunkSize) {\n    yield chunk;"
+  },
+  {
+   "modulo": "lib/helpers/validator.js",
+   "descricao": "Checks config option types against a schema and emits one-time deprecation warnings for transitional flags, so misconfigured options fail with a clear AxiosError.",
+   "veredito": "verdadeira",
+   "motivo": "assertOptions checks types via the schema validators and throws AxiosError. The transitional validator warns once per option, tracked in deprecatedWarnings.",
+   "trecho": "if (version && !deprecatedWarnings[opt]) {"
+  },
+  {
+   "modulo": "lib/platform/browser/classes/Blob.js",
+   "descricao": "Exports the global Blob constructor or null when it is absent, letting browser builds detect Blob support through one platform import instead of touching globals directly.",
+   "veredito": "verdadeira",
+   "motivo": "The module default-exports the global Blob, or null when it is undefined.",
+   "trecho": "export default typeof Blob !== 'undefined' ? Blob : null;"
+  },
+  {
+   "modulo": "lib/platform/browser/classes/FormData.js",
+   "descricao": "Exports the global form data constructor or null when the browser lacks it, so serializers detect form support through a single platform import instead of typeof checks.",
+   "veredito": "verdadeira",
+   "motivo": "The module default-exports the global FormData, or null when it is undefined.",
+   "trecho": "export default typeof FormData !== 'undefined' ? FormData : null;"
+  },
+  {
+   "modulo": "lib/platform/browser/classes/URLSearchParams.js",
+   "descricao": "Exports the native URL search params class and falls back to the axios encoder when it is absent, so query serialization stays consistent in older browsers.",
+   "veredito": "verdadeira",
+   "motivo": "It exports the native URLSearchParams when present and otherwise falls back to the library's own AxiosURLSearchParams, which does the axios encoding.",
+   "trecho": "typeof URLSearchParams !== 'undefined' ? URLSearchParams : AxiosURLSearchParams"
+  },
+  {
+   "modulo": "lib/platform/browser/index.js",
+   "descricao": "Declares the browser platform flags, supported protocols and class bindings, so shared code can branch on environment without checking globals in each module.",
+   "veredito": "verdadeira",
+   "motivo": "It exports isBrowser: true, the classes (URLSearchParams, FormData, Blob) and the protocols list.",
+   "trecho": "protocols: ['http', 'https', 'file', 'blob', 'url', 'data'],"
+  },
+  {
+   "modulo": "lib/platform/common/utils.js",
+   "descricao": "Detects standard browser, web worker and React Native environments from window, document and navigator, so XSRF and form data paths enable only where they are safe.",
+   "veredito": "falsa",
+   "motivo": "Web workers are detected through WorkerGlobalScope, self and importScripts, not window, document or navigator. React Native is not detected as a standard browser. navigator.product is used to exclude ReactNative, NativeScript and NS from hasStandardBrowserEnv. The sentence misdescribes both mechanisms.",
+   "trecho": "typeof WorkerGlobalScope !== 'undefined' &&"
+  },
+  {
+   "modulo": "lib/platform/index.js",
+   "descricao": "Merges shared environment checks with the Node platform descriptor into one object, giving every module a single platform import that bundlers can redirect for browsers.",
+   "veredito": "verdadeira",
+   "motivo": "It spreads the common utils and the node platform into one default export. That is the single platform import, and the node/index.js it points to is the file a bundler can redirect to the browser one.",
+   "trecho": "...utils,\n  ...platform,"
+  },
+  {
+   "modulo": "lib/platform/node/classes/Buffer.js",
+   "descricao": "Wraps Buffer creation behind a feature check so the form serializer builds byte payloads only where Buffer exists, keeping call sites free of typeof guards.",
+   "veredito": "verdadeira",
+   "motivo": "The module exposes isBufferAvailable(), which checks typeof Buffer, and from(), which calls Buffer.from. Callers therefore avoid their own typeof guards.",
+   "trecho": "return typeof Buffer !== 'undefined';"
+  },
+  {
+   "modulo": "lib/platform/node/classes/FormData.js",
+   "descricao": "Re-exports the form-data package as the Node form implementation, giving server requests multipart support without depending on a global constructor.",
+   "veredito": "verdadeira",
+   "motivo": "It imports form-data and re-exports it as the Node FormData class.",
+   "trecho": "import FormData from 'form-data';"
+  },
+  {
+   "modulo": "lib/platform/node/classes/URLSearchParams.js",
+   "descricao": "Re-exports the URL search params class from Node's url module, so server-side query serialization uses the same class the runtime itself provides.",
+   "veredito": "verdadeira",
+   "motivo": "It re-exports url.URLSearchParams from Node's url module.",
+   "trecho": "export default url.URLSearchParams;"
+  },
+  {
+   "modulo": "lib/platform/node/index.js",
+   "descricao": "Provides Node-specific classes, the protocol list and a crypto-based string generator for multipart boundaries, using randomFillSync rather than Math.random for unpredictability.",
+   "veredito": "verdadeira",
+   "motivo": "It provides the node classes, the protocols list and generateString, which fills random values with crypto.randomFillSync and does not use Math.random.",
+   "trecho": "crypto.randomFillSync(randomValues);"
+  },
+  {
+   "modulo": "lib/utils.js",
+   "descricao": "Supplies type checks, safe property access and object iteration used across the library, with prototype-boundary checks that stop inherited polluted keys from being copied.",
+   "veredito": "verdadeira",
+   "motivo": "It provides type checks and iteration helpers. It also has pollution-safe access: isPrototypeBoundary stops traversal at Object.prototype, hasOwnProperty is used for own-property checks, and merge skips __proto__, constructor and prototype keys.",
+   "trecho": "obj === Object.prototype || (!source && prototype === null);"
+  }
+ ]
+}

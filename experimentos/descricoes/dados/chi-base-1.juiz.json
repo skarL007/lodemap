@@ -1,0 +1,262 @@
+{
+ "contagem": {
+  "verdadeira": 31,
+  "falsa": 5,
+  "vaga": 0,
+  "sem_resposta": 0
+ },
+ "itens": [
+  {
+   "modulo": "chain.go",
+   "descricao": "Builds a single http.Handler by wrapping the endpoint in a middleware stack in declared order, skipping the wrapping entirely when the stack is empty.",
+   "veredito": "verdadeira",
+   "motivo": "chain() returns the endpoint unchanged when there are no middlewares. Otherwise it wraps from the last middleware to the first, so the first declared is outermost.",
+   "trecho": "if len(middlewares) == 0 {\n\t\treturn endpoint"
+  },
+  {
+   "modulo": "chi.go",
+   "descricao": "Exposes NewRouter, the Router and Routes interfaces, and the Middlewares slice type that the other helpers share as their common entry point.",
+   "veredito": "verdadeira",
+   "motivo": "chi.go defines NewRouter, the Router and Routes interfaces and the Middlewares slice type. chain.go uses Middlewares as the receiver for its methods.",
+   "trecho": "type Middlewares []func(http.Handler) http.Handler"
+  },
+  {
+   "modulo": "context.go",
+   "descricao": "Stores route patterns, URL parameters and the optional routing path on the request context, and deep-copies reference fields in Clone so sub-router lookups stay isolated.",
+   "veredito": "falsa",
+   "motivo": "Context does hold route patterns, URL params and RoutePath. But Clone's stated purpose is to let a context be used outside the request lifecycle, for example in a goroutine that outlives the handler. It detaches parentCtx and copies slices so the pooled original can be reset. Nothing in the code relates it to sub-router lookups.",
+   "trecho": "// Clone a routing context so that it may be used outside of the request/response\n// lifecycle, e.g. in a goroutine that outlives the request handler."
+  },
+  {
+   "modulo": "middleware/basic_auth.go",
+   "descricao": "Rejects requests whose Basic credentials are missing or wrong, comparing passwords in constant time to avoid timing leaks, and sends a WWW-Authenticate challenge with the realm.",
+   "veredito": "verdadeira",
+   "motivo": "The middleware rejects a request when r.BasicAuth() fails, the user is unknown, or the password is wrong. It compares passwords with subtle.ConstantTimeCompare. On failure it sets a WWW-Authenticate Basic realm header and returns 401.",
+   "trecho": "subtle.ConstantTimeCompare([]byte(pass), []byte(credPass)) != 1"
+  },
+  {
+   "modulo": "middleware/clean_path.go",
+   "descricao": "Collapses duplicate slashes in the routing path with path.Clean, so //users//1 and /users/1 reach the same route without altering the original request URL.",
+   "veredito": "verdadeira",
+   "motivo": "CleanPath applies path.Clean to the raw or normal URL path and stores the result in rctx.RoutePath. r.URL is not modified, so //users//1 and /users/1 route the same way.",
+   "trecho": "rctx.RoutePath = path.Clean(routePath)"
+  },
+  {
+   "modulo": "middleware/client_ip.go",
+   "descricao": "Derives the client IP only from headers the proxy overwrites or from counted trusted proxy hops, then stores it in context so spoofed X-Forwarded-For values are not believed.",
+   "veredito": "falsa",
+   "motivo": "The word 'only' is wrong. Besides overwritten headers (ClientIPFromHeader) and a counted number of proxies (ClientIPFromXFFTrustedProxies), the file has ClientIPFromXFF, which matches the chain against trusted CIDR prefixes. It also has ClientIPFromRemoteAddr, which uses the TCP peer address with no header at all.",
+   "trecho": "func ClientIPFromRemoteAddr(h http.Handler) http.Handler {"
+  },
+  {
+   "modulo": "middleware/compress.go",
+   "descricao": "Encodes response bodies according to Accept-Encoding but only for content types on its allowlist, and it needs the handler to set Content-Type first to compress anything.",
+   "veredito": "verdadeira",
+   "motivo": "The encoder is chosen from Accept-Encoding. Compression is applied only if the response Content-Type is in allowedTypes or the wildcard set. That check runs in WriteHeader, so a handler that sets no Content-Type gets no compression.",
+   "trecho": "if !cw.isCompressible() {\n\t\tcw.compressible = false"
+  },
+  {
+   "modulo": "middleware/content_charset.go",
+   "descricao": "Returns 415 when the request Content-Type charset is not in the allowed list, while letting bodiless requests and quoted charset values through untouched.",
+   "veredito": "verdadeira",
+   "motivo": "It returns 415 when the charset is not in the list. Requests with ContentLength == 0 pass. mime.ParseMediaType handles quoted charset values, so charset=\"UTF-8\" is accepted.",
+   "trecho": "if r.ContentLength == 0 {"
+  },
+  {
+   "modulo": "middleware/content_encoding.go",
+   "descricao": "Returns 415 when any request Content-Encoding falls outside the allowed list, skipping the check for requests that carry no body.",
+   "veredito": "verdadeira",
+   "motivo": "It loops over all Content-Encoding header values and returns 415 if any one is not in the allowed set. It skips the check when ContentLength == 0.",
+   "trecho": "w.WriteHeader(http.StatusUnsupportedMediaType)"
+  },
+  {
+   "modulo": "middleware/content_type.go",
+   "descricao": "Sets a fixed response header for each request and returns 415 when the request Content-Type is not on the allowlist, skipping the check for empty bodies.",
+   "veredito": "verdadeira",
+   "motivo": "The file has SetHeader, which sets a fixed response header on each request, and AllowContentType, which returns 415 when the media type is not allowed. AllowContentType skips the check when ContentLength == 0.",
+   "trecho": "w.Header().Set(key, value)"
+  },
+  {
+   "modulo": "middleware/deprecation.go",
+   "descricao": "Adds a Deprecation header with a Structured Field date and optional Link values per RFC 9745, so clients learn a route is retiring while it keeps working normally.",
+   "veredito": "verdadeira",
+   "motivo": "It sets Deprecation to '@<unix>', a Structured Field Date per RFC 9745, and adds each link as a Link header. It then calls next, so the route keeps working.",
+   "trecho": "value := \"@\" + strconv.FormatInt(deprecatedAt.Unix(), 10)"
+  },
+  {
+   "modulo": "middleware/get_head.go",
+   "descricao": "Routes an undefined HEAD request to the GET handler by looking ahead in a temporary routing context, so handlers do not need a separate HEAD registration.",
+   "veredito": "verdadeira",
+   "motivo": "For HEAD requests it builds a temporary route context and calls Routes.Match for HEAD. If there is no match, it sets RouteMethod to GET so the GET handler serves the request.",
+   "trecho": "if !rctx.Routes.Match(tctx, \"HEAD\", routePath) {"
+  },
+  {
+   "modulo": "middleware/heartbeat.go",
+   "descricao": "Answers GET or HEAD requests to one fixed path with 200 and a plain body before routing runs, so load balancers can probe liveness without touching any route.",
+   "veredito": "verdadeira",
+   "motivo": "Para GET/HEAD com o path igual (EqualFold) ao endpoint, responde 200 com Content-Type text/plain e corpo \".\" sem chamar o próximo handler; os demais requests seguem adiante.",
+   "trecho": "if (r.Method == \"GET\" || r.Method == \"HEAD\") && strings.EqualFold(r.URL.Path, endpoint) {"
+  },
+  {
+   "modulo": "middleware/logger.go",
+   "descricao": "Logs the start and end of each request with status, size and latency, colorizing output only when stdout is a terminal, and it must sit before the recoverer.",
+   "veredito": "falsa",
+   "motivo": "Não há detecção de terminal. A cor é ligada por padrão e desligada só quando runtime.GOOS == \"windows\". Redirecionar stdout para arquivo em Linux continua colorindo. O resto (início/fim, status, bytes, latência, ficar antes do Recoverer) está correto.",
+   "trecho": "if runtime.GOOS == \"windows\" {\n\t\t\tcolor = false"
+  },
+  {
+   "modulo": "middleware/maybe.go",
+   "descricao": "Runs the wrapped middleware only when a predicate on the request returns true, otherwise passing the request straight to the next handler in the stack.",
+   "veredito": "verdadeira",
+   "motivo": "Envolve o middleware mw e só chama wrapped se maybeFn(r) for true; caso contrário chama next diretamente.",
+   "trecho": "if maybeFn(r) {\n\t\t\t\twrapped.ServeHTTP(w, r)"
+  },
+  {
+   "modulo": "middleware/middleware.go",
+   "descricao": "Turns a plain http.Handler into a middleware that ignores the downstream handler and serves the given one instead, bridging existing handlers into a stack.",
+   "veredito": "verdadeira",
+   "motivo": "New devolve um middleware que ignora next e serve h.",
+   "trecho": "h.ServeHTTP(w, r)"
+  },
+  {
+   "modulo": "middleware/nocache.go",
+   "descricao": "Sets Expires, Cache-Control and Pragma headers to epoch and no-store values and deletes ETag headers, so upstream proxies and browsers never cache the responses.",
+   "veredito": "verdadeira",
+   "motivo": "Define Expires (epoch), Cache-Control, Pragma e X-Accel-Expires na resposta, e apaga ETag (e cabeçalhos condicionais If-*) do cabeçalho do request, para evitar respostas 304 e cache. A remoção ocorre no request, mas a afirmação literal vale.",
+   "trecho": "\"Expires\":         epoch,"
+  },
+  {
+   "modulo": "middleware/page_route.go",
+   "descricao": "Serves a fixed handler for one static GET path at the middleware level, matching case-insensitively and passing every other request down to the next handler.",
+   "veredito": "verdadeira",
+   "motivo": "Se o método é GET e o path coincide ignorando maiúsculas/minúsculas, serve o handler fixo; senão chama next.",
+   "trecho": "if r.Method == \"GET\" && strings.EqualFold(r.URL.Path, path) {"
+  },
+  {
+   "modulo": "middleware/path_rewrite.go",
+   "descricao": "Replaces the first occurrence of a substring in the request URL path before routing, so legacy prefixes map onto current routes without changing the registered patterns.",
+   "veredito": "verdadeira",
+   "motivo": "Usa strings.Replace com n=1 sobre r.URL.Path antes de chamar next, trocando só a primeira ocorrência.",
+   "trecho": "r.URL.Path = strings.Replace(r.URL.Path, old, new, 1)"
+  },
+  {
+   "modulo": "middleware/profiler.go",
+   "descricao": "Mounts pprof, expvar and the goroutine and heap profiles under a sub-router with no-cache headers, and it is excluded from TinyGo builds by a build tag.",
+   "veredito": "verdadeira",
+   "motivo": "Profiler() cria um sub-router chi com NoCache e monta pprof, expvar (/vars) e os perfis goroutine e heap. O arquivo tem a build tag !tinygo.",
+   "trecho": "//go:build !tinygo"
+  },
+  {
+   "modulo": "middleware/realip.go",
+   "descricao": "Overwrites RemoteAddr from True-Client-IP, X-Real-IP or X-Forwarded-For without checking the sender, which is spoof-prone, so callers should move to the client IP helpers.",
+   "veredito": "verdadeira",
+   "motivo": "RealIP sobrescreve r.RemoteAddr com True-Client-IP, X-Real-IP ou X-Forwarded-For, nessa ordem, sem verificar quem enviou. O comentário Deprecated manda usar os helpers ClientIP*.",
+   "trecho": "r.RemoteAddr = rip"
+  },
+  {
+   "modulo": "middleware/recoverer.go",
+   "descricao": "Catches panics from downstream handlers, logs a stack trace with the request ID and returns 500, but re-raises http.ErrAbortHandler so deliberate aborts stay silent.",
+   "veredito": "falsa",
+   "motivo": "Recoverer captura o pânico, devolve 500 e repropaga http.ErrAbortHandler sem log. Porém o stack trace impresso (via logEntry.Panic ou PrintPrettyStack) não inclui o ID da requisição; o Recoverer nunca chama GetReqID.",
+   "trecho": "logEntry.Panic(rvr, debug.Stack())"
+  },
+  {
+   "modulo": "middleware/request_id.go",
+   "descricao": "Assigns each request a unique ID built from a random prefix and an atomic counter, or reuses the incoming X-Request-Id header, and stores it in the request context.",
+   "veredito": "verdadeira",
+   "motivo": "Reutiliza o cabeçalho X-Request-Id se existir. Caso contrário monta prefixo (host/random) mais contador atômico e guarda o ID no contexto.",
+   "trecho": "requestID = fmt.Sprintf(\"%s-%06d\", prefix, myid)"
+  },
+  {
+   "modulo": "middleware/request_size.go",
+   "descricao": "Caps the request body size by wrapping it in http.MaxBytesReader, so oversized uploads fail on read instead of consuming server memory.",
+   "veredito": "verdadeira",
+   "motivo": "Troca r.Body por http.MaxBytesReader com o limite dado, então corpos grandes falham na leitura.",
+   "trecho": "r.Body = http.MaxBytesReader(w, r.Body, bytes)"
+  },
+  {
+   "modulo": "middleware/route_headers.go",
+   "descricao": "Chooses a middleware stack per request by matching a header such as Host or Origin against patterns with wildcards, falling back to a default when nothing matches.",
+   "veredito": "verdadeira",
+   "motivo": "HeaderRouter maps lowercase header names to routes with wildcard Patterns (prefix/suffix around '*'), runs the first matching middleware, and falls back to the \"*\" default route (or next) otherwise.",
+   "trecho": "matcher.Middleware(next).ServeHTTP(w, r)"
+  },
+  {
+   "modulo": "middleware/strip.go",
+   "descricao": "Removes trailing slashes so routing continues, or redirects them away, and strips a fixed prefix from the path, normalizing backslashes to block open redirect tricks.",
+   "veredito": "verdadeira",
+   "motivo": "StripSlashes rewrites the path and continues; RedirectSlashes replaces backslashes with '/' and issues a 301 to the path without the trailing slash; StripPrefix wraps http.StripPrefix.",
+   "trecho": "path = strings.ReplaceAll(path, `\\`, `/`)"
+  },
+  {
+   "modulo": "middleware/sunset.go",
+   "descricao": "Sends a Sunset header with an HTTP-date per RFC 8594 to announce when a route will stop working, and panics on a zero date the same way Deprecation does.",
+   "veredito": "verdadeira",
+   "motivo": "Sets the Sunset header with sunsetAt formatted as http.TimeFormat (HTTP-date) and panics if sunsetAt is zero, as Deprecation does with deprecatedAt.",
+   "trecho": "panic(\"middleware.Sunset: sunsetAt must not be zero\")"
+  },
+  {
+   "modulo": "middleware/supress_notfound.go",
+   "descricao": "Returns 404 immediately when the route is unknown, before the rest of the middleware runs, so bot scans never reach logging or expensive handlers.",
+   "veredito": "verdadeira",
+   "motivo": "It checks whether the router matches method and path. If not, it calls the router's NotFoundHandler (404 by default) and does not call next, so later middleware does not run. The doc comment states the purpose about bot 404s and logs.",
+   "trecho": "router.NotFoundHandler().ServeHTTP(w, r)"
+  },
+  {
+   "modulo": "middleware/terminal.go",
+   "descricao": "Detects whether stdout is a character device and provides ANSI color codes plus a colored write helper, so log output stays readable only on real terminals.",
+   "veredito": "verdadeira",
+   "motivo": "init() sets IsTTY when stdout has the ModeDevice and ModeCharDevice bits. The file defines ANSI color byte sequences and cW, which writes color codes only when IsTTY && useColor.",
+   "trecho": "if IsTTY && useColor {"
+  },
+  {
+   "modulo": "middleware/throttle.go",
+   "descricao": "Caps concurrent requests with a token pool and an optional timed backlog, sets Retry-After on rejected requests, and acts as a global ceiling rather than per-user rate limiting.",
+   "veredito": "falsa",
+   "motivo": "The token pool, timed backlog and global-ceiling parts are correct. Retry-After is not set on rejected requests in general. setRetryAfterHeaderIfNeeded returns early unless the optional RetryAfterFn is set, so Throttle and ThrottleBacklog never send the header.",
+   "trecho": "if t.retryAfterFn == nil {\n\t\treturn\n\t}"
+  },
+  {
+   "modulo": "middleware/timeout.go",
+   "descricao": "Cancels the request context after a set duration and sends 504 Gateway Timeout, but the cut-off only takes effect if the handler itself observes ctx.Done.",
+   "veredito": "verdadeira",
+   "motivo": "It wraps the context with context.WithTimeout. A deferred func writes 504 if ctx.Err() is DeadlineExceeded. The handler is not interrupted, so it must watch ctx.Done itself.",
+   "trecho": "w.WriteHeader(http.StatusGatewayTimeout)"
+  },
+  {
+   "modulo": "middleware/url_format.go",
+   "descricao": "Parses an extension such as .json from the URL path, stores it in context under a dedicated key, and trims it so routes do not need an extension parameter.",
+   "veredito": "verdadeira",
+   "motivo": "It finds the last '.' in the final path segment, stores the text after it in the context under URLFormatCtxKey, and sets rctx.RoutePath to the path without the extension.",
+   "trecho": "r = r.WithContext(context.WithValue(ctx, URLFormatCtxKey, format))"
+  },
+  {
+   "modulo": "middleware/value.go",
+   "descricao": "Adds a key and value to the request context chain for downstream handlers by copying the request with the new context attached.",
+   "veredito": "verdadeira",
+   "motivo": "WithValue calls r.WithContext(context.WithValue(...)) with the given key and value, then calls next with the new request.",
+   "trecho": "r = r.WithContext(context.WithValue(r.Context(), key, val))"
+  },
+  {
+   "modulo": "middleware/wrap_writer.go",
+   "descricao": "Wraps the ResponseWriter to record status and bytes written and optionally tee the body, while preserving Flusher and Hijacker support according to protocol version.",
+   "veredito": "verdadeira",
+   "motivo": "basicWriter records the status code and byte count and supports Tee and Discard. NewWrapResponseWriter chooses a Flusher, Hijacker or ReaderFrom variant for HTTP/1 and a Flusher and Pusher variant for HTTP/2, depending on protoMajor.",
+   "trecho": "if protoMajor == 2 {"
+  },
+  {
+   "modulo": "mux.go",
+   "descricao": "Holds the middleware stack and the radix router, parses request paths, records URL params, and implements http.Handler so it plugs straight into the standard library.",
+   "veredito": "verdadeira",
+   "motivo": "Mux holds the middleware stack and the radix tree (*node). It gets a pooled routing Context, routeHTTP finds the route, and the URL params are recorded in the context. It implements ServeHTTP, so it is an http.Handler.",
+   "trecho": "func (mx *Mux) ServeHTTP(w http.ResponseWriter, r *http.Request) {"
+  },
+  {
+   "modulo": "tree.go",
+   "descricao": "Stores routes in a radix trie with static, param, regexp and catch-all nodes, keeping lookups fast as the route count grows and supporting custom HTTP methods.",
+   "veredito": "verdadeira",
+   "motivo": "The tree has node types ntStatic, ntRegexp, ntParam and ntCatchAll in a radix trie, with children indexed by type. RegisterMethod adds custom HTTP methods.",
+   "trecho": "func RegisterMethod(method string) {"
+  }
+ ]
+}

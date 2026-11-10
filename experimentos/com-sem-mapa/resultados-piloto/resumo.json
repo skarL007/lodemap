@@ -1,0 +1,108 @@
+{
+ "execucoes": 4,
+ "falhas": [],
+ "tarefas": 2,
+ "por_tarefa": [
+  {
+   "tarefa": "C1",
+   "tipo": "localizar",
+   "n": [
+    1,
+    1
+   ],
+   "tokens": [
+    22292,
+    20109
+   ],
+   "saida": [
+    791,
+    599
+   ],
+   "turnos": [
+    6,
+    4
+   ],
+   "seg": [
+    14.8,
+    9.0
+   ],
+   "recall": [
+    1.0,
+    1.0
+   ],
+   "errados": [
+    0,
+    0
+   ]
+  },
+  {
+   "tarefa": "A1",
+   "tipo": "localizar",
+   "n": [
+    1,
+    1
+   ],
+   "tokens": [
+    38576,
+    29765
+   ],
+   "saida": [
+    1002,
+    868
+   ],
+   "turnos": [
+    7,
+    6
+   ],
+   "seg": [
+    15.6,
+    12.0
+   ],
+   "recall": [
+    1.0,
+    1.0
+   ],
+   "errados": [
+    0,
+    0
+   ]
+  }
+ ],
+ "subgrupos": {
+  "localizar": {
+   "tarefas": 2,
+   "mediana_razao_tokens": 1.202,
+   "recall": [
+    1.0,
+    1.0
+   ],
+   "errados": [
+    0,
+    0
+   ]
+  }
+ },
+ "H1": {
+  "tarefas_com_menos_tokens_em_A": 0,
+  "p_sinal": 1.0,
+  "mediana_razao_tokens_A_sobre_B": 1.202,
+  "demonstrada": false
+ },
+ "H2": {
+  "recall_medio": [
+   1.0,
+   1.0
+  ],
+  "errados_medio": [
+   0,
+   0
+  ],
+  "demonstrada": true
+ },
+ "H3": {
+  "tarefas_A_melhor": 0,
+  "tarefas_A_pior": 0,
+  "p_sinal": 1.0,
+  "demonstrada": false
+ }
+}

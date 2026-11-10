@@ -1,0 +1,88 @@
+{
+ "conferidas": 72,
+ "componentes": 72,
+ "falsas": [
+  {
+   "modulo": "lib/adapters/xhr.js",
+   "descricao": "Sends browser requests through XMLHttpRequest, adding XSRF cookie headers and a Firefox status-zero fallback that settles navigation-canceled requests as empty successes.",
+   "afirmacao": "The sentence says the Firefox status-zero fallback settles navigation-canceled requests as empty successes. The code does the opposite: when request.status is 0 and the URL is not file:, onloadend rejects with an AxiosError ECONNABORTED ('Request aborted'). Only file: URLs with status 0 proceed to settle() as a success.",
+   "correcao": "Sends browser requests through XMLHttpRequest, adds XSRF cookie headers, and rejects status-zero loads with ECONNABORTED unless the URL uses the file: scheme."
+  },
+  {
+   "modulo": "lib/core/assertParamsAcyclic.js",
+   "descricao": "Walks params with an explicit stack to reject circular references before merging, so a self-referencing params object fails with ERR_BAD_OPTION_VALUE instead of exhausting the call stack.",
+   "afirmacao": "The sentence says the acyclic check runs before merging, but mergeParams calls assertParamsAcyclic only after it has built the copied result, so the check runs after the copy step.",
+   "correcao": "Walks params with an explicit stack to reject circular references after mergeParams copies them, throwing ERR_BAD_OPTION_VALUE rather than recursing."
+  },
+  {
+   "modulo": "lib/core/dispatchRequest.js",
+   "descricao": "Runs request transforms, selects the adapter, checks cancellation and times adapter execution with a monotonic clock, so each request reports elapsed time that wall-clock jumps cannot skew.",
+   "afirmacao": "The sentence claims a monotonic clock always times the adapter, but resolveClock falls back to Date.now (a wall clock) when performance.now is unavailable, so skew is not prevented in that case.",
+   "correcao": "Times adapter execution with performance.now() when available, falling back to Date.now() and clamping negative elapsed time to zero."
+  },
+  {
+   "modulo": "lib/defaults/index.js",
+   "descricao": "Defines the default config, including JSON parsing, form serialization and validateStatus, and reads only own properties so prototype pollution cannot inject defaults.",
+   "afirmacao": "The sentence says defaults read only own properties, but the code reads some values directly, such as transitional.forcedJSONParsing, so the own-property rule does not apply to every read.",
+   "correcao": "Defines the default config for JSON parsing, form serialization and validateStatus, reading some optional settings through an own-property helper."
+  },
+  {
+   "modulo": "lib/helpers/AxiosTransformStream.js",
+   "descricao": "Throttles a Node stream to a maximum byte rate and emits progress per time window, so transfers can be capped without buffering the whole payload in memory.",
+   "afirmacao": "The sentence says progress is emitted per time window, but pushChunk emits progress for every pushed chunk; the time window only governs rate throttling.",
+   "correcao": "Throttles a Node stream to a maximum byte rate and emits progress for each pushed chunk, so transfers can be capped without buffering the whole payload."
+  },
+  {
+   "modulo": "lib/helpers/buildURL.js",
+   "descricao": "Appends serialized params to a URL with a custom encoder and reads serializer options only from own properties, so polluted prototypes cannot change the query output.",
+   "afirmacao": "The sentence says serializer options are read only from own properties, but the code uses getSafeProp and its comment states that prototype methods on class or template objects are also honored.",
+   "correcao": "Appends serialized params to a URL with a custom encoder, reading serializer options via getSafeProp so values injected onto Object.prototype are ignored."
+  },
+  {
+   "modulo": "lib/helpers/deprecatedMethod.js",
+   "descricao": "Prints a one-line console warning for deprecated methods, naming the replacement and docs link, and swallows console failures so a warning never breaks a request.",
+   "afirmacao": "The sentence says the warning is one line naming the replacement and docs link, but when docs is passed a second console.warn prints the docs link separately.",
+   "correcao": "Prints a deprecation warning naming the replacement, then a separate warning with the docs link when given, and swallows any exception thrown."
+  }
+ ],
+ "incertas": 0,
+ "chamadas": [
+  {
+   "itens": 8,
+   "conferir": true,
+   "input": 2,
+   "cache_criado": 23835,
+   "cache_lido": 0,
+   "output": 3646,
+   "turnos": 2,
+   "seg": 16.9
+  },
+  {
+   "itens": 32,
+   "conferir": true,
+   "input": 2,
+   "cache_criado": 42185,
+   "cache_lido": 942,
+   "output": 11140,
+   "turnos": 2,
+   "seg": 46.1
+  },
+  {
+   "itens": 32,
+   "conferir": true,
+   "input": 2,
+   "cache_criado": 32128,
+   "cache_lido": 942,
+   "output": 9311,
+   "turnos": 2,
+   "seg": 40.0
+  }
+ ],
+ "tokens": {
+  "input": 6,
+  "cache_criado": 98148,
+  "cache_lido": 1884,
+  "output": 24097,
+  "total": 124135
+ }
+}

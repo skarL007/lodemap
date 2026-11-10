@@ -20,7 +20,7 @@ Referência completa. O `SKILL.md` cita só os comandos de cada passo.
 | `references/custo-equivalente.json` | modelo de custo medido (preços e rodadas) que o `plano` usa |
 | `references/modelagem-c4.md` | níveis, como cortar componentes, relações, visões, fluxos, status, tags, formato das métricas |
 | `scripts/esqueleto.py` | `rascunho` (decisões em JSON, com impressão digital semântica por módulo) , `pendencias` (o mesmo cálculo do rascunho, sem gravar nada: é o que o `lodemap_decidir.py` consulta) e `renderizar` (escreve o DSL e as visões estáticas) |
-| `scripts/descrever.py` | rota enxuta: nome, descrição e área dos componentes pendentes numa chamada `claude -p` (Haiku medium); módulo a revisar mantém nome e área e só troca a frase se ela ficou falsa; `--resumo` imprime uma linha, `--todos` refaz do zero |
+| `scripts/descrever.py` | rota enxuta: nome, descrição e área dos componentes pendentes numa chamada `claude -p` (Haiku medium); módulo a revisar mantém nome e área e só troca a frase se ela ficou falsa; cada frase traz evidência literal e passa por uma segunda chamada que lê o código e corrige ou rejeita a falsa (`--conferir <modelo>`, `--sem-conferir`); `--auditar` lista as falsas de um mapa existente sem mudar nada (saída 3 se achar); `--resumo` imprime uma linha, `--todos` refaz do zero |
 
 ## No projeto (`<arq>/scripts/`)
 

@@ -102,10 +102,13 @@ modelo:
    - **Fase B, componentes.** Primeiro a **rota enxuta** (padrão para nome, descrição e área):
      `python ~/.claude/skills/lodemap/scripts/descrever.py --arq <pasta>`. Ela chama o `claude -p` oficial (assinatura,
      nunca API) em Haiku medium, sem ferramentas nem MCP, com saída por JSON Schema e a área presa às áreas da fase A,
-     e manda uma ficha determinística por módulo; um gate reenvia só os reprovados, uma vez. Saída 0: tudo descrito.
+     e manda uma ficha determinística por módulo. Cada frase traz evidência copiada da ficha, e o gate reprova frase sem
+     evidência, genérica ou com nome de código que o módulo não tem; os reprovados são reenviados uma vez. Depois uma
+     segunda chamada Haiku lê o código de cada módulo e corrige ou rejeita a frase falsa (`--sem-conferir` desliga;
+     `--auditar` só lista as falsas de um mapa existente, sem mudar nada). Saída 0: tudo descrito.
      Saída 3 (ou `claude` fora do PATH): o que faltou está em `pendentes.descricoes_para_modelador`. Depois, um
      modelador por container (ou por bloco de até ~25 módulos) preenche container e status, confere **contra o
-     código** cada frase que veio com `descrito_por` (num mapa em Go, 6 de 35 afirmavam algo falso) e descreve só
+     código** cada frase que veio com `descrito_por` (com a conferência, 5 de 213 frases ainda eram falsas em chi e axios) e descreve só
      o que sobrou. Medição em `references/rota-enxuta.md`.
    - **Fase C, relações:** confere cada relação sugerida no código (`manter` true ou false, verbo, tecnologia),
      acrescenta as que o código não mostra (HTTP, subprocess, import tardio) com `manual: true`, para o próximo

@@ -1,0 +1,28 @@
+{
+ "alvos": 72,
+ "descritos": 72,
+ "revisados": 0,
+ "mantidos": 0,
+ "reenviados": 0,
+ "para_modelador": [],
+ "chamadas": [
+  {
+   "itens": 72,
+   "input": 2,
+   "cache_criado": 39008,
+   "cache_lido": 0,
+   "output": 17117,
+   "turnos": 2,
+   "seg": 64.9
+  }
+ ],
+ "simulado": false,
+ "sem_container_ou_status": 0,
+ "tokens": {
+  "input": 2,
+  "cache_criado": 39008,
+  "cache_lido": 0,
+  "output": 17117,
+  "total": 56127
+ }
+}

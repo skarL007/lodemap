@@ -81,8 +81,11 @@ measured yet.
 - **Measured cost, published with its caveats.** Every number below names the repository, the model and what was left
   out. Nothing here is a projection unless it says so.
 
-What Lodemap does **not** claim: that the map makes a coding agent faster or more accurate. That has not been
-measured (see [Limits](#limits)).
+What Lodemap does **not** claim: that the map makes a coding agent cheaper. This was measured and it does not. In a
+pre-registered experiment (96 runs, Sonnet, 16 navigation questions on chi and axios), the agent with the map spent
+the same tokens as the agent without it (median ratio 0.99). Its answers were not worse (recall 0.991 vs 0.977) and
+were slightly better on 3 "who depends on X" questions; that gain is not significant. See
+[experimentos/com-sem-mapa](experimentos/com-sem-mapa/RESULTADOS.md).
 
 ## Install
 
@@ -135,7 +138,13 @@ python scripts/instalar_gancho.py           # optional: update on every commit a
    relationship per pair with edges, decisions left blank.
 2. **Descriptions, by one lean call.** `descrever.py` fills name, one-sentence description and area with a single
    `claude -p` call (Haiku, no tools, JSON Schema output, the area restricted to the areas already decided). A
-   deterministic gate rejects generic or ungrounded sentences and retries only those, once.
+   deterministic gate rejects a sentence that:
+   - is generic;
+   - has no verbatim evidence;
+   - names code the module does not contain.
+
+   It retries only those, once. A second Haiku call then reads each module's code and corrects or rejects false
+   sentences (`--sem-conferir` skips it; `--auditar` checks an existing map without changing it).
 3. **Decisions, by the modeler.** The `lodemap-modelador` agent decides containers, areas, status and which suggested
    relationships are real, in separate phases with a fresh agent each, so context stays small.
 4. **Everything else, by script.** `esqueleto.py renderizar` writes the DSL and the static views; `atualizar.py`
@@ -204,10 +213,14 @@ the map language.
 
 ## Limits
 
-- **Not measured: whether the map helps an agent.** A study of repository context files
-  ([arXiv 2602.11988](https://arxiv.org/abs/2602.11988)) found they do not generally raise task success and add over
-  20% to inference cost; it did not test C4 maps. Lodemap offers documentation that stays current and a gate that
-  fails when the model drifts.
+- **The map does not make an agent cheaper.**
+  - **What was measured:** Sonnet with Read, Grep and Glob, answering 16 code-navigation questions on two repositories
+    of 35 and 69 modules. With the map and a pointer to it, the agent spent the same tokens as without the map, and its
+    accuracy did not get worse ([experimentos/com-sem-mapa](experimentos/com-sem-mapa/RESULTADOS.md)).
+  - **What was not measured:** editing tasks, other models, and large repositories.
+  - **A related study:** research on repository context files ([arXiv 2602.11988](https://arxiv.org/abs/2602.11988))
+    found that they do not generally raise task success. It did not test C4 maps.
+  - **What Lodemap offers:** documentation that stays current, and a gate that fails when the model drifts.
 - **Run end to end on Windows and on Linux; macOS is not.** On Linux (WSL Ubuntu 24.04, Python 3.12, Java 21, the
   real Structurizr CLI) the test suite passes (414 tests, 1 skipped), the full regeneration took 9 s on the axios
   map and 5 s on the chi map, the generated docs and inventories of axios came out byte for byte as on Windows
@@ -217,10 +230,14 @@ the map language.
 - **Cost was measured on few repositories**, of 22 to 98 modules. Two are public (axios and chi). Only the axios
   update was repeated (three runs); every other figure is one run. Monorepos and very large repositories are not
   measured.
-- **Descriptions written by the lean route can be wrong.** On chi (Go) the modeler checked all 35 sentences against
-  the code: 6 stated something false and 2 were vague, and it fixed them. That check costs model calls (the chi
-  map cost more than the axios map with half the modules). On axios the sentences were never checked this way. The
-  quality score measures form, not truth.
+- **Descriptions written by the lean route can still be wrong.**
+  - **Before the truth check:** a Sonnet judge reading the code found 15 false sentences of 108 (13.9%) on chi and
+    axios.
+  - **With the check:** 5 of 213 over four runs (2.3%).
+  - **Cost:** the check costs about 3.7 times the tokens of the description pass, about 325,000 tokens for both
+    repositories.
+  - The modeler still confirms sentences in phase B.
+  - Details are in [`experimentos/descricoes/RESULTADOS.md`](experimentos/descricoes/RESULTADOS.md).
 - **The fingerprint misses behavior that changes with no change of surface**: 3 of 178 changed files in the two
   audited repositories. See [references/digital-semantica.md](references/digital-semantica.md).
 - The quality gate compares against `references/baseline-qualidade.json`, the first map the skill produced. On your

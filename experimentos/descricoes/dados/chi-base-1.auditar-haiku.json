@@ -1,0 +1,78 @@
+{
+ "conferidas": 36,
+ "componentes": 36,
+ "falsas": [
+  {
+   "modulo": "context.go",
+   "descricao": "Stores route patterns, URL parameters and the optional routing path on the request context, and deep-copies reference fields in Clone so sub-router lookups stay isolated.",
+   "afirmacao": "The sentence says the Clone deep-copy exists so sub-router lookups stay isolated. The code's Clone doc says it exists so the context can be used outside the request/response lifecycle, e.g. in a goroutine. Sub-router isolation is not mentioned.",
+   "correcao": "Stores route patterns, URL parameters and an optional routing path on the request context, and deep-copies slice fields in Clone so the copy outlives the request."
+  },
+  {
+   "modulo": "middleware/client_ip.go",
+   "descricao": "Derives the client IP only from headers the proxy overwrites or from counted trusted proxy hops, then stores it in context so spoofed X-Forwarded-For values are not believed.",
+   "afirmacao": "The sentence says the IP is derived 'only' from overwritten headers or counted trusted proxy hops. The code also has ClientIPFromXFF (CIDR-trusted XFF walk) and ClientIPFromRemoteAddr (RemoteAddr), so the 'only' is contradicted.",
+   "correcao": "Derives the client IP from proxy-overwritten headers, CIDR-trusted X-Forwarded-For hops, counted proxy hops, or RemoteAddr, then stores it in context."
+  },
+  {
+   "modulo": "middleware/logger.go",
+   "descricao": "Logs the start and end of each request with status, size and latency, colorizing output only when stdout is a terminal, and it must sit before the recoverer.",
+   "afirmacao": "The sentence says the logger logs the start and end of each request. The code only calls entry.Write once in a defer at completion; NewLogEntry only builds a buffer and prints nothing. The ordering 'must sit before the recoverer' is a doc recommendation the code does not enforce.",
+   "correcao": "Logs each request once when it completes, with status, size and latency, colorizing output only when stdout is a TTY."
+  },
+  {
+   "modulo": "middleware/nocache.go",
+   "descricao": "Sets Expires, Cache-Control and Pragma headers to epoch and no-store values and deletes ETag headers, so upstream proxies and browsers never cache the responses.",
+   "afirmacao": "The sentence says ETag headers are deleted, implying response headers, and that proxies and browsers 'never' cache. The code deletes ETag and If-* headers from the request (r.Header), not the response, and the no-cache headers are advisory, so 'never' is not shown.",
+   "correcao": "Sets Expires, Cache-Control and Pragma response headers to no-cache values and deletes ETag and If-* headers from the request."
+  },
+  {
+   "modulo": "middleware/recoverer.go",
+   "descricao": "Catches panics from downstream handlers, logs a stack trace with the request ID and returns 500, but re-raises http.ErrAbortHandler so deliberate aborts stay silent.",
+   "afirmacao": "The sentence says the stack trace is logged with the request ID. The code calls logEntry.Panic or PrintPrettyStack, and printPrettyStack prints only the panic value and stack; no request ID is written there.",
+   "correcao": "Catches panics from downstream handlers, prints a stack trace, returns 500 unless the Connection header is Upgrade, and re-raises http.ErrAbortHandler unlogged."
+  },
+  {
+   "modulo": "middleware/supress_notfound.go",
+   "descricao": "Returns 404 immediately when the route is unknown, before the rest of the middleware runs, so bot scans never reach logging or expensive handlers.",
+   "afirmacao": "The sentence claims a 404 is always returned and that bot scans 'never' reach logging or expensive handlers. The code delegates to router.NotFoundHandler(), which may be custom, and the skip of later middleware only happens when this middleware is placed first, which the code does not enforce.",
+   "correcao": "Delegates unknown routes to the router's NotFoundHandler without calling the next handler, so placing it first skips later middleware for those requests."
+  },
+  {
+   "modulo": "middleware/throttle.go",
+   "descricao": "Caps concurrent requests with a token pool and an optional timed backlog, sets Retry-After on rejected requests, and acts as a global ceiling rather than per-user rate limiting.",
+   "afirmacao": "The sentence says Retry-After is set on rejected requests unconditionally. The code sets it only when RetryAfterFn is non-nil; the default Throttle leaves it unset.",
+   "correcao": "Caps concurrent requests with a token pool and optional timed backlog, and sets Retry-After on rejected requests only when RetryAfterFn is set."
+  }
+ ],
+ "incertas": 0,
+ "chamadas": [
+  {
+   "itens": 34,
+   "conferir": true,
+   "input": 2,
+   "cache_criado": 45199,
+   "cache_lido": 0,
+   "output": 13387,
+   "turnos": 2,
+   "seg": 51.9
+  },
+  {
+   "itens": 2,
+   "conferir": true,
+   "input": 2,
+   "cache_criado": 15423,
+   "cache_lido": 942,
+   "output": 1128,
+   "turnos": 2,
+   "seg": 8.8
+  }
+ ],
+ "tokens": {
+  "input": 4,
+  "cache_criado": 60622,
+  "cache_lido": 942,
+  "output": 14515,
+  "total": 76083
+ }
+}

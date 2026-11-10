@@ -1,0 +1,262 @@
+{
+ "contagem": {
+  "verdadeira": 35,
+  "falsa": 1,
+  "vaga": 0,
+  "sem_resposta": 0
+ },
+ "itens": [
+  {
+   "modulo": "chain.go",
+   "descricao": "Builds an ordered middleware stack around a final handler, returning a Middlewares slice that can wrap any http.Handler or http.HandlerFunc.",
+   "veredito": "verdadeira",
+   "motivo": "Chain() returns a Middlewares slice. Its Handler and HandlerFunc methods wrap a final http.Handler or http.HandlerFunc, and chain() applies the middlewares in order.",
+   "trecho": "func Chain(middlewares ...func(http.Handler) http.Handler) Middlewares {"
+  },
+  {
+   "modulo": "chi.go",
+   "descricao": "Declares the chi package entry point, the NewRouter constructor, the Router and Routes interfaces, and the Middlewares type.",
+   "veredito": "verdadeira",
+   "motivo": "The file has the package doc, NewRouter (which calls NewMux), the Router and Routes interfaces, and the Middlewares type.",
+   "trecho": "type Middlewares []func(http.Handler) http.Handler"
+  },
+  {
+   "modulo": "context.go",
+   "descricao": "Stores route patterns, URL parameters, and routing path overrides in a request context, with helpers to read URL params and clone the context.",
+   "veredito": "verdadeira",
+   "motivo": "Context holds RoutePatterns, URLParams and RoutePath/RouteMethod. The file provides URLParam, URLParamFromCtx and Clone, which deep-copies the slices.",
+   "trecho": "func (x *Context) Clone() *Context {"
+  },
+  {
+   "modulo": "middleware/basic_auth.go",
+   "descricao": "Checks HTTP Basic credentials against a static user map using constant-time password comparison and answers failures with 401 and a WWW-Authenticate challenge.",
+   "veredito": "verdadeira",
+   "motivo": "The middleware looks the user up in the creds map and compares the password with subtle.ConstantTimeCompare. On failure it sets WWW-Authenticate and writes 401.",
+   "trecho": "subtle.ConstantTimeCompare([]byte(pass), []byte(credPass)) != 1"
+  },
+  {
+   "modulo": "middleware/clean_path.go",
+   "descricao": "Collapses repeated slashes in the request path by applying path.Clean to the routing path before the next handler runs.",
+   "veredito": "verdadeira",
+   "motivo": "When RoutePath is empty, it takes RawPath or Path and sets rctx.RoutePath = path.Clean(...) before calling next. path.Clean collapses the repeated slashes.",
+   "trecho": "rctx.RoutePath = path.Clean(routePath)"
+  },
+  {
+   "modulo": "middleware/client_ip.go",
+   "descricao": "Stores the client IP from trusted proxy headers, X-Forwarded-For hops, or RemoteAddr in the request context, and reads it back with GetClientIP.",
+   "veredito": "verdadeira",
+   "motivo": "ClientIPFromHeader, ClientIPFromXFF, ClientIPFromXFFTrustedProxies and ClientIPFromRemoteAddr store a netip.Addr in the context under clientIPCtxKey. GetClientIP reads it back.",
+   "trecho": "func GetClientIP(ctx context.Context) string {"
+  },
+  {
+   "modulo": "middleware/compress.go",
+   "descricao": "Compresses response bodies for configured content types based on Accept-Encoding, with pluggable encoders registered through SetEncoder.",
+   "veredito": "verdadeira",
+   "motivo": "Compress picks an encoder from Accept-Encoding and compresses only responses whose Content-Type is allowed. Encoders are registered through Compressor.SetEncoder.",
+   "trecho": "func (c *Compressor) SetEncoder(encoding string, fn EncoderFunc) {"
+  },
+  {
+   "modulo": "middleware/content_charset.go",
+   "descricao": "Responds 415 when a body's Content-Type charset is not in the allowed list, always allowing requests without a body and accepting missing charsets only if \"\" is listed.",
+   "veredito": "verdadeira",
+   "motivo": "It returns 415 when the charset is not in the list. ContentLength == 0 is always allowed. A missing charset yields \"\", which matches only if \"\" is in the list.",
+   "trecho": "return slices.Contains(charsets, strings.ToLower(params[\"charset\"]))"
+  },
+  {
+   "modulo": "middleware/content_encoding.go",
+   "descricao": "Responds 415 when any Content-Encoding value on a request body is outside a configured allowlist, skipping requests with zero content length.",
+   "veredito": "verdadeira",
+   "motivo": "It skips the check when ContentLength is 0. Otherwise every Content-Encoding header value must be in the allowed set, or it writes 415.",
+   "trecho": "w.WriteHeader(http.StatusUnsupportedMediaType)"
+  },
+  {
+   "modulo": "middleware/content_type.go",
+   "descricao": "Sets a fixed response header and enforces an allowlist of request Content-Type values, answering 415 for unlisted types on non-empty bodies.",
+   "veredito": "verdadeira",
+   "motivo": "SetHeader sets a fixed response header. AllowContentType checks the request media type against an allowlist, skips empty bodies, and answers 415 otherwise.",
+   "trecho": "s, _, _ := strings.Cut(r.Header.Get(\"Content-Type\"), \";\")"
+  },
+  {
+   "modulo": "middleware/deprecation.go",
+   "descricao": "Adds a Deprecation header per RFC 9745 with a Structured Field Date and optional Link headers, and panics when the given deprecation time is zero.",
+   "veredito": "verdadeira",
+   "motivo": "It sets the Deprecation header to \"@<unix>\", which is the Structured Field Date format. It adds each link as a Link header and panics if deprecatedAt.IsZero().",
+   "trecho": "value := \"@\" + strconv.FormatInt(deprecatedAt.Unix(), 10)"
+  },
+  {
+   "modulo": "middleware/get_head.go",
+   "descricao": "Routes an unmatched HEAD request to the GET handler by running a look-ahead match on a temporary route context before continuing with the HEAD method.",
+   "veredito": "verdadeira",
+   "motivo": "For HEAD it makes a temporary context and calls Routes.Match for HEAD. If there is no match it sets RouteMethod to GET and continues with the request still a HEAD.",
+   "trecho": "if !rctx.Routes.Match(tctx, \"HEAD\", routePath) {"
+  },
+  {
+   "modulo": "middleware/heartbeat.go",
+   "descricao": "Answers GET and HEAD requests matching a configured path with a 200 text/plain response and skips the next handler, a probe for load balancers.",
+   "veredito": "verdadeira",
+   "motivo": "Para GET/HEAD com path igual ao endpoint (sem diferenciar maiúsculas), responde 200 text/plain com '.' e retorna sem chamar o próximo handler.",
+   "trecho": "if (r.Method == \"GET\" || r.Method == \"HEAD\") && strings.EqualFold(r.URL.Path, endpoint) {"
+  },
+  {
+   "modulo": "middleware/logger.go",
+   "descricao": "Logs each request once when it completes, with status, size, and duration through a pluggable LogFormatter, using color only when stdout is a TTY.",
+   "veredito": "falsa",
+   "motivo": "A cor não depende de o stdout ser um TTY. O init() só desativa a cor quando runtime.GOOS == \"windows\"; não há verificação de TTY. O resto (log único ao concluir, via LogFormatter) está certo.",
+   "trecho": "if runtime.GOOS == \"windows\" {\n\t\t\tcolor = false"
+  },
+  {
+   "modulo": "middleware/maybe.go",
+   "descricao": "Applies a wrapped middleware only when a request predicate returns true, otherwise passing the request straight to the next handler.",
+   "veredito": "verdadeira",
+   "motivo": "Se maybeFn(r) é verdadeiro, usa o handler envolvido por mw; caso contrário chama next diretamente.",
+   "trecho": "if maybeFn(r) {\n\t\t\t\t\twrapped.ServeHTTP(w, r)"
+  },
+  {
+   "modulo": "middleware/middleware.go",
+   "descricao": "Wraps a plain http.Handler as middleware, ignoring the next handler, and defines the unexported contextKey type for context values.",
+   "veredito": "verdadeira",
+   "motivo": "New converte um http.Handler em middleware que chama h.ServeHTTP e ignora next. O tipo contextKey não exportado está definido no mesmo arquivo.",
+   "trecho": "type contextKey struct {"
+  },
+  {
+   "modulo": "middleware/nocache.go",
+   "descricao": "Sets headers that stop upstream proxies and clients from caching the response, and deletes ETag and conditional headers from the request.",
+   "veredito": "verdadeira",
+   "motivo": "Define Expires, Cache-Control, Pragma e X-Accel-Expires na resposta e remove da requisição ETag, If-Modified-Since, If-Match, If-None-Match e outros cabeçalhos condicionais.",
+   "trecho": "r.Header.Del(v)"
+  },
+  {
+   "modulo": "middleware/page_route.go",
+   "descricao": "Serves a fixed handler for GET requests whose path matches a given value case-insensitively, passing all other requests to the next handler.",
+   "veredito": "verdadeira",
+   "motivo": "Só atende com o handler fixo quando o método é GET e o path coincide sem diferenciar maiúsculas (EqualFold). Todo o resto vai para next.",
+   "trecho": "if r.Method == \"GET\" && strings.EqualFold(r.URL.Path, path) {"
+  },
+  {
+   "modulo": "middleware/path_rewrite.go",
+   "descricao": "Replaces the first occurrence of a substring in the request URL path with a new value before passing the request to the next handler.",
+   "veredito": "verdadeira",
+   "motivo": "strings.Replace com n=1 troca apenas a primeira ocorrência em r.URL.Path e depois chama next.",
+   "trecho": "r.URL.Path = strings.Replace(r.URL.Path, old, new, 1)"
+  },
+  {
+   "modulo": "middleware/profiler.go",
+   "descricao": "Builds a chi subrouter that wraps every debug route in a no-cache middleware and redirects the root and /pprof paths to the /pprof/ index, for mounting under /debug.",
+   "veredito": "verdadeira",
+   "motivo": "Cria um subrouter chi com r.Use(NoCache), que cobre todas as rotas. A rota raiz redireciona para /pprof/ e /pprof redireciona para a versão com barra final. O subrouter é pensado para ser montado em /debug.",
+   "trecho": "r.Use(NoCache)"
+  },
+  {
+   "modulo": "middleware/realip.go",
+   "descricao": "Rewrites r.RemoteAddr from True-Client-IP, X-Real-IP, or X-Forwarded-For headers, and is deprecated because it trusts those headers whether or not the infrastructure sets them.",
+   "veredito": "verdadeira",
+   "motivo": "Reescreve r.RemoteAddr com True-Client-IP, X-Real-IP ou X-Forwarded-For, nessa ordem. O comentário Deprecated diz que isso é vulnerável porque os cabeçalhos são aceitos quer a infraestrutura os defina ou não.",
+   "trecho": "r.RemoteAddr = rip"
+  },
+  {
+   "modulo": "middleware/recoverer.go",
+   "descricao": "Recovers from panics in downstream handlers and logs a pretty stack trace, returning 500 only when Connection is not Upgrade, but re-panics http.ErrAbortHandler.",
+   "veredito": "verdadeira",
+   "motivo": "Recupera o panic e registra a pilha formatada. Escreve 500 apenas se Connection != \"Upgrade\" e relança http.ErrAbortHandler.",
+   "trecho": "if r.Header.Get(\"Connection\") != \"Upgrade\" {"
+  },
+  {
+   "modulo": "middleware/request_id.go",
+   "descricao": "Reuses the X-Request-Id request header when present, otherwise generates a unique ID from a host prefix and an atomic counter, readable through GetReqID.",
+   "veredito": "verdadeira",
+   "motivo": "Usa o cabeçalho X-Request-Id se existir. Senão gera prefixo (hostname/aleatório) mais um contador atômico, e GetReqID lê o valor do contexto.",
+   "trecho": "requestID = fmt.Sprintf(\"%s-%06d\", prefix, myid)"
+  },
+  {
+   "modulo": "middleware/request_size.go",
+   "descricao": "Caps every request body at a configured byte count by wrapping r.Body with http.MaxBytesReader before calling the next handler.",
+   "veredito": "verdadeira",
+   "motivo": "Envolve r.Body com http.MaxBytesReader usando o limite configurado antes de chamar o próximo handler.",
+   "trecho": "r.Body = http.MaxBytesReader(w, r.Body, bytes)"
+  },
+  {
+   "modulo": "middleware/route_headers.go",
+   "descricao": "Routes a request through different middleware stacks based on matching header values, with pattern matching and a default route for unmatched requests.",
+   "veredito": "verdadeira",
+   "motivo": "HeaderRouter maps lowercase header names to routes with wildcard Pattern matching (prefix/suffix via strings.Cut), and a \"*\" default route is used when nothing matches.",
+   "trecho": "matcher, ok := hr[\"*\"]"
+  },
+  {
+   "modulo": "middleware/strip.go",
+   "descricao": "Provides StripSlashes to drop trailing slashes before routing, RedirectSlashes to redirect them, and StripPrefix to remove a path prefix from the request.",
+   "veredito": "verdadeira",
+   "motivo": "StripSlashes removes one trailing slash from the route path, RedirectSlashes issues a 301 to the path without it, and StripPrefix delegates to http.StripPrefix.",
+   "trecho": "return http.StripPrefix(prefix, next)"
+  },
+  {
+   "modulo": "middleware/sunset.go",
+   "descricao": "Adds a Sunset header per RFC 8594 announcing when a route stops working, and panics when the sunset date is the zero time.",
+   "veredito": "verdadeira",
+   "motivo": "Sets the Sunset header in HTTP time format, cites RFC 8594, and panics at construction if sunsetAt.IsZero().",
+   "trecho": "panic(\"middleware.Sunset: sunsetAt must not be zero\")"
+  },
+  {
+   "modulo": "middleware/supress_notfound.go",
+   "descricao": "Checks the route table before the rest of the stack and answers unmatched requests with the router's not-found handler, skipping later middleware.",
+   "veredito": "verdadeira",
+   "motivo": "Uses rctx.Routes.Match on a fresh route context, and if there is no match calls router.NotFoundHandler() without calling next.",
+   "trecho": "match := rctx.Routes.Match(chi.NewRouteContext(), r.Method, r.URL.Path)"
+  },
+  {
+   "modulo": "middleware/terminal.go",
+   "descricao": "Detects whether stdout is a TTY with a character-device heuristic and writes colored text through cW, used by the logger and recoverer.",
+   "veredito": "verdadeira",
+   "motivo": "init sets IsTTY by checking that stdout's mode has the device and char-device bits; cW wraps Fprintf with color codes only if IsTTY and useColor; cW is called in logger.go and recoverer.go.",
+   "trecho": "IsTTY = fi.Mode()&m == m"
+  },
+  {
+   "modulo": "middleware/throttle.go",
+   "descricao": "Caps in-flight requests across all users, with optional backlog and timeout, and sets Retry-After on rejected requests when RetryAfterFn is configured.",
+   "veredito": "verdadeira",
+   "motivo": "Token channels cap in-flight requests globally (not per user), BacklogLimit and BacklogTimeout configure the queue, and Retry-After is set only when retryAfterFn is non-nil.",
+   "trecho": "if t.retryAfterFn == nil {"
+  },
+  {
+   "modulo": "middleware/timeout.go",
+   "descricao": "Cancels the request context after a timeout and returns 504 Gateway Timeout, relying on the handler to observe ctx.Done for the signal to take effect.",
+   "veredito": "verdadeira",
+   "motivo": "Wraps the context with WithTimeout and, in a defer, writes 504 if ctx.Err() is DeadlineExceeded; the handler must watch ctx.Done to stop early.",
+   "trecho": "w.WriteHeader(http.StatusGatewayTimeout)"
+  },
+  {
+   "modulo": "middleware/url_format.go",
+   "descricao": "Parses a trailing file extension from the request path into the context under URLFormatCtxKey and trims it from the routing path before continuing.",
+   "veredito": "verdadeira",
+   "motivo": "Extracts the extension after the last dot in the last path segment, stores it under URLFormatCtxKey, and trims it from rctx.RoutePath before calling next.",
+   "trecho": "rctx.RoutePath = path[:idx]"
+  },
+  {
+   "modulo": "middleware/value.go",
+   "descricao": "Stores a key and value pair on the request context chain for downstream handlers, returning a new request with the value attached.",
+   "veredito": "verdadeira",
+   "motivo": "WithValue builds a middleware that attaches the key/value to a new request context via r.WithContext(context.WithValue(...)) before calling next.",
+   "trecho": "r = r.WithContext(context.WithValue(r.Context(), key, val))"
+  },
+  {
+   "modulo": "middleware/wrap_writer.go",
+   "descricao": "Wraps an http.ResponseWriter to record status and bytes written, optionally teeing the body, and exposes Unwrap, plus Flush or Hijack when the underlying writer supports them.",
+   "veredito": "verdadeira",
+   "motivo": "basicWriter records status code and bytes, supports Tee and Unwrap, and the constructor picks Flush/Hijack variants only when the underlying writer implements those interfaces.",
+   "trecho": "if fl && hj && rf {"
+  },
+  {
+   "modulo": "mux.go",
+   "descricao": "Parses request paths, records URL params, and executes a chained middleware stack before the radix tree endpoint, implementing http.Handler for the standard library.",
+   "veredito": "verdadeira",
+   "motivo": "Mux.ServeHTTP is the http.Handler; it sets up a pooled routing context, runs the middleware chain built by updateRouteHandler, and routeHTTP then looks up the radix tree and sets URL params.",
+   "trecho": "mx.handler = chain(mx.middlewares, http.HandlerFunc(mx.routeHTTP))"
+  },
+  {
+   "modulo": "tree.go",
+   "descricao": "Stores routes in a radix trie with static, regexp, param, and catch-all node types, and supports registering custom HTTP methods through RegisterMethod.",
+   "veredito": "verdadeira",
+   "motivo": "nodeTyp defines static, regexp, param and catch-all node kinds in a radix tree, and RegisterMethod adds custom methods to methodMap.",
+   "trecho": "ntCatchAll                // /api/v1/*"
+  }
+ ]
+}

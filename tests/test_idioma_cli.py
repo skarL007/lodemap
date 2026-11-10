@@ -55,27 +55,20 @@ def test_usar_mapa_vale_para_as_chamadas_seguintes(tmp_path, monkeypatch):
     assert idioma.idioma() == "pt"
 
 
-@pytest.mark.parametrize("codigo,esperado", [("pt_BR", "pt"), ("pt-PT", "pt"), ("PT_BR.UTF-8", "pt"),
-                                             ("en_US", "en"), ("de_DE", "en"), ("fr", "en")])
-def test_sistema_pt_vira_pt_o_resto_vira_en(monkeypatch, codigo, esperado):
+@pytest.mark.parametrize("codigo", ["pt_BR", "en_US", "de_DE", "fr", ""])
+def test_lancamento_em_portugues_o_sistema_nao_decide(monkeypatch, codigo):
+    """Lançamento só em pt: sem LODEMAP_IDIOMA e sem mapa em en, sai pt em qualquer locale."""
     monkeypatch.delenv("LODEMAP_IDIOMA")
     _sem_sistema(monkeypatch, codigo)
-    assert idioma.idioma() == esperado
-
-
-def test_sem_nada_o_padrao_e_ingles(monkeypatch):
-    monkeypatch.delenv("LODEMAP_IDIOMA")
-    _sem_sistema(monkeypatch, "")
-    assert idioma.idioma() == "en"
+    assert idioma.idioma() == "pt"
 
 
 @pytest.mark.parametrize("ruim", ["", "fr", "xx", "português"])
 def test_valor_invalido_e_ignorado(tmp_path, monkeypatch, ruim):
-    _sem_sistema(monkeypatch, "pt_BR")
+    _sem_sistema(monkeypatch, "en_US")
     monkeypatch.setenv("LODEMAP_IDIOMA", ruim)
-    assert idioma.idioma(_mapa(tmp_path, ruim or "zz")) == "pt"  # cai no sistema
+    assert idioma.idioma(_mapa(tmp_path, ruim or "zz")) == "pt"  # cai no padrão
     monkeypatch.setenv("LODEMAP_IDIOMA", ruim)
-    _sem_sistema(monkeypatch, "")
     assert idioma.idioma(_mapa(tmp_path, "en")) == "en"  # cai no mapa
 
 
@@ -85,8 +78,8 @@ def test_mapa_ilegivel_nao_derruba(tmp_path, monkeypatch):
     arq = tmp_path / "arq"
     arq.mkdir()
     (arq / "lodemap.json").write_text("{não é json", encoding="utf-8")
-    assert idioma.idioma(arq) == "en"
-    assert idioma.idioma(tmp_path / "nao-existe") == "en"
+    assert idioma.idioma(arq) == "pt"
+    assert idioma.idioma(tmp_path / "nao-existe") == "pt"
 
 
 def test_codigo_do_sistema_le_as_variaveis_de_locale(monkeypatch):
@@ -288,14 +281,14 @@ def test_doctor_json_mantem_as_chaves_em_portugues(home, monkeypatch, capsys):
 
 def test_idioma_do_mapa_vale_para_o_comando_que_aponta_o_repo(tmp_path, monkeypatch, capsys):
     monkeypatch.delenv("LODEMAP_IDIOMA")
-    _sem_sistema(monkeypatch, "pt_BR")
+    _sem_sistema(monkeypatch, "en_US")
     repo = _repo(tmp_path)
     arq = repo / "docs" / "architecture" / "structurizr"
     arq.mkdir(parents=True)
     (arq / "lodemap.json").write_text(json.dumps({"idioma": "en"}), encoding="utf-8")
     assert cli.main(["plan", "--repo", str(repo)]) == 0
     assert "this plan spent 0 tokens" in capsys.readouterr().out
-    assert cli.main(["plano", "--repo", str(_repo(tmp_path / "outro"))]) == 0  # sem mapa: cai no sistema (pt)
+    assert cli.main(["plano", "--repo", str(_repo(tmp_path / "outro"))]) == 0  # sem mapa: pt, mesmo em locale en
     assert "este plano gastou 0 tokens" in capsys.readouterr().out
 
 

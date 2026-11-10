@@ -250,6 +250,18 @@ def test_validacao_continua_exigindo_secoes_e_status(tmp_path):
     assert any("status 'aceito' invalid" in e for e in erros_en) and any("missing section '## Alternatives'" in e for e in erros_en)
 
 
+def test_lancamento_em_portugues_esconde_o_seletor_de_idioma():
+    """Leitor e explorador: seletor PT | EN escondido e escolha guardada ignorada até um lançamento em inglês."""
+    explorador = INDEX.parent.parent / "explorador" / "index.html"
+    for pagina, ident in ((INDEX, 'id="lmIdioma" hidden'), (explorador, 'id="seletorIdioma" hidden')):
+        t = pagina.read_text(encoding="utf-8")
+        assert ident in t, pagina
+        assert re.search(r"SELETOR_IDIOMA = false;", t), pagina
+        assert ".lm-idioma[hidden] { display: none; }" in t, pagina
+        assert re.search(r"if \(SELETOR_IDIOMA\) try \{ \w+ = localStorage\.getItem", t) or \
+            re.search(r"if \(SELETOR_IDIOMA\) try \{ const g = localStorage\.getItem", t), pagina
+
+
 def test_leitor_traz_dicionario_pt_en_completo_e_seletor():
     t = INDEX.read_text(encoding="utf-8")
     assert 'CHAVE_IDIOMA = "lodemap-idioma"' in t and 'get("lang")' in t and "D.idioma" in t

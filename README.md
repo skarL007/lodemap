@@ -1,95 +1,109 @@
 # Lodemap
 
-**A C4 architecture map that lives in your repository and fails the build when the code outgrows it. A skill for
+**Um mapa de arquitetura C4 que vive no seu repositório e quebra o build quando o código passa dele. Uma skill para o
 [Claude Code](https://code.claude.com).**
 
-Lodemap builds a C4 model of a codebase in [Structurizr DSL](https://docs.structurizr.com/dsl), keeps it versioned
-next to the code, and generates everything else from it: an interactive explorer, a reader for docs and decisions
-(ADRs), per-component metrics, and a coverage test that fails when a module is missing from the model.
+O Lodemap monta um modelo C4 de uma base de código em [Structurizr DSL](https://docs.structurizr.com/dsl), mantém
+esse modelo versionado ao lado do código e gera todo o resto a partir dele: um explorador interativo, um leitor de
+documentação e decisões (ADRs), métricas por componente e um teste de cobertura que falha quando um módulo fica fora
+do modelo.
 
-[![The Lodemap explorer on the axios map, playing the request lifecycle flow](assets/explorer-axios.webp)](https://skarl007.github.io/lodemap/demo/)
+[![O explorador do Lodemap no mapa do axios, rodando o fluxo do ciclo de vida de uma requisição](assets/explorer-axios.webp)](https://skarl007.github.io/lodemap/demo/)
 
-**Live demo:** the [explorer](https://skarl007.github.io/lodemap/demo/explorador/) and the
-[docs reader](https://skarl007.github.io/lodemap/demo/leitor/) of a map of [axios](https://github.com/axios/axios)
-(72 modules, 6 animated flows), made at v1.20.0 and updated to v1.21.1. Static pages, no server, no external request.
+**Demonstração ao vivo:** o [explorador](https://skarl007.github.io/lodemap/demo/explorador/) e o
+[leitor de docs](https://skarl007.github.io/lodemap/demo/leitor/) de um mapa do [axios](https://github.com/axios/axios)
+(72 módulos, 6 fluxos animados), feito na v1.20.0 e atualizado para a v1.21.1. Páginas estáticas, sem servidor, sem
+requisição externa.
 
-### The gate, on a real release
+**O mesmo mapa, neste repositório:** [`exemplos/axios/`](exemplos/axios/) guarda as fontes dele (DSL, docs, ADRs,
+métricas, `lodemap.json`), cerca de 300 KB, sem página gerada e sem caminho privado. O
+`tests/test_exemplo_axios.py` o regenera de ponta a ponta a partir de uma cópia limpa do axios v1.21.1 com o
+Structurizr CLI de verdade, e depois roda os testes que o mapa entrega e o gate de qualidade. O CI roda esse teste
+em Linux e macOS. Para regenerar você mesmo:
 
-The map was made at axios v1.20.0. Upstream then shipped v1.21.1 (99 commits, 27 files changed under `lib/`, three of
-them new). After merging the tag, the coverage test failed and named the three files. The recording below shows the
-real output of each command (long paths cut).
+```bash
+bash .circleci/preparar_pipeline.sh   # Structurizr CLI (sha256 checked) and axios v1.21.1 into ~/axios
+LODEMAP_EXEMPLO_AXIOS=~/axios python -m pytest -q tests/test_exemplo_axios.py
+```
 
-![Terminal: the coverage test fails after the merge, the update runs, the test passes](assets/gate-demo.gif)
+### O gate, numa release real
 
-| Step | What ran | Result |
+O mapa foi feito no axios v1.20.0. Depois o upstream lançou a v1.21.1 (99 commits, 27 arquivos alterados em `lib/`,
+três deles novos). Depois de mesclar a tag, o teste de cobertura falhou e apontou os três arquivos. A gravação abaixo
+mostra a saída real de cada comando (caminhos longos cortados).
+
+![Terminal: o teste de cobertura falha depois do merge, a atualização roda, o teste passa](assets/gate-demo.gif)
+
+| Passo | O que rodou | Resultado |
 |---|---|---|
-| `pytest tests/test_arquitetura_cobertura.py` | script | fails: 3 modules outside the model |
-| `esqueleto.py rascunho` | script, 0 tokens | 3 new modules, 16 of the 24 changed files with a different public surface, 12 new relationships |
-| `descrever.py` | one Haiku call, 26,029 tokens, 34 s (the rerun in the recording: 26,660 tokens, 37 s) | describes the 3 new modules and reviews the 16; 15 sentences kept word for word, 1 changed (the cookie helper gained a Cookie Store API path); the rerun kept 14 |
-| `lodemap-modelador` | Sonnet, 19 calls, 129 s, US$ 0.45 API-equivalent | container and status of the 3 new components, verbs of the 12 relationships |
-| `atualizar.py --incremental` | scripts, 17 s | DSL export, explorer, reader, derived docs |
-| `pytest tests/test_arquitetura_cobertura.py` | script | passes |
+| `pytest tests/test_arquitetura_cobertura.py` | script | falha: 3 módulos fora do modelo |
+| `esqueleto.py rascunho` | script, 0 tokens | 3 módulos novos, 16 dos 24 arquivos alterados com superfície pública diferente, 12 relações novas |
+| `descrever.py` | uma chamada ao Haiku, 26.029 tokens, 34 s (a repetição na gravação: 26.660 tokens, 37 s) | descreve os 3 módulos novos e revisa os 16; 15 frases mantidas palavra por palavra, 1 alterada (o helper de cookies ganhou um caminho pela Cookie Store API); a repetição manteve 14 |
+| `lodemap-modelador` | Sonnet, 19 chamadas, 129 s, US$ 0,45 equivalente em API | contêiner e status dos 3 componentes novos, verbos das 12 relações |
+| `atualizar.py --incremental` | scripts, 17 s | exportação do DSL, explorador, leitor, docs derivados |
+| `pytest tests/test_arquitetura_cobertura.py` | script | passa |
 
-The orchestrating session is not counted. The update was later repeated twice from the same commit: the script
-step gave the same lot, the model step cost US$ 0.35 and US$ 0.28 (13 and 9 calls), and the map came out with the
-same 72 components and 188 relationships. One of the three new modules landed in a different area in the first run,
-and the wording of verbs and sentences varies between runs.
+A sessão orquestradora não entra na conta. A atualização foi repetida depois, duas vezes, a partir do mesmo commit:
+a etapa de scripts deu o mesmo lote, a etapa do modelo custou US$ 0,35 e US$ 0,28 (13 e 9 chamadas), e o mapa saiu
+com os mesmos 72 componentes e 188 relações. Um dos três módulos novos caiu numa área diferente na primeira
+execução, e a redação de verbos e frases varia entre execuções.
 
-### When the map updates
+### Quando o mapa atualiza
 
-Updating on every commit wastes money and attention: each model session pays for its context again, and regenerating
-versioned files after every commit dirties the tree without changing the map. One script decides, for zero tokens:
+Atualizar a cada commit gasta dinheiro e atenção: cada sessão do modelo paga o contexto de novo, e regenerar
+arquivos versionados depois de cada commit suja a árvore sem mudar o mapa. Um script decide, por zero tokens:
 
 ```bash
 python docs/architecture/structurizr/scripts/lodemap_decidir.py --resumo
 ```
 
-| It answers | When | Model |
+| Ele responde | Quando | Modelo |
 |---|---|---|
-| `nada` (nothing) | nothing relevant changed, or too little since the last run | no |
-| `scripts` | the model sources or the set of modules changed, or 10 commits went by | no |
-| `adiar` (defer) | a new module may wait: it goes into `pendentes.json`, with its date, in your commit | no |
-| `descrever` (describe) | 10 or more modules changed their public surface | one Haiku call |
-| `modelar` (model) | modules waited past the limit or the deadline, a path the model cites is gone, or 10 or more new import relations | one Sonnet session for everything pending |
+| `nada` | nada relevante mudou, ou mudou pouco desde a última execução | não |
+| `scripts` | as fontes do modelo ou o conjunto de módulos mudaram, ou passaram 10 commits | não |
+| `adiar` | um módulo novo pode esperar: ele vai para `pendentes.json`, com a data, no seu commit | não |
+| `descrever` | 10 ou mais módulos mudaram a superfície pública | uma chamada ao Haiku |
+| `modelar` | módulos esperaram além do limite ou do prazo, um caminho citado pelo modelo sumiu, ou 10 ou mais relações de import novas | uma sessão do Sonnet para tudo o que está pendente |
 
-The gate is strict by default: any new module fails the coverage test. To let structure wait, give it a tolerance in
-`lodemap.json`:
+O gate é estrito por padrão: qualquer módulo novo faz o teste de cobertura falhar. Para deixar a estrutura esperar,
+dê uma tolerância no `lodemap.json`:
 
 ```json
 "politica": {"tolerancia_modulos": 3, "tolerancia_dias": 14}
 ```
 
-Then up to 3 modules may wait up to 14 days, each listed by name and date in a versioned file a reviewer can read.
-The fourth module, or day 15, fails the test again, and running the command twice does not extend a deadline. When
-the model finally runs, it handles the whole lot in one session. The opt-in git hook follows the same answer and
-never calls a model.
+Assim, até 3 módulos podem esperar até 14 dias, cada um listado por nome e data num arquivo versionado que um
+revisor pode ler. O quarto módulo, ou o dia 15, faz o teste falhar de novo, e rodar o comando duas vezes não
+estende um prazo. Quando o modelo finalmente roda, trata o lote inteiro numa só sessão. O git hook opcional segue a
+mesma resposta e nunca chama um modelo.
 
-Replayed on the axios merge above, for zero tokens: with the default policy the script answers `modelar` and names the
-3 files; with a tolerance of 3 it answers `adiar`, the test passes once the 3 are listed, and with the skill in reach
-it still answers `modelar`, because the merge also brought 12 new import relations (limit 10). The lot it reports, 3
-modules, 16 reviews and 12 relations, is exactly what the real update handled. How much batching saves has not been
-measured yet.
+Reproduzido no merge do axios acima, por zero tokens: com a política padrão o script responde `modelar` e nomeia os 3
+arquivos; com tolerância de 3 ele responde `adiar`, o teste passa quando os 3 estão listados, e com a skill ao
+alcance ainda responde `modelar`, porque o merge também trouxe 12 relações de import novas (limite 10). O lote que
+ele relata, 3 módulos, 16 revisões e 12 relações, é exatamente o que a atualização real tratou. Quanto o agrupamento
+economiza ainda não foi medido.
 
-## What is different
+## O que muda
 
-- **A gate, not a picture.** `tests/test_arquitetura_cobertura.py` is installed in your project and fails when a
-  module matched by your globs has no component, when a component points to a path that no longer exists, or when an
-  exception has no reason. Put it in CI and the map cannot silently fall behind.
-- **Updates cost no model call.** `atualizar.py --incremental` regenerates every output with scripts. A model is
-  asked again only for modules whose *public surface* changed (docstring, imports, signatures, public symbols). On
-  five release pairs of [rich](https://github.com/Textualize/rich), 78 changed files needed 29 reviews (63% fewer).
-- **Measured cost, published with its caveats.** Every number below names the repository, the model and what was left
-  out. Nothing here is a projection unless it says so.
+- **Um gate, não uma figura.** O `tests/test_arquitetura_cobertura.py` é instalado no seu projeto e falha quando um
+  módulo que casa com seus globs não tem componente, quando um componente aponta para um caminho que não existe mais,
+  ou quando uma exceção não tem motivo. Coloque-o no CI e o mapa não fica para trás em silêncio.
+- **Atualizar não custa chamada de modelo.** O `atualizar.py --incremental` regenera todas as saídas com scripts. Um
+  modelo só é consultado de novo para os módulos cuja *superfície pública* mudou (docstring, imports, assinaturas,
+  símbolos públicos). Em cinco pares de releases do [rich](https://github.com/Textualize/rich), 78 arquivos alterados
+  precisaram de 29 revisões (63% a menos).
+- **Custo medido, publicado com as ressalvas.** Todo número abaixo nomeia o repositório, o modelo e o que ficou de
+  fora. Nada aqui é projeção, a menos que diga que é.
 
-What Lodemap does **not** claim: that the map makes a coding agent cheaper. This was measured and it does not. In a
-pre-registered experiment (96 runs, Sonnet, 16 navigation questions on chi and axios), the agent with the map spent
-the same tokens as the agent without it (median ratio 0.99). Its answers were not worse (recall 0.991 vs 0.977) and
-were slightly better on 3 "who depends on X" questions; that gain is not significant. See
+O que o Lodemap **não** afirma: que o mapa deixa um agente de código mais barato. Isso foi medido e não deixa. Num
+experimento pré-registrado (96 execuções, Sonnet, 16 perguntas de navegação no chi e no axios), o agente com o mapa
+gastou os mesmos tokens que o agente sem ele (razão mediana 0,99). As respostas não foram piores (recall 0,991 contra
+0,977) e foram um pouco melhores em 3 perguntas do tipo "quem depende de X"; esse ganho não é significativo. Veja
 [experimentos/com-sem-mapa](experimentos/com-sem-mapa/RESULTADOS.md).
 
-## Install
+## Instalação
 
-Requires Python 3.11+ and git. On Debian/Ubuntu the interpreter is `python3`.
+Exige Python 3.11+ e git. No Debian/Ubuntu o interpretador é `python3`.
 
 ```bash
 git clone https://github.com/skarL007/lodemap && cd lodemap
@@ -98,24 +112,25 @@ python -m lodemap install --profile padrao --apply    # applies, with backups an
 python -m lodemap doctor                              # checks Python, git, Java, Structurizr CLI, Graphviz, claude
 ```
 
-Undo with `python -m lodemap revert`: it restores the exact bytes of every file the install touched, newest install
-first. It is all-or-nothing: if a touched file changed after the install, it refuses and names the file.
+Desfaça com `python -m lodemap revert`: ele restaura os bytes exatos de cada arquivo que a instalação tocou, da
+instalação mais recente para a mais antiga. É tudo ou nada: se um arquivo tocado mudou depois da instalação, ele se
+recusa e nomeia o arquivo.
 
-| Profile | What it installs |
+| Perfil | O que instala |
 |---|---|
-| `minimo` | The skill (a link from `~/.claude/skills/lodemap` to this folder) and six `lodemap-*` agents in `~/.claude/agents/`. |
-| `padrao` | The above, plus a one-time hint (`SessionStart` hook) in repositories that have no map. |
+| `minimo` | A skill (um link de `~/.claude/skills/lodemap` para esta pasta) e seis agentes `lodemap-*` em `~/.claude/agents/`. |
+| `padrao` | O acima, mais um aviso único (hook `SessionStart`) em repositórios que não têm mapa. |
 
-The installer never overwrites a file, key or link owned by someone else unless you pass `--force`, and never touches
-the hooks of other tools. `python -m lodemap status` shows what is installed.
+O instalador nunca sobrescreve um arquivo, chave ou link que pertença a outra pessoa, a menos que você passe
+`--force`, e nunca mexe nos hooks de outras ferramentas. O `python -m lodemap status` mostra o que está instalado.
 
-Generating a map also needs Java 21, the [Structurizr CLI](https://docs.structurizr.com/cli) and Graphviz. `doctor`
-tells you which of them is missing and where it looked.
+Gerar um mapa também exige Java 21, o [Structurizr CLI](https://docs.structurizr.com/cli) e o Graphviz. O `doctor`
+diz qual deles está faltando e onde procurou.
 
-## Use
+## Uso
 
-In Claude Code, inside your repository, ask for the map ("lodemap", "architecture map", "C4 model of this project").
-The skill always starts with a plan that spends no tokens, and waits for your OK:
+No Claude Code, dentro do seu repositório, peça o mapa ("lodemap", "mapa de arquitetura", "modelo C4 deste
+projeto"). A skill sempre começa com um plano que não gasta tokens e espera o seu OK:
 
 ```bash
 python -m lodemap plan --repo .        # modules found, estimated cost and time, files that would be written
@@ -123,12 +138,12 @@ python -m lodemap consent --repo . --scopes gerar,modelo --monthly-budget 5
 python -m lodemap revoke --repo .
 ```
 
-The Portuguese command names and options still work (`instalar`, `reverter`, `plano`, `consentir`, `revogar`,
-`verificar`, `diagnostico`; `--perfil`, `--aplicar`, `--sem`, `--com`, `--forcar`, `--manifesto`, `--escopos`,
-`--orcamento-mensal`, `--escopo`, `--custo`, `--todos`), so existing scripts keep running. The scope values
-(`gerar`, `gancho`, `modelo`) are the same in both languages.
+Os nomes de comando e opções em português continuam funcionando (`instalar`, `reverter`, `plano`, `consentir`,
+`revogar`, `verificar`, `diagnostico`; `--perfil`, `--aplicar`, `--sem`, `--com`, `--forcar`, `--manifesto`,
+`--escopos`, `--orcamento-mensal`, `--escopo`, `--custo`, `--todos`), então scripts existentes seguem rodando. Os
+valores de escopo (`gerar`, `gancho`, `modelo`) são os mesmos nos dois idiomas.
 
-After the first generation:
+Depois da primeira geração:
 
 ```bash
 python scripts/atualizar.py --incremental   # regenerate only if something relevant changed; no model call
@@ -136,147 +151,150 @@ python scripts/ver_arquitetura.py           # serve on 127.0.0.1 and open the ex
 python scripts/instalar_gancho.py           # optional: update on every commit and merge
 ```
 
-## How it works
+## Como funciona
 
-1. **Inventory and skeleton, by script.** `inventario.py` and `codegraph_ponte.py` list modules and the import edges
-   between them. `esqueleto.py rascunho` writes a JSON with one suggested component per module and one suggested
-   relationship per pair with edges, decisions left blank.
-2. **Descriptions, by one lean call.** `descrever.py` fills name, one-sentence description and area with a single
-   `claude -p` call (Haiku, no tools, JSON Schema output, the area restricted to the areas already decided). A
-   deterministic gate rejects a sentence that:
-   - is generic;
-   - has no verbatim evidence;
-   - names code the module does not contain.
+1. **Inventário e esqueleto, por script.** `inventario.py` e `codegraph_ponte.py` listam os módulos e as arestas de
+   import entre eles. `esqueleto.py rascunho` escreve um JSON com um componente sugerido por módulo e uma relação
+   sugerida por par com arestas, deixando as decisões em branco.
+2. **Descrições, por uma chamada enxuta.** `descrever.py` preenche nome, descrição de uma frase e área com uma única
+   chamada `claude -p` (Haiku, sem ferramentas, saída em JSON Schema, a área restrita às áreas já decididas). Um
+   gate determinístico rejeita uma frase que:
+   - é genérica;
+   - não tem evidência literal;
+   - cita código que o módulo não contém.
 
-   It retries only those, once. A second Haiku call then reads each module's code and corrects or rejects false
-   sentences (`--sem-conferir` skips it; `--auditar` checks an existing map without changing it).
-3. **Decisions, by the modeler.** The `lodemap-modelador` agent decides containers, areas, status and which suggested
-   relationships are real, in separate phases with a fresh agent each, so context stays small.
-4. **Everything else, by script.** `esqueleto.py renderizar` writes the DSL and the static views; `atualizar.py`
-   exports the workspace and builds the explorer, the reader and the derived documents.
-5. **Two gates.** The coverage test (structure) and `qualidade.py`, a 14-criterion rubric with no model in the loop
-   (description quality, relationships backed by code edges, orphan components, and so on).
+   Ele repete só essas, uma vez. Uma segunda chamada ao Haiku então lê o código de cada módulo e corrige ou rejeita
+   as frases falsas (`--sem-conferir` pula essa etapa; `--auditar` confere um mapa existente sem alterá-lo).
+3. **Decisões, pelo modelador.** O agente `lodemap-modelador` decide contêineres, áreas, status e quais relações
+   sugeridas são reais, em fases separadas, cada uma com um agente novo, para o contexto ficar pequeno.
+4. **Todo o resto, por script.** `esqueleto.py renderizar` escreve o DSL e as visões estáticas; o `atualizar.py`
+   exporta o workspace e monta o explorador, o leitor e os documentos derivados.
+5. **Dois portões.** O teste de cobertura (estrutura) e o `qualidade.py`, uma rubrica de 14 critérios sem modelo no
+   processo (qualidade das descrições, relações respaldadas por arestas de código, componentes órfãos e assim por
+   diante).
 
-Six agents, one job each: `lodemap-inventario`, `lodemap-modelador` (the only one that decides architecture),
-`lodemap-metricas`, `lodemap-gerador`, `lodemap-verificador` and `lodemap-revisor-visual`. Routing, order and saving
-rules are in [SKILL.md](SKILL.md).
+Seis agentes, uma tarefa cada: `lodemap-inventario`, `lodemap-modelador` (o único que decide arquitetura),
+`lodemap-metricas`, `lodemap-gerador`, `lodemap-verificador` e `lodemap-revisor-visual`. As regras de roteamento,
+ordem e gravação estão no [SKILL.md](SKILL.md).
 
-## Measured
+## Medições
 
-### Cost of a full map
+### Custo de um mapa completo
 
-Tokens read from the subagent transcripts (usage deduplicated by message id), priced at the public API rates even
-though the runs used a Claude Code subscription. All four token types count: input, cache writes, cache reads, output.
+Tokens lidos das transcrições dos subagentes (uso deduplicado por id de mensagem), precificados pelas tarifas públicas
+da API mesmo que as execuções tenham usado uma assinatura do Claude Code. Os quatro tipos de token contam: entrada,
+escrita de cache, leitura de cache, saída.
 
-| Run | Model | Calls | Time | API-equivalent cost |
+| Execução | Modelo | Chamadas | Tempo | Custo equivalente em API |
 |---|---|---:|---:|---:|
-| Full map, 63-module repository, one agent | Sonnet | 93 | 25 min | US$ 3.61 |
-| Same repository and commit, script skeleton + fresh agent per phase | Sonnet (+ Haiku verifier) | 98 | 14 min | US$ 2.84 |
-| Update on a commit with no structural change | scripts only | 0 | 11–17 s | US$ 0 |
-| Full map of axios v1.20.0 (69 modules), skeleton + phases + lean descriptions | Sonnet (+ one Haiku call) | 51 | 10 min | at most US$ 1.74 |
-| Update of that map to axios v1.21.1 (3 new modules, 16 reviews, 12 new relationships), three runs | Sonnet (+ one Haiku call) | 20, 14, 10 | 1 to 3 min | at most US$ 0.47, 0.36, 0.29 |
-| Full map of go-chi/chi v5.4.0 (Go, 35 modules), with every description checked against the code | Sonnet (+ one Haiku call) | 67 | 9 min | at most US$ 1.92 |
-| Update of that map to chi v5.5.0 (1 new module, 1 review) | Sonnet (+ one Haiku call) | 8 | 1 min | at most US$ 0.22 |
+| Mapa completo, repositório de 63 módulos, um agente | Sonnet | 93 | 25 min | US$ 3,61 |
+| Mesmo repositório e commit, esqueleto por script + agente novo por fase | Sonnet (+ verificador Haiku) | 98 | 14 min | US$ 2,84 |
+| Atualização num commit sem mudança estrutural | só scripts | 0 | 11–17 s | US$ 0 |
+| Mapa completo do axios v1.20.0 (69 módulos), esqueleto + fases + descrições enxutas | Sonnet (+ uma chamada ao Haiku) | 51 | 10 min | no máximo US$ 1,74 |
+| Atualização desse mapa para o axios v1.21.1 (3 módulos novos, 16 revisões, 12 relações novas), três execuções | Sonnet (+ uma chamada ao Haiku) | 20, 14, 10 | 1 a 3 min | no máximo US$ 0,47, 0,36, 0,29 |
+| Mapa completo do go-chi/chi v5.4.0 (Go, 35 módulos), com cada descrição conferida contra o código | Sonnet (+ uma chamada ao Haiku) | 67 | 9 min | no máximo US$ 1,92 |
+| Atualização desse mapa para o chi v5.5.0 (1 módulo novo, 1 revisão) | Sonnet (+ uma chamada ao Haiku) | 8 | 1 min | no máximo US$ 0,22 |
 
-The axios and chi rows are on public repositories and can be redone: the Sonnet calls are counted as above and the
-Haiku call is priced as if every token were output, which bounds it at US$ 0.03 or less. Time is model time; the
-scripts add under a minute. The smallest update still pays for the context of one Sonnet session: about 37,000
-tokens of cache writes to decide one module on chi.
+As linhas do axios e do chi são de repositórios públicos e podem ser refeitas: as chamadas ao Sonnet são contadas
+como acima e a chamada ao Haiku é precificada como se todo token fosse de saída, o que a limita a US$ 0,03 ou menos.
+O tempo é tempo de modelo; os scripts somam menos de um minuto. A menor atualização ainda paga o contexto de uma
+sessão do Sonnet: cerca de 37.000 tokens de escrita de cache para decidir um módulo no chi.
 
-Not included: the orchestrator session that dispatched the agents. The two full-map rows are the same repository but
-not a controlled test (the first run also fixed six defects of the skill). `plano` scales the Sonnet run linearly by
-module count, which is an assumption. Method and raw figures:
+Não incluído: a sessão orquestradora que despachou os agentes. As duas linhas de mapa completo são o mesmo
+repositório, mas não um teste controlado (a primeira execução também corrigiu seis defeitos da skill). O `plano`
+escala a execução do Sonnet linearmente pelo número de módulos, o que é uma suposição. Método e números brutos:
 [references/benchmark-e-custo.md](references/benchmark-e-custo.md).
 
-### Lean description route
+### Rota enxuta de descrição
 
-Same quality band as a subagent, with fewer tokens, on two public repositories:
+Mesma faixa de qualidade de um subagente, com menos tokens, em dois repositórios públicos:
 
-| Repository | Modules | Lean route (Haiku medium) | Subagent |
+| Repositório | Módulos | Rota enxuta (Haiku medium) | Subagente |
 |---|---:|---|---|
-| [rich](https://github.com/Textualize/rich) (Python) | 76 | score 96.9 (95% interval 92.7–98.7), 64,670 tokens | score 96.9, 129,385 tokens |
-| [axios](https://github.com/axios/axios) (JavaScript) | 72 | area agrees with the reference in 0.90, 70,178 tokens, 105 s | 98,869 tokens, 240 s |
+| [rich](https://github.com/Textualize/rich) (Python) | 76 | nota 96,9 (intervalo de 95% 92,7–98,7), 64.670 tokens | nota 96,9, 129.385 tokens |
+| [axios](https://github.com/axios/axios) (JavaScript) | 72 | área concorda com a referência em 0,90, 70.178 tokens, 105 s | 98.869 tokens, 240 s |
 
-The reference is a Sonnet run, not a human gold set. A repeat on rich scored 95.3. Details and the variants that
-lost: [references/rota-enxuta.md](references/rota-enxuta.md).
+A referência é uma execução do Sonnet, não um gabarito humano. Uma repetição no rich deu 95,3. Detalhes e as variantes
+que perderam: [references/rota-enxuta.md](references/rota-enxuta.md).
 
-### Import edges without an index
+### Arestas de import sem índice
 
-Without a CodeGraph index, relationships are suggested from imports read by a built-in parser (Python, JS/TS, Go,
-Rust, Java, Kotlin, C#, C/C++). In Go, where files of a package see each other without an import, the edge comes
-from the symbol used: on go-chi/chi it found 31 edges, all 31 confirmed in the code, and missed 3 real ones (method
-and interface use). Precision by language: [references/precisao-ast.md](references/precisao-ast.md).
-Suggested edges are never written to the model automatically; the modeler confirms each one in the code.
+Sem um índice do CodeGraph, as relações são sugeridas a partir dos imports lidos por um parser embutido (Python,
+JS/TS, Go, Rust, Java, Kotlin, C#, C/C++). Em Go, onde os arquivos de um pacote se enxergam sem import, a aresta vem
+do símbolo usado: no go-chi/chi ele achou 31 arestas, as 31 confirmadas no código, e perdeu 3 reais (uso de método
+e de interface). Precisão por linguagem: [references/precisao-ast.md](references/precisao-ast.md).
+Arestas sugeridas nunca são escritas no modelo automaticamente; o modelador confirma cada uma no código.
 
-## Language
+## Idioma
 
-Generated pages, docs, DSL labels and views come in Portuguese by default and in English with `"idioma": "en"` in
-`lodemap.json` (or `novo_mapa.py --idioma en`); the explorer and the reader have a PT | EN switch. The prompts of the
-skill are in Brazilian Portuguese.
+O lançamento é em português. Páginas geradas, docs, rótulos do DSL, visões e o terminal (mensagens e `--help`) saem
+em português. O inglês existe, mas fica desligado por padrão: só aparece com `LODEMAP_IDIOMA=en` ou com
+`"idioma": "en"` no `lodemap.json` (ou `novo_mapa.py --idioma en`). Os prompts da skill estão em português do Brasil.
 
-Terminal output comes in both languages, chosen once for the whole CLI, `scripts/` and the scripts copied into your
-repository: `LODEMAP_IDIOMA=pt|en` wins; otherwise the `"idioma"` of the map's `lodemap.json` (when the command points
-at one with `--repo` / `--arq`); otherwise the system locale (`pt*` gives Portuguese); otherwise English. `--help`
-and every message follow it. Command names and options exist in both languages, the active one is listed first.
-The coverage test and the update pipeline (`draft`/`rascunho`, `render`/`renderizar`, `descrever.py --resumo`,
-`atualizar.py`) print in the map language.
+A saída do terminal vale para a CLI inteira, os `scripts/` e os scripts copiados para o seu repositório:
+`LODEMAP_IDIOMA=pt|en` vence; senão vale o `"idioma"` do `lodemap.json` do mapa (quando o comando aponta para um com
+`--repo` / `--arq`); senão, português. Nomes de comando e opções existem nos dois idiomas, e o ativo vem primeiro. O
+teste de cobertura e o pipeline de atualização (`draft`/`rascunho`, `render`/`renderizar`, `descrever.py --resumo`,
+`atualizar.py`) imprimem no idioma do mapa.
 
-## Limits
+## Limites
 
-- **The map does not make an agent cheaper.**
-  - **What was measured:** Sonnet with Read, Grep and Glob, answering 16 code-navigation questions on two repositories
-    of 35 and 69 modules. With the map and a pointer to it, the agent spent the same tokens as without the map, and its
-    accuracy did not get worse ([experimentos/com-sem-mapa](experimentos/com-sem-mapa/RESULTADOS.md)).
-  - **What was not measured:** editing tasks, other models, and large repositories.
-  - **A related study:** research on repository context files ([arXiv 2602.11988](https://arxiv.org/abs/2602.11988))
-    found that they do not generally raise task success. It did not test C4 maps.
-  - **What Lodemap offers:** documentation that stays current, and a gate that fails when the model drifts.
-- **Run end to end on Windows and on Linux; macOS is not.** On Linux (WSL Ubuntu 24.04, Python 3.12, Java 21, the
-  real Structurizr CLI) the test suite passes (414 tests, 1 skipped), the full regeneration took 9 s on the axios
-  map and 5 s on the chi map, the generated docs and inventories of axios came out byte for byte as on Windows
-  (only timestamps differ), the quality gate gave the same scores, and the real git hook regenerated on an
-  architecture commit and stayed quiet on a code-only commit. The model phases (agents) ran on Windows only.
-  macOS has branches covered by tests that simulate the platform and nothing more.
-- **Cost was measured on few repositories**, of 22 to 98 modules. Two are public (axios and chi). Only the axios
-  update was repeated (three runs); every other figure is one run. Monorepos and very large repositories are not
-  measured.
-- **Descriptions written by the lean route can still be wrong.**
-  - **Before the truth check:** a Sonnet judge reading the code found 15 false sentences of 108 (13.9%) on chi and
-    axios.
-  - **With the check:** 5 of 213 over four runs (2.3%).
-  - **Cost:** the check costs about 3.7 times the tokens of the description pass, about 325,000 tokens for both
-    repositories.
-  - The modeler still confirms sentences in phase B.
-  - Details are in [`experimentos/descricoes/RESULTADOS.md`](experimentos/descricoes/RESULTADOS.md).
-- **The fingerprint misses behavior that changes with no change of surface**: 3 of 178 changed files in the two
-  audited repositories. See [references/digital-semantica.md](references/digital-semantica.md).
-- The quality gate compares against `references/baseline-qualidade.json`, the first map the skill produced. On your
-  project read the absolute score and the per-criterion notes, or record your own baseline with `--gravar-baseline`.
-- Consent is a record the skill and its agents read and follow. No hook enforces it, and the monthly ceiling is
-  checked per run, not summed across runs.
-- With the default globs an empty `__init__.py` counts as a module and needs a component or an entry in `EXCECOES`.
-- Files that live next to the code and are not modules (tests, examples, fixtures) are left out by the
-  `"ignorar"` list in `lodemap.json`. A new map gets the defaults of its language (Go: `**/*_test.go`,
+- **O mapa não deixa um agente mais barato.**
+  - **O que foi medido:** Sonnet com Read, Grep e Glob, respondendo 16 perguntas de navegação de código em dois
+    repositórios de 35 e 69 módulos. Com o mapa e um ponteiro para ele, o agente gastou os mesmos tokens que sem o
+    mapa, e a precisão não piorou ([experimentos/com-sem-mapa](experimentos/com-sem-mapa/RESULTADOS.md)).
+  - **O que não foi medido:** tarefas de edição, outros modelos e repositórios grandes.
+  - **Um estudo relacionado:** uma pesquisa sobre arquivos de contexto de repositório
+    ([arXiv 2602.11988](https://arxiv.org/abs/2602.11988)) concluiu que eles não aumentam, em geral, o sucesso nas
+    tarefas. Ela não testou mapas C4.
+  - **O que o Lodemap oferece:** documentação que se mantém atual e um gate que falha quando o modelo se afasta
+    do código.
+- **Rodado de ponta a ponta no Windows e no Linux; no macOS, não.** No Linux (WSL Ubuntu 24.04, Python 3.12, Java 21,
+  o Structurizr CLI de verdade) a suíte de testes passa (414 testes, 1 ignorado), a regeneração completa levou 9 s no
+  mapa do axios e 5 s no do chi, os docs e inventários gerados do axios saíram byte a byte iguais aos do Windows
+  (só os carimbos de data diferem), o gate de qualidade deu as mesmas notas, e o git hook real regenerou num commit
+  de arquitetura e ficou quieto num commit só de código. As fases do modelo (agentes) rodaram só no Windows. O macOS
+  tem ramos cobertos por testes que simulam a plataforma e nada além disso.
+- **O custo foi medido em poucos repositórios**, de 22 a 98 módulos. Dois são públicos (axios e chi). Só a
+  atualização do axios foi repetida (três execuções); todo outro número é de uma execução. Monorepos e repositórios
+  muito grandes não foram medidos.
+- **Descrições escritas pela rota enxuta ainda podem estar erradas.**
+  - **Antes da conferência de veracidade:** um juiz Sonnet lendo o código achou 15 frases falsas em 108 (13,9%) no
+    chi e no axios.
+  - **Com a conferência:** 5 de 213 em quatro execuções (2,3%).
+  - **Custo:** a conferência custa cerca de 3,7 vezes os tokens da passada de descrição, cerca de 325.000 tokens para
+    os dois repositórios.
+  - O modelador ainda confirma as frases na fase B.
+  - Os detalhes estão em [`experimentos/descricoes/RESULTADOS.md`](experimentos/descricoes/RESULTADOS.md).
+- **A impressão digital não pega comportamento que muda sem mudar a superfície**: 3 de 178 arquivos alterados nos
+  dois repositórios auditados. Veja [references/digital-semantica.md](references/digital-semantica.md).
+- O gate de qualidade compara com o `references/baseline-qualidade.json`, o primeiro mapa que a skill produziu. No
+  seu projeto, leia a nota absoluta e as notas por critério, ou grave seu próprio baseline com `--gravar-baseline`.
+- O consentimento é um registro que a skill e seus agentes leem e seguem. Nenhum hook o impõe, e o teto mensal é
+  conferido por execução, não somado entre execuções.
+- Com os globs padrão, um `__init__.py` vazio conta como módulo e precisa de um componente ou de uma entrada em
+  `EXCECOES`.
+- Arquivos que ficam ao lado do código e não são módulos (testes, exemplos, fixtures) ficam de fora pela lista
+  `"ignorar"` do `lodemap.json`. Um mapa novo recebe os padrões da sua linguagem (Go: `**/*_test.go`,
   `**/_*/**`, `**/testdata/**`; JS/TS: `**/*.test.*`, `**/*.spec.*`; Python: `**/test_*.py`, `**/*_test.py`,
-  `**/conftest.py`); a map made before the list existed has none until you add it.
-- `--incremental` compares commits: an uncommitted new module shows up after the commit (or run
+  `**/conftest.py`); um mapa feito antes de a lista existir não tem nenhuma até você acrescentar.
+- O `--incremental` compara commits: um módulo novo ainda não commitado aparece depois do commit (ou rode
   `lodemap_diff.py --trabalho`).
-- The reader draws Mermaid offline with an embedded build; `mindmap`, `architecture` and math load a larger build
-  only on pages that need it.
+- O leitor desenha o Mermaid offline com um build embutido; `mindmap`, `architecture` e matemática carregam um build
+  maior só nas páginas que precisam.
 
-## Privacy and security
+## Privacidade e segurança
 
-- Scripts run locally and make no network call. The model-driven steps send the files they read to Anthropic through
-  your own Claude Code. The viewer (`ver_arquitetura.py`) serves the pages on `127.0.0.1`
-  only.
-- Generated pages load nothing from a CDN; the embedded libraries are listed in
+- Os scripts rodam localmente e não fazem chamada de rede. As etapas guiadas por modelo enviam os arquivos que leem à
+  Anthropic, pelo seu próprio Claude Code. O visualizador (`ver_arquitetura.py`) serve as páginas só em `127.0.0.1`.
+- As páginas geradas não carregam nada de uma CDN; as bibliotecas embutidas estão listadas em
   [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
-- The optional git hook runs the scripts of the repository only while their hash matches the one approved at install
-  time. After a pull that changes them it logs a warning and runs nothing until you approve again.
-- The installer backs up every file before writing. Backups stay in `~/.claude/.lodemap-instalador/`.
-- Reporting a vulnerability: [SECURITY.md](SECURITY.md).
+- O git hook opcional só roda os scripts do repositório enquanto o hash deles bate com o aprovado na instalação.
+  Depois de um pull que os altere, ele registra um aviso e não roda nada até você aprovar de novo.
+- O instalador faz backup de cada arquivo antes de escrever. Os backups ficam em `~/.claude/.lodemap-instalador/`.
+- Para relatar uma vulnerabilidade: [SECURITY.md](SECURITY.md).
 
-## Repository layout
+## Estrutura do repositório
 
 ```
 SKILL.md       what Claude Code reads on every run (the operational core)
@@ -289,6 +307,6 @@ hooks/         the one-time hint hook
 tests/         run with: python -m pytest
 ```
 
-## License
+## Licença
 
-[MIT](LICENSE). Contributions: [CONTRIBUTING.md](CONTRIBUTING.md). Changes: [CHANGELOG.md](CHANGELOG.md).
+[MIT](LICENSE). Contribuições: [CONTRIBUTING.md](CONTRIBUTING.md). Mudanças: [CHANGELOG.md](CHANGELOG.md).

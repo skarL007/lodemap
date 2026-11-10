@@ -3,12 +3,10 @@
 Ordem de decisão:
   1. LODEMAP_IDIOMA (pt|en) vence;
   2. o "idioma" do lodemap.json do mapa que o comando aponta (--repo/--arq), registrado com `usar_mapa()`;
-  3. o idioma do sistema (pt* -> pt);
-  4. inglês.
+  3. português.
 
-Language of the terminal output (pt | en). One rule, shared by the package CLI and by scripts/:
-LODEMAP_IDIOMA wins; else the map's lodemap.json "idioma" (set with `usar_mapa()`); else the system locale
-(pt* -> pt); else English. Standard library only, no side effects at import.
+O lançamento é em português: o inglês existe, mas só aparece quando pedido (passo 1 ou 2). O idioma do sistema não
+decide mais; `do_sistema()` fica para um lançamento em inglês. Só biblioteca padrão, sem efeito ao importar.
 """
 from __future__ import annotations
 
@@ -72,7 +70,7 @@ def do_sistema() -> str | None:
 
 def idioma(arq: str | Path | None = None) -> str:
     """'pt' ou 'en' pela regra acima. `arq` (opcional) vale como o mapa dessa chamada; senão, o de `usar_mapa()`."""
-    return (_valido(os.environ.get("LODEMAP_IDIOMA")) or do_mapa(arq or _mapa) or do_sistema() or "en")
+    return _valido(os.environ.get("LODEMAP_IDIOMA")) or do_mapa(arq or _mapa) or "pt"
 
 
 def t(pt: str, en: str, arq: str | Path | None = None) -> str:

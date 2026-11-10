@@ -11,7 +11,7 @@ Commands (the Portuguese names keep working as aliases):
   doctor    (diagnostico) [--repo .] [--json]    (environment diagnosis: 0 tokens, no network)
   --version
 
-Language of the output: LODEMAP_IDIOMA=pt|en, else the map's lodemap.json "idioma", else the system locale, else English.
+Idioma da saída: LODEMAP_IDIOMA=pt|en, senão o "idioma" do lodemap.json do mapa, senão português.
 """
 from __future__ import annotations
 

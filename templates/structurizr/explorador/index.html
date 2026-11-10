@@ -446,6 +446,7 @@ header { grid-area: topo; }
 .botao:disabled { color: var(--label-disabled); cursor: not-allowed; background: transparent; }
 /* seletor de idioma PT | EN: fica entre a busca e o tema (segunda linha no celular) */
 .lm-idioma { order: 5; display: inline-flex; gap: 2px; }
+.lm-idioma[hidden] { display: none; }
 .lm-idioma .botao { min-width: 36px; min-height: 36px; padding: 0 var(--space-2); border-color: transparent; color: var(--label-2); }
 .lm-idioma .botao:hover { color: var(--label); }
 .lm-idioma .botao[aria-pressed="true"] { background: var(--brand-tint); color: var(--brand); }
@@ -685,7 +686,7 @@ footer.visivel { display: flex; }
     <button type="button" class="chip" id="chipSaude" hidden></button>
     <button type="button" class="chip" id="chipMudou" aria-pressed="false" hidden></button>
   </div>
-  <div class="lm-idioma" id="seletorIdioma" role="group" aria-label="Idioma" data-i18n-aria="idiomaGrupo">
+  <div class="lm-idioma" id="seletorIdioma" hidden role="group" aria-label="Idioma" data-i18n-aria="idiomaGrupo">
     <button type="button" class="botao" data-idioma="pt" lang="pt" aria-pressed="true" title="Português">PT</button>
     <button type="button" class="botao" data-idioma="en" lang="en" aria-pressed="false" title="English">EN</button>
   </div>
@@ -843,11 +844,14 @@ footer.visivel { display: flex; }
   let aoTrocarTema = () => {};
 
   // ------------------------------------------------------------ idioma (pt padrão): ?lang= > localStorage "lodemap-idioma" > dados.idioma > pt
+  // Lançamento em português: o seletor PT | EN fica escondido e a escolha guardada não vale; o mapa decide (dados.idioma)
+  // e ?lang= continua funcionando. Para um lançamento em inglês, ponha SELETOR_IDIOMA = true (aqui e no leitor).
+  const SELETOR_IDIOMA = false;
   const T = window.LODEMAP_I18N, IDIOMAS = ["pt", "en"];
   const mac = /Mac|iP(hone|ad|od)/.test(navigator.platform || "");
   let lang = (() => {
     try { const q = new URLSearchParams(location.search).get("lang"); if (IDIOMAS.includes(q)) return q; } catch (e) { /* sem URLSearchParams */ }
-    try { const g = localStorage.getItem("lodemap-idioma"); if (IDIOMAS.includes(g)) return g; } catch (e) { /* sem localStorage */ }
+    if (SELETOR_IDIOMA) try { const g = localStorage.getItem("lodemap-idioma"); if (IDIOMAS.includes(g)) return g; } catch (e) { /* sem localStorage */ }
     return window.ARQ && IDIOMAS.includes(window.ARQ.idioma) ? window.ARQ.idioma : "pt";
   })();
   const t = (k, ...a) => { const v = T[lang][k] !== undefined ? T[lang][k] : T.pt[k]; return typeof v === "function" ? v(...a) : v; };
@@ -930,6 +934,7 @@ footer.visivel { display: flex; }
 
   const D = window.ARQ;
   const falha = !D ? "erroDados" : typeof cytoscape === "undefined" ? "erroCytoscape" : null;
+  $("seletorIdioma").hidden = !SELETOR_IDIOMA;
   $("seletorIdioma").addEventListener("click", ev => {
     const b = ev.target.closest("[data-idioma]");
     if (b && b.getAttribute("data-idioma") !== lang) trocarIdioma(b.getAttribute("data-idioma"));

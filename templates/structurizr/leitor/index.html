@@ -407,6 +407,7 @@ mark { background: var(--warn-tint); color: inherit; border-radius: 2px; box-sha
 .filtros button[aria-pressed="true"] { background: var(--surface); color: var(--label); box-shadow: var(--shadow-1); }
 .filtros button span { margin-left: 4px; color: var(--label-3); font-variant-numeric: tabular-nums; }
 /* seletor PT | EN da barra (a mesma peça segmentada dos filtros; fica no espaço .lm-extra, fora dos blocos comuns) */
+.lm-idioma[hidden] { display: none; }
 .lm-idioma { display: inline-flex; gap: 2px; padding: 2px; border-radius: var(--radius-control); background: var(--surface-2); }
 .lm-idioma button { min-width: 36px; min-height: 32px; padding: 0 var(--space-2); border: 0; border-radius: calc(var(--radius-control) - 2px);
                     background: transparent; color: var(--label-2); font: var(--weight-medium) var(--text-sm) / 1 var(--font-sans); cursor: pointer; }
@@ -522,7 +523,7 @@ mark { background: var(--warn-tint); color: inherit; border-radius: 2px; box-sha
     <kbd aria-hidden="true">/</kbd>
     <div class="resultados" id="resultados" role="listbox" aria-label="Resultados da busca" data-i18n-aria="resultados" hidden></div>
   </div>
-  <div class="lm-extra lm-idioma" id="lmIdioma" role="group" aria-label="Idioma" data-i18n-aria="idioma">
+  <div class="lm-extra lm-idioma" id="lmIdioma" hidden role="group" aria-label="Idioma" data-i18n-aria="idioma">
     <button type="button" data-idioma="pt" aria-pressed="true" lang="pt-BR" title="Português" data-i18n-title="idiomaPt">PT</button>
     <button type="button" data-idioma="en" aria-pressed="false" lang="en" title="English" data-i18n-title="idiomaEn">EN</button>
   </div>
@@ -634,6 +635,9 @@ mark { background: var(--warn-tint); color: inherit; border-radius: 2px; box-sha
   // Todo texto de interface fica aqui. O conteúdo do modelo (nomes, descrições, documentos, ADRs) não é traduzido.
   // Valores com <code> são HTML fixo; o que vem dos dados entra sempre por esc().
   var CHAVE_IDIOMA = "lodemap-idioma";
+  // Lançamento em português: seletor PT | EN escondido e escolha guardada ignorada; o mapa decide e ?lang= funciona.
+  // Para um lançamento em inglês, ponha SELETOR_IDIOMA = true (aqui e no explorador).
+  var SELETOR_IDIOMA = false;
   var TEXTOS = {
     pt: {
       titulo: "Documentação da arquitetura", tituloCom: "Documentação · {0}", arquitetura: "Arquitetura", pular: "Pular para o conteúdo",
@@ -738,7 +742,7 @@ mark { background: var(--warn-tint); color: inherit; border-radius: 2px; box-sha
     var q = null, s = null;
     try { q = new URLSearchParams(location.search).get("lang"); } catch (e) { /* navegador antigo */ }
     if (q === "pt" || q === "en") return q;
-    try { s = localStorage.getItem(CHAVE_IDIOMA); } catch (e) { /* file:// sem armazenamento */ }
+    if (SELETOR_IDIOMA) try { s = localStorage.getItem(CHAVE_IDIOMA); } catch (e) { /* file:// sem armazenamento */ }
     if (s === "pt" || s === "en") return s;
     if (D && (D.idioma === "pt" || D.idioma === "en")) return D.idioma;
     return "pt";
@@ -828,6 +832,7 @@ mark { background: var(--warn-tint); color: inherit; border-radius: 2px; box-sha
     b.addEventListener("click", function () { trocarIdioma(b.getAttribute("data-idioma")); });
   });
   IDIOMA = idiomaInicial();
+  document.getElementById("lmIdioma").hidden = !SELETOR_IDIOMA;
   aplicarEstatico();
 
   // ------------------------------------------------------------ estado de erro (sem dados)

@@ -1,10 +1,10 @@
 ---
 id: "0001"
-titulo: Structurizr as the source of the architecture
+titulo: Structurizr como fonte da arquitetura
 status: aceita
 data: 2026-11-09
 date: 2026-11-09
-decisores: [owner]
+decisores: [dono]
 elementos: [sistema]
 substitui: []
 substituida_por: []
@@ -13,24 +13,24 @@ evidencia:
   - scripts/atualizar.ps1
 ---
 
-# Structurizr as the source of the architecture
+# Structurizr como fonte da arquitetura
 
-## Context
+## Contexto
 
-The architecture has to be studied, changed and checked against the code, without diagrams that go stale on their own.
+A arquitetura precisa ser estudada, alterada e conferida contra o código, sem diagramas que envelhecem sozinhos.
 
-## Decision
+## Decisão
 
-The architecture lives in Structurizr (a C4 model in DSL), with one component per real module, status by color, code and
-observability properties, and views by area, by flow and by status. The explorer, the docs reader, the derived documents
-and the metrics are generated from the model itself by `scripts/atualizar.ps1`.
+A arquitetura vive no Structurizr (modelo C4 em DSL), com um componente por módulo real, status por cor, propriedades
+de código e de observabilidade e visões por área, por fluxo e por status. Explorador, leitor de documentação,
+documentos derivados e métricas são gerados do próprio modelo por `scripts/atualizar.ps1`.
 
-## Alternatives
+## Alternativas
 
-- Hand-drawn diagrams (draw.io, Figma): quick to start, but nobody checks them against the code and they go stale.
-- Text-only documentation: shows neither relationships nor the impact of a change.
+- Diagramas desenhados à mão (draw.io, Figma): rápidos de começar, mas ninguém confere contra o código e envelhecem.
+- Só documentação em texto: não mostra relações nem impacto de mudança.
 
-## Consequences
+## Consequências
 
-Did the status of something change in the code? Change the tag and the `status` property in the DSL in the same commit.
-A new module with no place in the model makes the coverage test fail.
+Mudou o status de algo no código? Muda a tag e a propriedade `status` no DSL no mesmo commit. Módulo novo sem lugar
+no modelo faz o teste de cobertura falhar.

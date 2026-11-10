@@ -6,22 +6,22 @@
  "containers": [
   {
    "id": "axiosLib",
-   "nome": "axios package",
-   "descricao": "The single npm package that ships axios: the lib/ sources, bundled into Node (CJS), browser (CJS), ESM and UMD builds that run inside the host application's process.",
-   "tecnologia": "JavaScript (ESM, bundled to CJS and UMD)",
+   "nome": "Pacote axios",
+   "descricao": "O único pacote npm que distribui o axios: as fontes de lib/, empacotadas nos builds Node (CJS), navegador (CJS), ESM e UMD que rodam dentro do processo da aplicação hospedeira.",
+   "tecnologia": "JavaScript (ESM, empacotado em CJS e UMD)",
    "status": "Pronto",
    "codigo": "lib/"
   }
  ],
  "areas": {
-  "AreaClient": "Client and configuration",
-  "AreaPipeline": "Request pipeline",
-  "AreaAdapters": "Transport adapters",
-  "AreaUrlHeaders": "URLs and headers",
-  "AreaPayload": "Payload encoding",
-  "AreaStreaming": "Streams and progress",
-  "AreaErrors": "Errors and cancellation",
-  "AreaPlatform": "Platform and utilities"
+  "AreaClient": "Cliente e configuração",
+  "AreaPipeline": "Pipeline da requisição",
+  "AreaAdapters": "Adaptadores de transporte",
+  "AreaUrlHeaders": "URLs e cabeçalhos",
+  "AreaPayload": "Codificação do corpo",
+  "AreaStreaming": "Streams e progresso",
+  "AreaErrors": "Erros e cancelamento",
+  "AreaPlatform": "Plataforma e utilitários"
  },
  "componentes": [
   {
@@ -36,8 +36,8 @@
    ],
    "lido_pelo_inventario": true,
    "digital": "2:f2bff591618b8011",
-   "nome": "Adapter selection registry",
-   "descricao": "Selects the first usable transport from a list of names or functions and rejects unknown ones, so Axios fails early with a clear reason when no adapter fits the runtime.",
+   "nome": "Registro de seleção de adaptadores",
+   "descricao": "Escolhe o primeiro transporte utilizável de uma lista de nomes ou funções e rejeita os desconhecidos, para que o Axios falhe cedo e com um motivo claro quando nenhum adaptador serve ao ambiente de execução.",
    "container": "axiosLib",
    "area": "AreaAdapters",
    "status": "Pronto",
@@ -56,8 +56,8 @@
    "simbolos": [],
    "lido_pelo_inventario": true,
    "digital": "2:073ac1d89a4b8541",
-   "nome": "Fetch transport adapter",
-   "descricao": "Sends requests through the Fetch API with streamed bodies and progress tracking, so runtimes without XMLHttpRequest, such as workers and edge hosts, can still use Axios.",
+   "nome": "Adaptador de transporte Fetch",
+   "descricao": "Envia requisições pela Fetch API com corpos em stream e acompanhamento de progresso, para que ambientes sem XMLHttpRequest, como workers e hosts de borda, ainda possam usar o Axios.",
    "container": "axiosLib",
    "area": "AreaAdapters",
    "status": "Pronto",
@@ -85,12 +85,12 @@
    ],
    "lido_pelo_inventario": true,
    "digital": "2:8cd4b66a41b87535",
-   "nome": "Node HTTP transport",
-   "descricao": "Performs requests with Node's http and https modules, adding proxy tunneling, redirect handling, rate limits and decompression, which the browser-bound adapters cannot provide.",
+   "nome": "Transporte HTTP do Node",
+   "descricao": "Executa requisições com os módulos http e https do Node, acrescentando túnel de proxy, tratamento de redirecionamentos, limites de taxa e descompressão, que os adaptadores do navegador não oferecem.",
    "container": "axiosLib",
    "area": "AreaAdapters",
    "status": "Pronto",
-   "tecnologia": "JavaScript (Node only)",
+   "tecnologia": "JavaScript (só Node)",
    "tags": [],
    "propriedades": {},
    "descrito_por": "claude -p haiku medium"
@@ -105,12 +105,12 @@
    "simbolos": [],
    "lido_pelo_inventario": true,
    "digital": "2:5155e81f928a87fe",
-   "nome": "Browser XHR transport",
-   "descricao": "Drives XMLHttpRequest in browsers and maps timeouts, aborts and status-0 responses to Axios errors, because XHR is the only transport with native upload progress there.",
+   "nome": "Transporte XHR do navegador",
+   "descricao": "Controla o XMLHttpRequest nos navegadores e converte timeouts, cancelamentos e respostas com status 0 em erros do Axios, porque o XHR é o único transporte com progresso de upload nativo ali.",
    "container": "axiosLib",
    "area": "AreaAdapters",
    "status": "Pronto",
-   "tecnologia": "JavaScript (browser only)",
+   "tecnologia": "JavaScript (só navegador)",
    "tags": [],
    "propriedades": {},
    "descrito_por": "claude -p haiku medium"
@@ -127,8 +127,8 @@
    ],
    "lido_pelo_inventario": true,
    "digital": "2:6e8faf87a4cbec64",
-   "nome": "Default instance factory",
-   "descricao": "Builds the default axios instance and factory for custom instances, re-exporting cancel, error and helper APIs from one entry point so consumers import a single module.",
+   "nome": "Fábrica da instância padrão",
+   "descricao": "Cria a instância padrão do axios e a fábrica de instâncias personalizadas, reexportando as APIs de cancelamento, erro e utilitários por um único ponto de entrada, para que quem consome importe um só módulo.",
    "container": "axiosLib",
    "area": "AreaClient",
    "status": "Pronto",
@@ -149,8 +149,8 @@
    ],
    "lido_pelo_inventario": true,
    "digital": "2:e6369c66de11df16",
-   "nome": "Token-based cancellation",
-   "descricao": "Implements the token-based cancellation API, where one token's promise notifies every subscribed request, so related requests can be aborted together with a single call.",
+   "nome": "Cancelamento por token",
+   "descricao": "Implementa a API de cancelamento por token, em que a promise de um token avisa todas as requisições inscritas, para que requisições relacionadas sejam abortadas juntas com uma só chamada.",
    "container": "axiosLib",
    "area": "AreaErrors",
    "status": "Pronto",
@@ -171,8 +171,8 @@
    ],
    "lido_pelo_inventario": true,
    "digital": "2:11ac168ff1c02521",
-   "nome": "Cancellation error type",
-   "descricao": "Extends AxiosError with the ERR_CANCELED code and a __CANCEL__ flag, so isCancel can tell user cancellations apart from network failures without inspecting messages.",
+   "nome": "Tipo de erro de cancelamento",
+   "descricao": "Estende o AxiosError com o código ERR_CANCELED e a marca __CANCEL__, para que isCancel distinga cancelamentos do usuário de falhas de rede sem inspecionar mensagens.",
    "container": "axiosLib",
    "area": "AreaErrors",
    "status": "Pronto",
@@ -191,8 +191,8 @@
    "simbolos": [],
    "lido_pelo_inventario": true,
    "digital": "2:7e68e4eaa307d7bb",
-   "nome": "Cancellation check helper",
-   "descricao": "Tests a thrown value for the __CANCEL__ marker instead of instanceof, so cancellation is detected even when errors cross realms or module copies in the same process.",
+   "nome": "Auxiliar de verificação de cancelamento",
+   "descricao": "Testa se um valor lançado traz a marca __CANCEL__ em vez de usar instanceof, para que o cancelamento seja detectado mesmo quando os erros cruzam realms ou cópias do módulo no mesmo processo.",
    "container": "axiosLib",
    "area": "AreaErrors",
    "status": "Pronto",
@@ -213,8 +213,8 @@
    ],
    "lido_pelo_inventario": true,
    "digital": "2:9c34a716455fce19",
-   "nome": "Request orchestration class",
-   "descricao": "Holds per-instance defaults and interceptors, merges each call's config, and generates the shorthand methods, so every request runs through one ordered pipeline.",
+   "nome": "Classe de orquestração de requisições",
+   "descricao": "Guarda os padrões e os interceptors de cada instância, mescla a configuração de cada chamada e gera os métodos de atalho, para que toda requisição passe por um único pipeline ordenado.",
    "container": "axiosLib",
    "area": "AreaPipeline",
    "status": "Pronto",
@@ -241,8 +241,8 @@
    ],
    "lido_pelo_inventario": true,
    "digital": "2:859a8669cee30568",
-   "nome": "Structured error class",
-   "descricao": "Carries code, config, request and response on each failure, and redacts secret config keys and URL credentials, so logged errors do not leak credentials.",
+   "nome": "Classe de erro estruturado",
+   "descricao": "Leva code, config, request e response em cada falha e oculta chaves secretas da configuração e credenciais de URL, para que os erros registrados em log não vazem credenciais.",
    "container": "axiosLib",
    "area": "AreaErrors",
    "status": "Pronto",
@@ -270,8 +270,8 @@
    ],
    "lido_pelo_inventario": true,
    "digital": "2:fe7b0f411bacd032",
-   "nome": "Case-insensitive header map",
-   "descricao": "Stores headers under normalized names with set, get and merge helpers, and rejects invalid names or values, because raw object headers silently duplicate keys in different casings.",
+   "nome": "Mapa de cabeçalhos sem distinção de caixa",
+   "descricao": "Guarda os cabeçalhos com nomes normalizados e oferece set, get e merge, rejeitando nomes ou valores inválidos, porque cabeçalhos em objeto puro duplicam chaves em silêncio quando a caixa varia.",
    "container": "axiosLib",
    "area": "AreaUrlHeaders",
    "status": "Pronto",
@@ -296,8 +296,8 @@
    ],
    "lido_pelo_inventario": true,
    "digital": "2:eee5deaf88822ac9",
-   "nome": "Interceptor stack manager",
-   "descricao": "Keeps request and response interceptors in an ordered stack with synchronous and runWhen flags, and skips entries ejected mid-run, so removals during a request do not break the chain.",
+   "nome": "Gerenciador da pilha de interceptors",
+   "descricao": "Mantém os interceptors de requisição e de resposta numa pilha ordenada, com as opções synchronous e runWhen, e ignora entradas removidas durante a execução, para que remoções no meio de uma requisição não quebrem a cadeia.",
    "container": "axiosLib",
    "area": "AreaPipeline",
    "status": "Pronto",
@@ -316,8 +316,8 @@
    "simbolos": [],
    "lido_pelo_inventario": true,
    "digital": "2:31b77e823fb3d557",
-   "nome": "Params cycle guard",
-   "descricao": "Walks the merged params iteratively and throws ERR_BAD_OPTION_VALUE on true cycles, tracking the active path so shared but acyclic objects still pass, so circular params fail fast with a clear error instead of reaching the query serializer.",
+   "nome": "Guarda de ciclos nos params",
+   "descricao": "Percorre os params mesclados de forma iterativa e lança ERR_BAD_OPTION_VALUE diante de ciclos reais, acompanhando o caminho ativo para que objetos compartilhados e acíclicos ainda passem, de modo que params circulares falhem cedo com um erro claro em vez de chegar ao serializador da query.",
    "container": "axiosLib",
    "area": "AreaUrlHeaders",
    "status": "Pronto",
@@ -340,8 +340,8 @@
    ],
    "lido_pelo_inventario": true,
    "digital": "2:e7769fd30b186097",
-   "nome": "Base URL joiner",
-   "descricao": "Joins baseURL with relative paths and refuses malformed or disallowed absolute URLs, redacting credentials and query secrets from the message, so errors stay safe to log.",
+   "nome": "Junção da URL base",
+   "descricao": "Junta baseURL com caminhos relativos e recusa URLs absolutas malformadas ou não permitidas, ocultando credenciais e segredos da query na mensagem, para que os erros sejam seguros de registrar em log.",
    "container": "axiosLib",
    "area": "AreaUrlHeaders",
    "status": "Pronto",
@@ -362,8 +362,8 @@
    "simbolos": [],
    "lido_pelo_inventario": true,
    "digital": "2:6269c40de441ccde",
-   "nome": "Multipart body builder",
-   "descricao": "Builds a multipart Blob from FormData for the fetch adapter, generating a boundary when none is given and translating serialization failures into AxiosError codes (ERR_NOT_SUPPORT, ERR_BAD_OPTION_VALUE, ERR_BAD_REQUEST), so uploads can be size-limited or streamed.",
+   "nome": "Construtor de corpo multipart",
+   "descricao": "Monta um Blob multipart a partir de FormData para o adaptador fetch, gerando um boundary quando nenhum é informado e traduzindo falhas de serialização em códigos do AxiosError (ERR_NOT_SUPPORT, ERR_BAD_OPTION_VALUE, ERR_BAD_REQUEST), para que uploads possam ter tamanho limitado ou ser enviados em stream.",
    "container": "axiosLib",
    "area": "AreaPayload",
    "status": "Pronto",
@@ -386,8 +386,8 @@
    ],
    "lido_pelo_inventario": true,
    "digital": "2:f4b66465a4ce4b87",
-   "nome": "Request dispatch and transforms",
-   "descricao": "Runs request transforms, flattens the config, checks cancellation, calls the selected adapter, and then transforms the response, so every adapter sees the same prepared input.",
+   "nome": "Despacho da requisição e transformações",
+   "descricao": "Executa as transformações da requisição, achata a configuração, verifica o cancelamento, chama o adaptador escolhido e depois transforma a resposta, para que todo adaptador receba a mesma entrada preparada.",
    "container": "axiosLib",
    "area": "AreaPipeline",
    "status": "Pronto",
@@ -415,8 +415,8 @@
    ],
    "lido_pelo_inventario": true,
    "digital": "2:5421cfc553c4586b",
-   "nome": "Config merge with precedence",
-   "descricao": "Merges two config objects into a null-prototype result using per-key rules for headers, auth and URLs, so later config layers override earlier ones without prototype leakage.",
+   "nome": "Mescla de configuração com precedência",
+   "descricao": "Mescla dois objetos de configuração num resultado sem protótipo, com regras por chave para cabeçalhos, autenticação e URLs, para que as camadas de configuração posteriores sobrescrevam as anteriores sem vazamento de protótipo.",
    "container": "axiosLib",
    "area": "AreaPipeline",
    "status": "Pronto",
@@ -435,8 +435,8 @@
    "simbolos": [],
    "lido_pelo_inventario": true,
    "digital": "2:47a92ee710ada304",
-   "nome": "Supported HTTP methods list",
-   "descricao": "Lists the frozen set of HTTP method names that get shorthand functions, including PURGE, LINK and QUERY, so adding a method requires one edit in one place.",
+   "nome": "Lista de métodos HTTP suportados",
+   "descricao": "Lista o conjunto congelado de nomes de métodos HTTP que ganham funções de atalho, incluindo PURGE, LINK e QUERY, para que acrescentar um método exija uma única edição num único lugar.",
    "container": "axiosLib",
    "area": "AreaClient",
    "status": "Pronto",
@@ -457,8 +457,8 @@
    "simbolos": [],
    "lido_pelo_inventario": true,
    "digital": "2:c46f568f80899631",
-   "nome": "FormData header policy",
-   "descricao": "Copies FormData-generated headers into the request, either all of them or only content-type and content-length per formDataHeaderPolicy, so multipart boundaries apply predictably.",
+   "nome": "Política de cabeçalhos do FormData",
+   "descricao": "Copia para a requisição os cabeçalhos gerados pelo FormData, todos ou só content-type e content-length conforme formDataHeaderPolicy, para que os boundaries multipart se apliquem de forma previsível.",
    "container": "axiosLib",
    "area": "AreaPayload",
    "status": "Pronto",
@@ -477,8 +477,8 @@
    "simbolos": [],
    "lido_pelo_inventario": true,
    "digital": "2:9b2aea5a897251df",
-   "nome": "Status-based promise settlement",
-   "descricao": "Resolves or rejects the request promise by applying validateStatus, mapping 4xx to ERR_BAD_REQUEST and other failures to ERR_BAD_RESPONSE, so adapters share one status rule.",
+   "nome": "Resolução da promise pelo status",
+   "descricao": "Resolve ou rejeita a promise da requisição aplicando validateStatus, mapeando 4xx para ERR_BAD_REQUEST e as demais falhas para ERR_BAD_RESPONSE, para que os adaptadores compartilhem uma única regra de status.",
    "container": "axiosLib",
    "area": "AreaPipeline",
    "status": "Pronto",
@@ -499,8 +499,8 @@
    "simbolos": [],
    "lido_pelo_inventario": true,
    "digital": "2:629a6643d0149d02",
-   "nome": "Request and response transforms",
-   "descricao": "Runs the configured transformRequest or transformResponse functions in order with normalized headers, so each function sees the same header object and status code.",
+   "nome": "Transformações de requisição e resposta",
+   "descricao": "Executa em ordem as funções transformRequest ou transformResponse configuradas, com cabeçalhos normalizados, para que cada função veja o mesmo objeto de cabeçalhos e o mesmo código de status.",
    "container": "axiosLib",
    "area": "AreaPipeline",
    "status": "Pronto",
@@ -521,8 +521,8 @@
    ],
    "lido_pelo_inventario": true,
    "digital": "2:dbb8f1271c465852",
-   "nome": "Default configuration object",
-   "descricao": "Defines the built-in config, including JSON parsing, transform functions, adapters and validateStatus, and picks the right form encoders, so every instance starts from one baseline.",
+   "nome": "Objeto de configuração padrão",
+   "descricao": "Define a configuração embutida, incluindo a leitura de JSON, as funções de transformação, os adaptadores e o validateStatus, e escolhe os codificadores de formulário adequados, para que toda instância parta de uma mesma base.",
    "container": "axiosLib",
    "area": "AreaClient",
    "status": "Pronto",
@@ -541,8 +541,8 @@
    "simbolos": [],
    "lido_pelo_inventario": true,
    "digital": "2:2a1e2130d95cd1f4",
-   "nome": "Transitional behavior flags",
-   "descricao": "Holds boolean switches for legacy behaviors such as silent JSON parsing and interceptor ordering, so maintainers can change defaults in one place during a migration.",
+   "nome": "Flags de comportamento transitório",
+   "descricao": "Guarda chaves booleanas para comportamentos legados, como a leitura silenciosa de JSON e a ordem dos interceptors, para que os mantenedores mudem os padrões num só lugar durante uma migração.",
    "container": "axiosLib",
    "area": "AreaClient",
    "status": "Pronto",
@@ -563,12 +563,12 @@
    "simbolos": [],
    "lido_pelo_inventario": true,
    "digital": "2:4cb483a473c9b09a",
-   "nome": "Environment FormData selector",
-   "descricao": "Exports the global FormData when present and falls back to the form-data package, so Node processes get a multipart class even without a global FormData.",
+   "nome": "Seletor de FormData do ambiente",
+   "descricao": "Exporta o FormData global quando existe e recorre ao pacote form-data, para que processos Node tenham uma classe multipart mesmo sem FormData global.",
    "container": "axiosLib",
    "area": "AreaPlatform",
    "status": "Pronto",
-   "tecnologia": "JavaScript (Node only)",
+   "tecnologia": "JavaScript (só Node)",
    "tags": [],
    "propriedades": {},
    "descrito_por": "claude -p haiku medium"
@@ -583,8 +583,8 @@
    "simbolos": [],
    "lido_pelo_inventario": true,
    "digital": "2:470aee8bf09beb4f",
-   "nome": "Package version constant",
-   "descricao": "Exports the library VERSION string as a single constant, which default headers and deprecation messages read to report the running release.",
+   "nome": "Constante da versão do pacote",
+   "descricao": "Exporta a string VERSION da biblioteca como uma constante única, que os cabeçalhos padrão e as mensagens de descontinuação leem para informar a versão em execução.",
    "container": "axiosLib",
    "area": "AreaPlatform",
    "status": "Pronto",
@@ -607,12 +607,12 @@
    ],
    "lido_pelo_inventario": true,
    "digital": "2:ad9e0b1d23793a07",
-   "nome": "Throttled transform stream",
-   "descricao": "Caps throughput and emits progress from a Node Transform stream using a sliding time window, so uploads and downloads can be rate-limited with the maxRate option.",
+   "nome": "Stream de transformação com limite de taxa",
+   "descricao": "Limita a vazão e emite progresso a partir de um stream Transform do Node usando uma janela de tempo deslizante, para que uploads e downloads possam ter a taxa limitada pela opção maxRate.",
    "container": "axiosLib",
    "area": "AreaStreaming",
    "status": "Pronto",
-   "tecnologia": "JavaScript (Node only)",
+   "tecnologia": "JavaScript (só Node)",
    "tags": [],
    "propriedades": {},
    "descrito_por": "claude -p haiku medium"
@@ -630,8 +630,8 @@
    ],
    "lido_pelo_inventario": true,
    "digital": "2:0574ea268119dbd4",
-   "nome": "URLSearchParams fallback class",
-   "descricao": "Fallback URLSearchParams class that percent-encodes pairs with plus for spaces, used where the native class is missing, so query and form encoding stay consistent.",
+   "nome": "Classe substituta de URLSearchParams",
+   "descricao": "Classe substituta de URLSearchParams que codifica os pares em percent-encoding com mais no lugar de espaço, usada onde a classe nativa não existe, para que a codificação de query e de formulário continue consistente.",
    "container": "axiosLib",
    "area": "AreaPayload",
    "status": "Pronto",
@@ -652,12 +652,12 @@
    ],
    "lido_pelo_inventario": true,
    "digital": "2:37159cedce364f7a",
-   "nome": "HTTP/2 session pool",
-   "descricao": "Caches HTTP/2 sessions per authority and option set, reusing live connections and expiring idle ones after a timeout, so repeated requests avoid new TLS handshakes.",
+   "nome": "Pool de sessões HTTP/2",
+   "descricao": "Guarda em cache sessões HTTP/2 por authority e conjunto de opções, reaproveitando conexões vivas e expirando as ociosas após um tempo, para que requisições repetidas evitem novos handshakes TLS.",
    "container": "axiosLib",
    "area": "AreaAdapters",
    "status": "Pronto",
-   "tecnologia": "JavaScript (Node only)",
+   "tecnologia": "JavaScript (só Node)",
    "tags": [],
    "propriedades": {},
    "descrito_por": "claude -p haiku medium"
@@ -672,8 +672,8 @@
    "simbolos": [],
    "lido_pelo_inventario": true,
    "digital": "2:b2522f3d55af8d34",
-   "nome": "HTTP status code constants",
-   "descricao": "Maps readable names such as NotFound to numeric status codes, including deprecated aliases kept for compatibility, so callers avoid magic numbers in validateStatus checks.",
+   "nome": "Constantes de códigos de status HTTP",
+   "descricao": "Mapeia nomes legíveis, como NotFound, para os códigos numéricos de status, incluindo apelidos descontinuados mantidos por compatibilidade, para que quem chama evite números mágicos nas verificações de validateStatus.",
    "container": "axiosLib",
    "area": "AreaErrors",
    "status": "Pronto",
@@ -682,7 +682,7 @@
     "Dados"
    ],
    "propriedades": {
-    "nota": "Keeps deprecated aliases (see @deprecated entries in the source) for backward compatibility."
+    "nota": "Mantém apelidos descontinuados (veja as entradas @deprecated no código) por compatibilidade com versões anteriores."
    },
    "descrito_por": "claude -p haiku medium"
   },
@@ -698,12 +698,12 @@
    ],
    "lido_pelo_inventario": true,
    "digital": "2:7688769f756f5a3e",
-   "nome": "Zlib header repair stream",
-   "descricao": "Prepends a default zlib header when a deflate body lacks one, because some servers send raw deflate that Node's inflate rejects, so decompression still succeeds.",
+   "nome": "Stream de reparo do cabeçalho zlib",
+   "descricao": "Acrescenta um cabeçalho zlib padrão quando um corpo deflate não tem um, porque alguns servidores enviam deflate cru que o inflate do Node rejeita, para que a descompressão ainda funcione.",
    "container": "axiosLib",
    "area": "AreaStreaming",
    "status": "Pronto",
-   "tecnologia": "JavaScript (Node only)",
+   "tecnologia": "JavaScript (só Node)",
    "tags": [],
    "propriedades": {},
    "descrito_por": "claude -p haiku medium"
@@ -718,8 +718,8 @@
    "simbolos": [],
    "lido_pelo_inventario": true,
    "digital": "2:a016cb4e6f3a1499",
-   "nome": "Bound function helper",
-   "descricao": "Wraps a function so it always runs with a fixed this value, which lets axios expose instance methods as plain functions that can be passed around safely.",
+   "nome": "Auxiliar de função com this fixo",
+   "descricao": "Envolve uma função para que ela sempre rode com um valor fixo de this, o que permite ao axios expor métodos da instância como funções simples que podem ser repassadas com segurança.",
    "container": "axiosLib",
    "area": "AreaPlatform",
    "status": "Pronto",
@@ -740,8 +740,8 @@
    ],
    "lido_pelo_inventario": true,
    "digital": "2:80dad2dc407ac859",
-   "nome": "Query string builder",
-   "descricao": "Appends serialized params to a URL while keeping reserved characters like colon and comma readable, and honors custom serializers, so generated query strings stay compact and predictable.",
+   "nome": "Construtor da query string",
+   "descricao": "Acrescenta à URL os params serializados mantendo legíveis caracteres reservados como dois-pontos e vírgula, e respeita serializadores personalizados, para que as query strings geradas fiquem compactas e previsíveis.",
    "container": "axiosLib",
    "area": "AreaUrlHeaders",
    "status": "Pronto",
@@ -760,8 +760,8 @@
    "simbolos": [],
    "lido_pelo_inventario": true,
    "digital": "2:044dfc98b7399117",
-   "nome": "Async-to-callback wrapper",
-   "descricao": "Converts an async function into a callback-style one with an optional result reducer, so the HTTP adapter can wrap a custom async DNS lookup for Node's callback-based sockets.",
+   "nome": "Conversor de async para callback",
+   "descricao": "Converte uma função assíncrona em uma de estilo callback, com um redutor opcional de resultado, para que o adaptador HTTP possa envolver uma resolução de DNS assíncrona personalizada para os sockets do Node, que usam callbacks.",
    "container": "axiosLib",
    "area": "AreaAdapters",
    "status": "Pronto",
@@ -780,8 +780,8 @@
    "simbolos": [],
    "lido_pelo_inventario": true,
    "digital": "2:11a6f308df134885",
-   "nome": "URL segment joiner",
-   "descricao": "Joins a base URL and a relative path with exactly one slash, trimming trailing slashes from the base, so baseURL and url values never produce double or missing separators.",
+   "nome": "Junção de segmentos de URL",
+   "descricao": "Junta uma URL base e um caminho relativo com exatamente uma barra, removendo as barras finais da base, para que os valores de baseURL e url nunca gerem separadores duplicados ou ausentes.",
    "container": "axiosLib",
    "area": "AreaUrlHeaders",
    "status": "Pronto",
@@ -800,8 +800,8 @@
    "simbolos": [],
    "lido_pelo_inventario": true,
    "digital": "2:4ac725ed3bc33149",
-   "nome": "Abort signal composer",
-   "descricao": "Merges user cancel signals and a timeout into one AbortSignal, unsubscribing on completion, so a request aborts on whichever trigger fires first without leaking listeners.",
+   "nome": "Compositor de sinais de cancelamento",
+   "descricao": "Mescla os sinais de cancelamento do usuário e um timeout em um único AbortSignal, cancelando as inscrições ao terminar, para que a requisição seja abortada pelo gatilho que disparar primeiro, sem vazar listeners.",
    "container": "axiosLib",
    "area": "AreaErrors",
    "status": "Pronto",
@@ -820,8 +820,8 @@
    "simbolos": [],
    "lido_pelo_inventario": true,
    "digital": "2:bedca942d9f04a6d",
-   "nome": "Cookie read and write",
-   "descricao": "Reads and writes XSRF cookies via document.cookie or the Cookie Store API, splitting on semicolons instead of building a regex from the name to avoid ReDoS and wrong-cookie matches.",
+   "nome": "Leitura e escrita de cookies",
+   "descricao": "Lê e grava cookies de XSRF por document.cookie ou pela Cookie Store API, dividindo o texto em ponto e vírgula em vez de montar uma regex com o nome, para evitar ReDoS e correspondências com o cookie errado.",
    "container": "axiosLib",
    "area": "AreaUrlHeaders",
    "status": "Pronto",
@@ -840,8 +840,8 @@
    "simbolos": [],
    "lido_pelo_inventario": true,
    "digital": "2:ef721e2386af1a57",
-   "nome": "Deprecation warning emitter",
-   "descricao": "Prints a console warning that names a deprecated method and its replacement, so callers see migration guidance without the call throwing.",
+   "nome": "Emissor de aviso de descontinuação",
+   "descricao": "Imprime no console um aviso que nomeia um método descontinuado e seu substituto, para que quem chama veja a orientação de migração sem que a chamada lance exceção.",
    "container": "axiosLib",
    "area": "AreaPlatform",
    "status": "Pronto",
@@ -862,8 +862,8 @@
    ],
    "lido_pelo_inventario": true,
    "digital": "2:3b68beafcb421348",
-   "nome": "Data URL size estimator",
-   "descricao": "Estimates decoded byte length of data: URLs without allocating buffers, so maxContentLength can reject oversized payloads before any memory is committed.",
+   "nome": "Estimador do tamanho de URL de dados",
+   "descricao": "Estima o tamanho em bytes decodificados de URLs data: sem alocar buffers, para que maxContentLength rejeite cargas grandes demais antes de qualquer memória ser reservada.",
    "container": "axiosLib",
    "area": "AreaPayload",
    "status": "Pronto",
@@ -884,8 +884,8 @@
    ],
    "lido_pelo_inventario": true,
    "digital": "2:8d1e5bd039447bea",
-   "nome": "FormData to Blob",
-   "descricao": "Converts FormData into a native multipart Blob, counting UTF-8 field bytes without encoding copies and enforcing the body-size limit before building it, and composes existing File data by reference, so large uploads avoid extra buffers.",
+   "nome": "FormData para Blob",
+   "descricao": "Converte FormData em um Blob multipart nativo, contando os bytes UTF-8 dos campos sem cópias de codificação e impondo o limite de tamanho do corpo antes de montá-lo, e compõe dados de File existentes por referência, para que uploads grandes evitem buffers extras.",
    "container": "axiosLib",
    "area": "AreaPayload",
    "status": "Pronto",
@@ -911,8 +911,8 @@
    ],
    "lido_pelo_inventario": true,
    "digital": "2:33ba4b5b5a26ee95",
-   "nome": "FormData to JSON converter",
-   "descricao": "Turns FormData entries into nested objects by parsing bracket and dot paths, with a depth cap and fail-fast parsing, so form submissions convert to JSON safely.",
+   "nome": "Conversor de FormData para JSON",
+   "descricao": "Transforma as entradas de FormData em objetos aninhados interpretando caminhos com colchetes e pontos, com limite de profundidade e leitura que falha cedo, para que envios de formulário virem JSON com segurança.",
    "container": "axiosLib",
    "area": "AreaPayload",
    "status": "Pronto",
@@ -933,12 +933,12 @@
    ],
    "lido_pelo_inventario": true,
    "digital": "2:60734122d8b9a22b",
-   "nome": "Multipart form stream",
-   "descricao": "Streams FormData parts as multipart bytes with a generated boundary and computed length, so large uploads reach Node's HTTP stack without buffering the whole body.",
+   "nome": "Stream de formulário multipart",
+   "descricao": "Envia as partes do FormData como bytes multipart em stream, com boundary gerado e tamanho calculado, para que uploads grandes cheguem à pilha HTTP do Node sem manter o corpo inteiro em buffer.",
    "container": "axiosLib",
    "area": "AreaStreaming",
    "status": "Pronto",
-   "tecnologia": "JavaScript (Node only)",
+   "tecnologia": "JavaScript (só Node)",
    "tags": [],
    "propriedades": {},
    "descrito_por": "claude -p haiku medium"
@@ -953,8 +953,8 @@
    "simbolos": [],
    "lido_pelo_inventario": true,
    "digital": "2:2708c9dba1bbaee6",
-   "nome": "Data URI decoder",
-   "descricao": "Decodes RFC 2397 data: URIs into a Buffer or Blob, applying the spec default mediatype, so inline payloads work in Node the same as in browsers.",
+   "nome": "Decodificador de data URI",
+   "descricao": "Decodifica data: URIs da RFC 2397 em um Buffer ou Blob, aplicando o mediatype padrão da especificação, para que cargas embutidas funcionem no Node como nos navegadores.",
    "container": "axiosLib",
    "area": "AreaPayload",
    "status": "Pronto",
@@ -973,8 +973,8 @@
    "simbolos": [],
    "lido_pelo_inventario": true,
    "digital": "2:02faccad5f9bd256",
-   "nome": "Absolute URL detector",
-   "descricao": "Detects an absolute URL by RFC 3986 scheme syntax or a leading double slash, so protocol-relative URLs skip baseURL joining.",
+   "nome": "Detector de URL absoluta",
+   "descricao": "Detecta uma URL absoluta pela sintaxe de esquema da RFC 3986 ou por uma barra dupla inicial, para que URLs relativas ao protocolo dispensem a junção com baseURL.",
    "container": "axiosLib",
    "area": "AreaUrlHeaders",
    "status": "Pronto",
@@ -993,8 +993,8 @@
    "simbolos": [],
    "lido_pelo_inventario": true,
    "digital": "2:7da312dc94f51c6f",
-   "nome": "Axios error type guard",
-   "descricao": "Checks for the isAxiosError flag on plain objects, not instanceof, so errors from other copies of axios are still recognized by callers.",
+   "nome": "Verificador de tipo do erro do Axios",
+   "descricao": "Verifica a flag isAxiosError em objetos simples, sem usar instanceof, para que erros vindos de outras cópias do axios continuem sendo reconhecidos por quem chama.",
    "container": "axiosLib",
    "area": "AreaErrors",
    "status": "Pronto",
@@ -1013,8 +1013,8 @@
    "simbolos": [],
    "lido_pelo_inventario": true,
    "digital": "2:b4c6b94bbb91e82a",
-   "nome": "Same-origin check",
-   "descricao": "Compares protocol, host and port with the page origin, so the XSRF header is sent only to same-origin URLs in standard browsers.",
+   "nome": "Verificação de mesma origem",
+   "descricao": "Compara protocolo, host e porta com a origem da página, para que o cabeçalho XSRF seja enviado só a URLs da mesma origem nos navegadores padrão.",
    "container": "axiosLib",
    "area": "AreaUrlHeaders",
    "status": "Pronto",
@@ -1035,8 +1035,8 @@
    "simbolos": [],
    "lido_pelo_inventario": true,
    "digital": "2:20ce5e291309f6f8",
-   "nome": "URL protocol normalizer",
-   "descricao": "Strips leading control characters and embedded tabs or newlines the way WHATWG parsing does, so protocol checks see the same scheme the browser will use.",
+   "nome": "Normalizador de protocolo da URL",
+   "descricao": "Remove caracteres de controle iniciais e tabulações ou quebras de linha embutidas como o parser WHATWG faz, para que a verificação de protocolo enxergue o mesmo esquema que o navegador usará.",
    "container": "axiosLib",
    "area": "AreaUrlHeaders",
    "status": "Pronto",
@@ -1055,12 +1055,12 @@
    "simbolos": [],
    "lido_pelo_inventario": true,
    "digital": "2:96052ac4228353fd",
-   "nome": "Null browser stub",
-   "descricao": "Exports null as a stand-in module, so the browser build can swap out Node-only adapters through the package browser field without pulling in Node built-ins.",
+   "nome": "Módulo nulo para o navegador",
+   "descricao": "Exporta null como módulo substituto, para que o build do navegador troque adaptadores só do Node pelo campo browser do package.json sem trazer módulos internos do Node.",
    "container": "axiosLib",
    "area": "AreaPlatform",
    "status": "Pronto",
-   "tecnologia": "JavaScript (browser only)",
+   "tecnologia": "JavaScript (só navegador)",
    "tags": [],
    "propriedades": {},
    "descrito_por": "claude -p haiku medium"
@@ -1075,8 +1075,8 @@
    "simbolos": [],
    "lido_pelo_inventario": true,
    "digital": "2:dc929b1fc0c2ce4d",
-   "nome": "Raw header parser",
-   "descricao": "Parses raw header text into an object and drops duplicates for headers Node itself ignores, so merged values match what Node's HTTP layer exposes.",
+   "nome": "Analisador de cabeçalhos brutos",
+   "descricao": "Analisa o texto bruto de cabeçalhos em um objeto e descarta duplicatas de cabeçalhos que o próprio Node ignora, para que os valores mesclados coincidam com o que a camada HTTP do Node expõe.",
    "container": "axiosLib",
    "area": "AreaUrlHeaders",
    "status": "Pronto",
@@ -1095,8 +1095,8 @@
    "simbolos": [],
    "lido_pelo_inventario": true,
    "digital": "2:b40b00cb93ac5164",
-   "nome": "URL scheme extractor",
-   "descricao": "Extracts the scheme from a URL string with one regex and returns an empty string when none is found, so adapters can pick a transport by protocol.",
+   "nome": "Extrator do esquema da URL",
+   "descricao": "Extrai o esquema de uma string de URL com uma única regex e devolve uma string vazia quando não encontra nenhum, para que os adaptadores possam escolher o transporte pelo protocolo.",
    "container": "axiosLib",
    "area": "AreaUrlHeaders",
    "status": "Pronto",
@@ -1115,8 +1115,8 @@
    "simbolos": [],
    "lido_pelo_inventario": true,
    "digital": "2:1ac53eff9fdf574d",
-   "nome": "Throttled progress reducer",
-   "descricao": "Clamps loaded counts, computes rate and ETA with a speedometer, and throttles callbacks, so progress listeners receive steady, accurate events instead of raw bursts.",
+   "nome": "Redutor de eventos de progresso com limite",
+   "descricao": "Limita as contagens de bytes carregados, calcula taxa e tempo restante com um medidor de velocidade e limita a frequência dos callbacks, para que os ouvintes de progresso recebam eventos estáveis e precisos em vez de rajadas brutas.",
    "container": "axiosLib",
    "area": "AreaStreaming",
    "status": "Pronto",
@@ -1135,8 +1135,8 @@
    "simbolos": [],
    "lido_pelo_inventario": true,
    "digital": "2:40c5660e4bcc7843",
-   "nome": "Blob chunk reader",
-   "descricao": "Reads a Blob as an async iterator using stream, arrayBuffer or iterator, whichever is available, so multipart encoding works across runtimes with different Blob APIs.",
+   "nome": "Leitor de blocos de Blob",
+   "descricao": "Lê um Blob como iterador assíncrono usando stream, arrayBuffer ou um iterador, o que estiver disponível, para que a codificação multipart funcione em ambientes com APIs de Blob diferentes.",
    "container": "axiosLib",
    "area": "AreaPayload",
    "status": "Pronto",
@@ -1157,8 +1157,8 @@
    ],
    "lido_pelo_inventario": true,
    "digital": "2:31a233699a381d04",
-   "nome": "Request config resolver",
-   "descricao": "Turns the merged config into final URL, headers and body by applying basic auth, XSRF and FormData headers, so adapters receive a ready-to-send request description.",
+   "nome": "Resolvedor da configuração da requisição",
+   "descricao": "Transforma a configuração mesclada em URL, cabeçalhos e corpo finais aplicando autenticação básica, XSRF e cabeçalhos de FormData, para que os adaptadores recebam uma descrição da requisição pronta para envio.",
    "container": "axiosLib",
    "area": "AreaPipeline",
    "status": "Pronto",
@@ -1181,8 +1181,8 @@
    ],
    "lido_pelo_inventario": true,
    "digital": "2:7005236fda9cf894",
-   "nome": "Header value sanitizer",
-   "descricao": "Trims whitespace and strips control bytes from header values, and converts them to byte strings for fetch, so invalid characters cannot break the request or inject headers.",
+   "nome": "Saneador de valores de cabeçalho",
+   "descricao": "Apara espaços e remove bytes de controle dos valores de cabeçalho, e os converte em strings de bytes para o fetch, para que caracteres inválidos não quebrem a requisição nem injetem cabeçalhos.",
    "container": "axiosLib",
    "area": "AreaUrlHeaders",
    "status": "Pronto",
@@ -1203,8 +1203,8 @@
    "simbolos": [],
    "lido_pelo_inventario": true,
    "digital": "2:a0c0d7d0fe7f7c54",
-   "nome": "Proxy bypass matcher",
-   "descricao": "Decides whether a host skips the proxy by canonicalizing IPv4 shorthand, octal and hex forms and unmapping IPv4-mapped IPv6, so bypass rules cannot be evaded by alternate spellings.",
+   "nome": "Verificador de exceção de proxy",
+   "descricao": "Decide se um host dispensa o proxy canonicalizando formas abreviadas, octais e hexadecimais de IPv4 e desfazendo o mapeamento de IPv6 para IPv4, para que as regras de exceção não sejam burladas por grafias alternativas.",
    "container": "axiosLib",
    "area": "AreaAdapters",
    "status": "Pronto",
@@ -1225,8 +1225,8 @@
    ],
    "lido_pelo_inventario": true,
    "digital": "2:5253d86952d3b92f",
-   "nome": "Transfer rate estimator",
-   "descricao": "Computes bytes per second over a fixed ring buffer of recent samples and reports nothing until a minimum window passes, so early rate figures do not spike.",
+   "nome": "Estimador de taxa de transferência",
+   "descricao": "Calcula bytes por segundo sobre um buffer circular fixo de amostras recentes e não informa nada até passar uma janela mínima, para que as primeiras taxas não disparem.",
    "container": "axiosLib",
    "area": "AreaStreaming",
    "status": "Pronto",
@@ -1245,8 +1245,8 @@
    "simbolos": [],
    "lido_pelo_inventario": true,
    "digital": "2:0f27d2f350b49bee",
-   "nome": "Array argument spreader",
-   "descricao": "Wraps a function so it receives an array as its argument list, which lets promise chains pass multiple results to callbacks such as axios.spread.",
+   "nome": "Espalhador de argumentos de array",
+   "descricao": "Envolve uma função para que ela receba um array como lista de argumentos, o que permite que cadeias de promises passem vários resultados a callbacks como axios.spread.",
    "container": "axiosLib",
    "area": "AreaPlatform",
    "status": "Pronto",
@@ -1267,8 +1267,8 @@
    ],
    "lido_pelo_inventario": true,
    "digital": "2:6c95aae4ce4875f7",
-   "nome": "Call rate limiter",
-   "descricao": "Limits a function to a set frequency and trails the last call with a timer, returning flush helpers, so progress events are emitted at a steady rate without dropping the final value.",
+   "nome": "Limitador de frequência de chamadas",
+   "descricao": "Limita uma função a uma frequência definida e reserva a última chamada com um timer, devolvendo auxiliares de flush, para que os eventos de progresso saiam em ritmo estável sem perder o valor final.",
    "container": "axiosLib",
    "area": "AreaStreaming",
    "status": "Pronto",
@@ -1293,8 +1293,8 @@
    ],
    "lido_pelo_inventario": true,
    "digital": "2:e5ccaf40be793406",
-   "nome": "Object to FormData encoder",
-   "descricao": "Serializes nested objects into FormData or URLSearchParams with bracket keys and a depth limit of 100, and enforces that limit so deep payloads fail with a clear error.",
+   "nome": "Codificador de objeto para FormData",
+   "descricao": "Serializa objetos aninhados em FormData ou URLSearchParams com chaves entre colchetes e limite de profundidade de 100, impondo esse limite para que cargas muito profundas falhem com um erro claro.",
    "container": "axiosLib",
    "area": "AreaPayload",
    "status": "Pronto",
@@ -1313,8 +1313,8 @@
    "simbolos": [],
    "lido_pelo_inventario": true,
    "digital": "2:84df810ac53abe64",
-   "nome": "URL-encoded body encoder",
-   "descricao": "Encodes objects as application/x-www-form-urlencoded, writing Node Buffers as base64, so form posts keep binary values intact without a separate serializer.",
+   "nome": "Codificador de corpo urlencoded",
+   "descricao": "Codifica objetos como application/x-www-form-urlencoded, gravando Buffers do Node em base64, para que envios de formulário mantenham valores binários intactos sem um serializador à parte.",
    "container": "axiosLib",
    "area": "AreaPayload",
    "status": "Pronto",
@@ -1333,8 +1333,8 @@
    "simbolos": [],
    "lido_pelo_inventario": true,
    "digital": "2:16f54dfbd935c3d6",
-   "nome": "Stream progress tracker",
-   "descricao": "Wraps a ReadableStream in another that counts bytes and fires progress and finish callbacks once, so fetch uploads report progress without buffering the body.",
+   "nome": "Rastreador de progresso de stream",
+   "descricao": "Envolve um ReadableStream em outro que conta bytes e dispara os callbacks de progresso e de término uma única vez, para que uploads com fetch informem progresso sem manter o corpo em buffer.",
    "container": "axiosLib",
    "area": "AreaStreaming",
    "status": "Pronto",
@@ -1355,8 +1355,8 @@
    ],
    "lido_pelo_inventario": true,
    "digital": "2:be2e6c593b05930d",
-   "nome": "Option schema validator",
-   "descricao": "Checks option types against a schema and emits one-time deprecation warnings for removed transitional options, so misconfigured instances fail early with clear messages.",
+   "nome": "Validador de esquema de opções",
+   "descricao": "Verifica os tipos das opções contra um esquema e emite avisos únicos de descontinuação para opções transitórias removidas, para que instâncias mal configuradas falhem cedo com mensagens claras.",
    "container": "axiosLib",
    "area": "AreaPipeline",
    "status": "Pronto",
@@ -1377,12 +1377,12 @@
    "simbolos": [],
    "lido_pelo_inventario": true,
    "digital": "2:8644bc024d8d8d83",
-   "nome": "Browser Blob export",
-   "descricao": "Exports the global Blob or null when absent, so browser builds reference Blob without throwing in workers or older environments that lack it.",
+   "nome": "Exportação do Blob do navegador",
+   "descricao": "Exporta o Blob global ou null quando ausente, para que os builds de navegador referenciem Blob sem lançar exceção em workers ou ambientes antigos que não o têm.",
    "container": "axiosLib",
    "area": "AreaPlatform",
    "status": "Pronto",
-   "tecnologia": "JavaScript (browser only)",
+   "tecnologia": "JavaScript (só navegador)",
    "tags": [],
    "propriedades": {},
    "descrito_por": "claude -p haiku medium"
@@ -1397,12 +1397,12 @@
    "simbolos": [],
    "lido_pelo_inventario": true,
    "digital": "2:238e9e1c261b63d3",
-   "nome": "Browser FormData export",
-   "descricao": "Exports the global FormData or null when absent, so the browser platform can detect multipart support without a hard reference to the global.",
+   "nome": "Exportação do FormData do navegador",
+   "descricao": "Exporta o FormData global ou null quando ausente, para que a plataforma do navegador detecte o suporte a multipart sem uma referência rígida ao global.",
    "container": "axiosLib",
    "area": "AreaPlatform",
    "status": "Pronto",
-   "tecnologia": "JavaScript (browser only)",
+   "tecnologia": "JavaScript (só navegador)",
    "tags": [],
    "propriedades": {},
    "descrito_por": "claude -p haiku medium"
@@ -1417,12 +1417,12 @@
    "simbolos": [],
    "lido_pelo_inventario": true,
    "digital": "2:ca3c8019dfb887f2",
-   "nome": "Browser URLSearchParams export",
-   "descricao": "Uses the native URLSearchParams when present and falls back to AxiosURLSearchParams otherwise, so query encoding works in older browsers too.",
+   "nome": "Exportação do URLSearchParams do navegador",
+   "descricao": "Usa o URLSearchParams nativo quando existe e recorre ao AxiosURLSearchParams caso contrário, para que a codificação de query funcione também em navegadores antigos.",
    "container": "axiosLib",
    "area": "AreaPlatform",
    "status": "Pronto",
-   "tecnologia": "JavaScript (browser only)",
+   "tecnologia": "JavaScript (só navegador)",
    "tags": [],
    "propriedades": {},
    "descrito_por": "claude -p haiku medium"
@@ -1437,12 +1437,12 @@
    "simbolos": [],
    "lido_pelo_inventario": true,
    "digital": "2:424ec9487a418213",
-   "nome": "Browser platform descriptor",
-   "descricao": "Describes browser capabilities by flagging isBrowser, listing supported protocols and wiring the browser class set, so shared code picks browser behavior at runtime.",
+   "nome": "Descritor da plataforma navegador",
+   "descricao": "Descreve as capacidades do navegador sinalizando isBrowser, listando os protocolos suportados e ligando o conjunto de classes do navegador, para que o código compartilhado escolha o comportamento do navegador em tempo de execução.",
    "container": "axiosLib",
    "area": "AreaPlatform",
    "status": "Pronto",
-   "tecnologia": "JavaScript (browser only)",
+   "tecnologia": "JavaScript (só navegador)",
    "tags": [],
    "propriedades": {},
    "descrito_por": "claude -p haiku medium"
@@ -1457,8 +1457,8 @@
    "simbolos": [],
    "lido_pelo_inventario": true,
    "digital": "2:4283ed64df5fe37e",
-   "nome": "Shared environment detection",
-   "descricao": "Detects standard browser, web worker and React Native environments from window, document and navigator, so axios picks the right XSRF and FormData behavior in each.",
+   "nome": "Detecção de ambiente compartilhada",
+   "descricao": "Detecta ambientes de navegador padrão, web worker e React Native a partir de window, document e navigator, para que o axios escolha o comportamento certo de XSRF e FormData em cada um.",
    "container": "axiosLib",
    "area": "AreaPlatform",
    "status": "Pronto",
@@ -1477,8 +1477,8 @@
    "simbolos": [],
    "lido_pelo_inventario": true,
    "digital": "2:07b6327342db79ac",
-   "nome": "Platform facade",
-   "descricao": "Merges the Node platform descriptor with shared environment detection into one object, so modules import a single platform API and the browser build swaps it through the bundler.",
+   "nome": "Fachada da plataforma",
+   "descricao": "Reúne o descritor da plataforma Node e a detecção de ambiente compartilhada em um único objeto, para que os módulos importem uma só API de plataforma e o build do navegador a troque pelo empacotador.",
    "container": "axiosLib",
    "area": "AreaPlatform",
    "status": "Pronto",
@@ -1497,12 +1497,12 @@
    "simbolos": [],
    "lido_pelo_inventario": true,
    "digital": "2:e395c8d4a66da17e",
-   "nome": "Node Buffer adapter",
-   "descricao": "Wraps Buffer creation behind an availability check, so form and body encoders can handle binary values on Node while staying safe where Buffer is absent.",
+   "nome": "Adaptador do Buffer do Node",
+   "descricao": "Envolve a criação de Buffer atrás de uma verificação de disponibilidade, para que os codificadores de formulário e de corpo tratem valores binários no Node e continuem seguros onde Buffer não existe.",
    "container": "axiosLib",
    "area": "AreaPlatform",
    "status": "Pronto",
-   "tecnologia": "JavaScript (Node only)",
+   "tecnologia": "JavaScript (só Node)",
    "tags": [],
    "propriedades": {},
    "descrito_por": "claude -p haiku medium"
@@ -1517,12 +1517,12 @@
    "simbolos": [],
    "lido_pelo_inventario": true,
    "digital": "2:1b0b2fa59ad4a1d0",
-   "nome": "Node FormData re-export",
-   "descricao": "Re-exports the form-data package on Node, so multipart encoding uses a full implementation with boundaries and file streams where no native FormData exists.",
+   "nome": "Reexportação do FormData do Node",
+   "descricao": "Reexporta o pacote form-data no Node, para que a codificação multipart use uma implementação completa, com boundaries e streams de arquivo, onde não há FormData nativo.",
    "container": "axiosLib",
    "area": "AreaPlatform",
    "status": "Pronto",
-   "tecnologia": "JavaScript (Node only)",
+   "tecnologia": "JavaScript (só Node)",
    "tags": [],
    "propriedades": {},
    "descrito_por": "claude -p haiku medium"
@@ -1537,12 +1537,12 @@
    "simbolos": [],
    "lido_pelo_inventario": true,
    "digital": "2:ac2599fa3ad2240c",
-   "nome": "Node URLSearchParams re-export",
-   "descricao": "Re-exports the URLSearchParams class from Node's url module, so server-side query serialization uses the same class as the platform's built-in parser.",
+   "nome": "Reexportação do URLSearchParams do Node",
+   "descricao": "Reexporta a classe URLSearchParams do módulo url do Node, para que a serialização de query no servidor use a mesma classe do parser embutido da plataforma.",
    "container": "axiosLib",
    "area": "AreaPlatform",
    "status": "Pronto",
-   "tecnologia": "JavaScript (Node only)",
+   "tecnologia": "JavaScript (só Node)",
    "tags": [],
    "propriedades": {},
    "descrito_por": "claude -p haiku medium"
@@ -1557,12 +1557,12 @@
    "simbolos": [],
    "lido_pelo_inventario": true,
    "digital": "2:54c28d275a428a7c",
-   "nome": "Node platform descriptor",
-   "descricao": "Describes the Node runtime with isNode, classes and protocols, and generates random boundary strings with crypto, so multipart bodies get unpredictable boundaries.",
+   "nome": "Descritor da plataforma Node",
+   "descricao": "Descreve o ambiente Node com isNode, classes e protocolos, e gera strings de boundary aleatórias com crypto, para que os corpos multipart tenham boundaries imprevisíveis.",
    "container": "axiosLib",
    "area": "AreaPlatform",
    "status": "Pronto",
-   "tecnologia": "JavaScript (Node only)",
+   "tecnologia": "JavaScript (só Node)",
    "tags": [],
    "propriedades": {},
    "descrito_por": "claude -p haiku medium"
@@ -1585,8 +1585,8 @@
    ],
    "lido_pelo_inventario": true,
    "digital": "2:70ee91726cde8a72",
-   "nome": "Shared utility toolkit",
-   "descricao": "Provides type checks, safe object iteration and prototype-pollution guards used across the library, so helpers ignore inherited keys that could alter request behavior.",
+   "nome": "Conjunto de utilitários compartilhados",
+   "descricao": "Oferece verificações de tipo, iteração segura de objetos e proteções contra poluição de protótipo usadas em toda a biblioteca, para que os auxiliares ignorem chaves herdadas que poderiam alterar o comportamento da requisição.",
    "container": "axiosLib",
    "area": "AreaPlatform",
    "status": "Pronto",
@@ -1604,8 +1604,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Registers the lazy fetch getter as the fetch adapter",
-   "tecnologia": "Adapter registry",
+   "verbo": "Registra o getter preguiçoso do fetch como adaptador fetch",
+   "tecnologia": "Registro de adaptadores",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -1616,8 +1616,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Registers it as the Node.js http adapter",
-   "tecnologia": "Adapter registry",
+   "verbo": "Registra-o como adaptador http do Node.js",
+   "tecnologia": "Registro de adaptadores",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -1628,8 +1628,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Registers it as the browser xhr adapter",
-   "tecnologia": "Adapter registry",
+   "verbo": "Registra-o como adaptador xhr do navegador",
+   "tecnologia": "Registro de adaptadores",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -1640,8 +1640,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Throws unknown or unsupported adapter errors with",
-   "tecnologia": "Function call",
+   "verbo": "Lança erros de adaptador desconhecido ou não suportado com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -1652,8 +1652,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Iterates the adapter registry and checks adapter types with",
-   "tecnologia": "Function call",
+   "verbo": "Percorre o registro de adaptadores e verifica os tipos de adaptador com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -1664,8 +1664,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Raises network, timeout and bad-response errors with",
-   "tecnologia": "Function call",
+   "verbo": "Levanta erros de rede, timeout e resposta inválida com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -1676,8 +1676,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Builds request headers and wraps response headers with",
-   "tecnologia": "Function call",
+   "verbo": "Monta os cabeçalhos da requisição e envolve os da resposta com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -1688,8 +1688,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Builds the multipart Blob for size-limited or streamed uploads with",
-   "tecnologia": "Function call",
+   "verbo": "Monta o Blob multipart para uploads com tamanho limitado ou em stream com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -1700,8 +1700,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Settles the promise from the response status through",
-   "tecnologia": "Function call",
+   "verbo": "Resolve a promise a partir do status da resposta por meio de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -1712,8 +1712,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Reads the package version for the User-Agent from",
-   "tecnologia": "Function call",
+   "verbo": "Lê a versão do pacote para o User-Agent de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -1724,8 +1724,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Merges the abort signal, cancel token and timeout through",
-   "tecnologia": "Function call",
+   "verbo": "Mescla o sinal de cancelamento, o token de cancelamento e o timeout por meio de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -1736,8 +1736,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Checks the size of data: URLs before decoding with",
-   "tecnologia": "Function call",
+   "verbo": "Verifica o tamanho das URLs data: antes de decodificar com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -1748,8 +1748,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Emits upload and download progress through",
-   "tecnologia": "Function call",
+   "verbo": "Emite o progresso de upload e de download por meio de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -1760,8 +1760,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Resolves URL, headers, auth and body policy with",
-   "tecnologia": "Function call",
+   "verbo": "Resolve URL, cabeçalhos, autenticação e política do corpo com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -1772,8 +1772,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Converts header values to byte strings with",
-   "tecnologia": "Function call",
+   "verbo": "Converte os valores de cabeçalho em strings de bytes com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -1784,8 +1784,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Counts streamed request and response bytes through",
-   "tecnologia": "Function call",
+   "verbo": "Conta os bytes de requisição e resposta em stream por meio de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -1796,8 +1796,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Reads runtime capability flags from",
-   "tecnologia": "Function call",
+   "verbo": "Lê as flags de capacidade do ambiente de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -1808,8 +1808,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Classifies body types and merges config values with",
-   "tecnologia": "Function call",
+   "verbo": "Classifica os tipos de corpo e mescla valores de configuração com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -1820,8 +1820,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Aborts the request with",
-   "tecnologia": "Function call",
+   "verbo": "Aborta a requisição com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -1832,8 +1832,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Raises network, timeout, size and redirect errors with",
-   "tecnologia": "Function call",
+   "verbo": "Levanta erros de rede, timeout, tamanho e redirecionamento com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -1844,8 +1844,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Builds request headers and wraps response headers with",
-   "tecnologia": "Function call",
+   "verbo": "Monta os cabeçalhos da requisição e envolve os da resposta com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -1856,8 +1856,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Joins baseURL and url into the request URL with",
-   "tecnologia": "Function call",
+   "verbo": "Junta baseURL e url na URL da requisição com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -1868,8 +1868,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Applies the multipart header policy through",
-   "tecnologia": "Function call",
+   "verbo": "Aplica a política de cabeçalhos multipart por meio de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -1880,8 +1880,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Settles the promise from the response status through",
-   "tecnologia": "Function call",
+   "verbo": "Resolve a promise a partir do status da resposta por meio de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -1892,8 +1892,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Reads transitional behavior flags from",
-   "tecnologia": "Function call",
+   "verbo": "Lê as flags de comportamento transitório de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -1904,8 +1904,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Reads the package version for the User-Agent and boundary tag from",
-   "tecnologia": "Function call",
+   "verbo": "Lê a versão do pacote para o User-Agent e a marca do boundary de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -1916,8 +1916,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Throttles upload and download streams with",
-   "tecnologia": "Node.js streams",
+   "verbo": "Limita a taxa dos streams de upload e de download com",
+   "tecnologia": "Streams do Node.js",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -1928,8 +1928,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Reuses pooled HTTP/2 sessions from",
-   "tecnologia": "Function call",
+   "verbo": "Reaproveita sessões HTTP/2 do pool de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -1940,8 +1940,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Repairs compressed response streams with",
-   "tecnologia": "Node.js streams",
+   "verbo": "Repara streams de resposta comprimida com",
+   "tecnologia": "Streams do Node.js",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -1952,8 +1952,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Rebinds the pooled agent hooks of the direct connection with",
-   "tecnologia": "Function call",
+   "verbo": "Religa os hooks do agente em pool da conexão direta com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -1964,8 +1964,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Appends serialized params to the URL with",
-   "tecnologia": "Function call",
+   "verbo": "Acrescenta os params serializados à URL com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -1976,8 +1976,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Wraps the async DNS lookup as a callback with",
-   "tecnologia": "Function call",
+   "verbo": "Envolve a resolução de DNS assíncrona como callback com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -1988,8 +1988,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Caps buffer allocation for data: URLs with",
-   "tecnologia": "Function call",
+   "verbo": "Limita a alocação de buffer para URLs data: com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2000,8 +2000,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Streams multipart FormData bodies with",
-   "tecnologia": "Node.js streams",
+   "verbo": "Envia corpos FormData multipart em stream com",
+   "tecnologia": "Streams do Node.js",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2012,8 +2012,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Decodes data: URLs without a network call with",
-   "tecnologia": "Function call",
+   "verbo": "Decodifica URLs data: sem chamada de rede com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2024,8 +2024,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Emits upload and download progress through",
-   "tecnologia": "Function call",
+   "verbo": "Emite o progresso de upload e de download por meio de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2036,8 +2036,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Reads Blob bodies as chunks with",
-   "tecnologia": "Function call",
+   "verbo": "Lê corpos Blob em blocos com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2048,8 +2048,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Converts header values to byte strings with",
-   "tecnologia": "Function call",
+   "verbo": "Converte os valores de cabeçalho em strings de bytes com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2060,8 +2060,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Matches NO_PROXY rules with",
-   "tecnologia": "Function call",
+   "verbo": "Confere as regras de NO_PROXY com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2072,8 +2072,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Reads runtime capability flags from",
-   "tecnologia": "Function call",
+   "verbo": "Lê as flags de capacidade do ambiente de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2084,8 +2084,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Classifies body types, stream kinds and numeric limits with",
-   "tecnologia": "Function call",
+   "verbo": "Classifica tipos de corpo, tipos de stream e limites numéricos com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2096,8 +2096,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Aborts the request with",
-   "tecnologia": "Function call",
+   "verbo": "Aborta a requisição com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2108,8 +2108,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Raises network, timeout and abort errors with",
-   "tecnologia": "Function call",
+   "verbo": "Levanta erros de rede, timeout e cancelamento com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2120,8 +2120,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Wraps request and response headers with",
-   "tecnologia": "Function call",
+   "verbo": "Envolve os cabeçalhos da requisição e da resposta com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2132,8 +2132,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Settles the promise from the response status through",
-   "tecnologia": "Function call",
+   "verbo": "Resolve a promise a partir do status da resposta por meio de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2144,8 +2144,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Reads timeout-clarification flags from",
-   "tecnologia": "Function call",
+   "verbo": "Lê as flags de esclarecimento de timeout de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2156,8 +2156,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Reads the XSRF cookie asynchronously through",
-   "tecnologia": "Function call",
+   "verbo": "Lê o cookie XSRF de forma assíncrona por meio de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2168,8 +2168,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Normalizes the URL before the scheme check with",
-   "tecnologia": "Function call",
+   "verbo": "Normaliza a URL antes da verificação do esquema com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2180,8 +2180,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Rejects unsupported URL schemes with",
-   "tecnologia": "Function call",
+   "verbo": "Rejeita esquemas de URL não suportados com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2192,8 +2192,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Emits upload and download progress through",
-   "tecnologia": "Function call",
+   "verbo": "Emite o progresso de upload e de download por meio de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2204,8 +2204,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Resolves URL, headers, auth and body policy with",
-   "tecnologia": "Function call",
+   "verbo": "Resolve URL, cabeçalhos, autenticação e política do corpo com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2216,8 +2216,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Converts header values to byte strings with",
-   "tecnologia": "Function call",
+   "verbo": "Converte os valores de cabeçalho em strings de bytes com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2228,8 +2228,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Checks the browser environment through",
-   "tecnologia": "Function call",
+   "verbo": "Verifica o ambiente de navegador por meio de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2240,8 +2240,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Iterates headers with forEach and checks for undefined with",
-   "tecnologia": "Function call",
+   "verbo": "Percorre os cabeçalhos com forEach e verifica undefined com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2252,8 +2252,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Exposes getAdapter from",
-   "tecnologia": "Function call",
+   "verbo": "Expõe getAdapter de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2264,8 +2264,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Exposes the cancel token class from",
-   "tecnologia": "Function call",
+   "verbo": "Expõe a classe do token de cancelamento de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2276,8 +2276,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Exposes the cancellation error from",
-   "tecnologia": "Function call",
+   "verbo": "Expõe o erro de cancelamento de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2288,8 +2288,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Exposes the cancellation check from",
-   "tecnologia": "Function call",
+   "verbo": "Expõe a verificação de cancelamento de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2300,8 +2300,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Instantiates the client and binds request on it with",
-   "tecnologia": "Function call",
+   "verbo": "Instancia o cliente e liga request a ele com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2312,8 +2312,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Exposes the error class from",
-   "tecnologia": "Function call",
+   "verbo": "Expõe a classe de erro de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2324,8 +2324,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Exposes the headers class from",
-   "tecnologia": "Function call",
+   "verbo": "Expõe a classe de cabeçalhos de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2336,8 +2336,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Merges instance config in axios.create with",
-   "tecnologia": "Function call",
+   "verbo": "Mescla a configuração da instância em axios.create com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2348,8 +2348,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Seeds the default instance with",
-   "tecnologia": "Function call",
+   "verbo": "Inicializa a instância padrão com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2360,8 +2360,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Exposes the package version from",
-   "tecnologia": "Function call",
+   "verbo": "Expõe a versão do pacote de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2372,8 +2372,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Exposes the status code table from",
-   "tecnologia": "Function call",
+   "verbo": "Expõe a tabela de códigos de status de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2384,8 +2384,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Binds the request method to the instance with",
-   "tecnologia": "Function call",
+   "verbo": "Liga o método request à instância com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2396,8 +2396,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Exposes axios.formToJSON with",
-   "tecnologia": "Function call",
+   "verbo": "Expõe axios.formToJSON com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2408,8 +2408,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Exposes axios.isAxiosError with",
-   "tecnologia": "Function call",
+   "verbo": "Expõe axios.isAxiosError com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2420,8 +2420,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Exposes axios.spread with",
-   "tecnologia": "Function call",
+   "verbo": "Expõe axios.spread com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2432,8 +2432,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Exposes axios.toFormData with",
-   "tecnologia": "Function call",
+   "verbo": "Expõe axios.toFormData com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2444,8 +2444,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Copies prototype members onto the instance and detects HTML forms with",
-   "tecnologia": "Function call",
+   "verbo": "Copia membros do protótipo para a instância e detecta formulários HTML com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2456,8 +2456,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Builds the cancellation reason with",
-   "tecnologia": "Function call",
+   "verbo": "Monta o motivo do cancelamento com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2468,8 +2468,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Extends as a subclass of",
-   "tecnologia": "Function call",
+   "verbo": "Estende como subclasse de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2480,8 +2480,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Finds the wrapped cause in the error stack with",
-   "tecnologia": "Function call",
+   "verbo": "Encontra a causa embutida na pilha do erro com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2492,8 +2492,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Merges common and per-method headers with",
-   "tecnologia": "Function call",
+   "verbo": "Mescla os cabeçalhos comuns e os de cada método com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2504,8 +2504,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Registers and runs request and response interceptors from",
-   "tecnologia": "Promise chain",
+   "verbo": "Registra e executa os interceptors de requisição e de resposta de",
+   "tecnologia": "Cadeia de promises",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2516,8 +2516,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Builds the full URL in getUri with",
-   "tecnologia": "Function call",
+   "verbo": "Monta a URL completa em getUri com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2528,8 +2528,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Hands the merged config over for dispatch to",
-   "tecnologia": "Promise chain",
+   "verbo": "Entrega a configuração mesclada para despacho a",
+   "tecnologia": "Cadeia de promises",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2540,8 +2540,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Merges instance defaults with each call config through",
-   "tecnologia": "Function call",
+   "verbo": "Mescla os padrões da instância com a configuração de cada chamada por meio de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2552,8 +2552,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Generates the get/post/put shortcut methods from",
-   "tecnologia": "Function call",
+   "verbo": "Gera os métodos de atalho get/post/put de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2564,8 +2564,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Falls back to the default transitional flags from",
-   "tecnologia": "Function call",
+   "verbo": "Recorre às flags transitórias padrão de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2576,8 +2576,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Serializes params in getUri with",
-   "tecnologia": "Function call",
+   "verbo": "Serializa os params em getUri com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2588,8 +2588,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Validates config options and transitional flags with",
-   "tecnologia": "Function call",
+   "verbo": "Valida as opções de configuração e as flags transitórias com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2600,8 +2600,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Merges config and iterates the method list with",
-   "tecnologia": "Function call",
+   "verbo": "Mescla a configuração e percorre a lista de métodos com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2612,8 +2612,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Redacts and serializes headers of the failed config with",
-   "tecnologia": "Function call",
+   "verbo": "Oculta e serializa os cabeçalhos da configuração que falhou com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2624,8 +2624,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Serializes the error to plain JSON and checks types with",
-   "tecnologia": "Function call",
+   "verbo": "Serializa o erro em JSON simples e verifica tipos com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2636,8 +2636,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Parses raw header strings with",
-   "tecnologia": "Function call",
+   "verbo": "Analisa strings brutas de cabeçalho com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2648,8 +2648,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Strips unsafe characters from header values with",
-   "tecnologia": "Function call",
+   "verbo": "Remove caracteres inseguros dos valores de cabeçalho com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2660,8 +2660,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Normalizes header names and checks value types with",
-   "tecnologia": "Function call",
+   "verbo": "Normaliza os nomes dos cabeçalhos e verifica os tipos dos valores com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2672,8 +2672,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Iterates registered handlers with forEach from",
-   "tecnologia": "Function call",
+   "verbo": "Percorre os handlers registrados com forEach de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2684,8 +2684,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Throws ERR_BAD_OPTION_VALUE on a circular reference with",
-   "tecnologia": "Function call",
+   "verbo": "Lança ERR_BAD_OPTION_VALUE diante de uma referência circular com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2696,8 +2696,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Checks plain objects and arrays and reads own properties with",
-   "tecnologia": "Function call",
+   "verbo": "Verifica objetos simples e arrays e lê propriedades próprias com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2708,8 +2708,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Throws on unsafe URLs and redacts credentials with",
-   "tecnologia": "Function call",
+   "verbo": "Lança erro em URLs inseguras e oculta credenciais com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2720,8 +2720,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Joins the base and relative URL with",
-   "tecnologia": "Function call",
+   "verbo": "Junta a URL base e a relativa com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2732,8 +2732,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Skips joining for absolute URLs with",
-   "tecnologia": "Function call",
+   "verbo": "Dispensa a junção para URLs absolutas com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2744,8 +2744,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Normalizes the URL before the scheme check with",
-   "tecnologia": "Function call",
+   "verbo": "Normaliza a URL antes da verificação do esquema com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2756,8 +2756,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Raises unsupported-Blob, random-source and serialization errors with",
-   "tecnologia": "Function call",
+   "verbo": "Levanta erros de Blob não suportado, de fonte aleatória e de serialização com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2768,8 +2768,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Serializes the FormData into a Blob with",
-   "tecnologia": "Function call",
+   "verbo": "Serializa o FormData em um Blob com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2780,8 +2780,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Reads the random string generator from",
-   "tecnologia": "Function call",
+   "verbo": "Lê o gerador de strings aleatórias de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2792,8 +2792,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Checks for functions and reads the global crypto with",
-   "tecnologia": "Function call",
+   "verbo": "Verifica funções e lê o crypto global com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2804,8 +2804,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Resolves config.adapter or the default list through",
-   "tecnologia": "Function call",
+   "verbo": "Resolve config.adapter ou a lista padrão por meio de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2816,8 +2816,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Throws when the abort signal has fired with",
-   "tecnologia": "Function call",
+   "verbo": "Lança erro quando o sinal de cancelamento já disparou com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2828,8 +2828,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Tells cancellations from other rejections with",
-   "tecnologia": "Function call",
+   "verbo": "Distingue cancelamentos de outras rejeições com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2840,8 +2840,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Wraps request and response headers with",
-   "tecnologia": "Function call",
+   "verbo": "Envolve os cabeçalhos da requisição e da resposta com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2852,8 +2852,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Runs transformRequest and transformResponse through",
-   "tecnologia": "Function call",
+   "verbo": "Executa transformRequest e transformResponse por meio de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2864,8 +2864,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Reads the default adapter from",
-   "tecnologia": "Function call",
+   "verbo": "Lê o adaptador padrão de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2876,8 +2876,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Copies the config safely with",
-   "tecnologia": "Function call",
+   "verbo": "Copia a configuração com segurança com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2888,8 +2888,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Flattens header instances before merging with",
-   "tecnologia": "Function call",
+   "verbo": "Achata as instâncias de cabeçalhos antes de mesclar com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2900,8 +2900,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Rejects circular params after merging them with",
-   "tecnologia": "Function call",
+   "verbo": "Rejeita params circulares depois de mesclá-los com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2912,8 +2912,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Merges plain-object config values and checks types with",
-   "tecnologia": "Function call",
+   "verbo": "Mescla valores de configuração em objeto simples e verifica tipos com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2924,8 +2924,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Rejects out-of-range statuses with",
-   "tecnologia": "Function call",
+   "verbo": "Rejeita status fora do intervalo com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2936,8 +2936,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Hands normalized headers to each transform with",
-   "tecnologia": "Function call",
+   "verbo": "Entrega os cabeçalhos normalizados a cada transformação com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2948,8 +2948,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Falls back to the default transforms from",
-   "tecnologia": "Function call",
+   "verbo": "Recorre às transformações padrão de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2960,8 +2960,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Iterates the transform functions with forEach from",
-   "tecnologia": "Function call",
+   "verbo": "Percorre as funções de transformação com forEach de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2972,8 +2972,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Raises JSON parse errors with",
-   "tecnologia": "Function call",
+   "verbo": "Levanta erros de leitura de JSON com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2984,8 +2984,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Creates a header bucket per method from",
-   "tecnologia": "Function call",
+   "verbo": "Cria um grupo de cabeçalhos por método a partir de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -2996,8 +2996,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Embeds the default transitional flags from",
-   "tecnologia": "Function call",
+   "verbo": "Embute as flags transitórias padrão de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3008,8 +3008,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Converts FormData bodies to JSON with",
-   "tecnologia": "Function call",
+   "verbo": "Converte corpos FormData em JSON com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3020,8 +3020,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Serializes objects to multipart bodies with",
-   "tecnologia": "Function call",
+   "verbo": "Serializa objetos em corpos multipart com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3032,8 +3032,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Serializes objects to urlencoded bodies with",
-   "tecnologia": "Function call",
+   "verbo": "Serializa objetos em corpos urlencoded com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3044,8 +3044,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Picks the platform FormData and Blob classes from",
-   "tecnologia": "Function call",
+   "verbo": "Escolhe as classes FormData e Blob da plataforma de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3056,8 +3056,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Classifies body types to pick the request serializer with",
-   "tecnologia": "Function call",
+   "verbo": "Classifica os tipos de corpo para escolher o serializador da requisição com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3068,8 +3068,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Copies stream options with",
-   "tecnologia": "Function call",
+   "verbo": "Copia as opções de stream com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3080,8 +3080,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Encodes key/value pairs with",
-   "tecnologia": "Function call",
+   "verbo": "Codifica pares chave/valor com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3092,8 +3092,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Serializes params into the query string with",
-   "tecnologia": "Function call",
+   "verbo": "Serializa os params na query string com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3104,8 +3104,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Reads params safely and checks types with",
-   "tecnologia": "Function call",
+   "verbo": "Lê os params com segurança e verifica tipos com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3116,8 +3116,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Detects async functions with",
-   "tecnologia": "Function call",
+   "verbo": "Detecta funções assíncronas com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3128,8 +3128,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Aborts with",
-   "tecnologia": "Function call",
+   "verbo": "Aborta com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3140,8 +3140,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Aborts with a timeout error from",
-   "tecnologia": "Function call",
+   "verbo": "Aborta com um erro de timeout de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3152,8 +3152,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Defers the abort callback with asap from",
-   "tecnologia": "Function call",
+   "verbo": "Adia o callback de cancelamento com asap de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3164,8 +3164,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Enables itself only in standard browser environments via",
-   "tecnologia": "Function call",
+   "verbo": "Só se habilita em ambientes de navegador padrão por meio de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3176,8 +3176,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Type checks with",
-   "tecnologia": "Function call",
+   "verbo": "Verifica tipos com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3188,8 +3188,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Checks string and function types with",
-   "tecnologia": "Function call",
+   "verbo": "Verifica tipos string e função com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3200,8 +3200,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Throws on excessive nesting with",
-   "tecnologia": "Function call",
+   "verbo": "Lança erro diante de aninhamento excessivo com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3212,8 +3212,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Shares the maximum nesting depth constant with",
-   "tecnologia": "Function call",
+   "verbo": "Compartilha a constante de profundidade máxima de aninhamento com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3224,8 +3224,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Iterates FormData entries and checks types with",
-   "tecnologia": "Function call",
+   "verbo": "Percorre as entradas do FormData e verifica tipos com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3236,8 +3236,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Reads blob parts with",
-   "tecnologia": "Function call",
+   "verbo": "Lê partes de blob com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3248,8 +3248,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Generates the multipart boundary with",
-   "tecnologia": "Function call",
+   "verbo": "Gera o boundary multipart com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3260,8 +3260,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Classifies parts and sizes multipart bodies with",
-   "tecnologia": "Function call",
+   "verbo": "Classifica as partes e mede corpos multipart com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3272,8 +3272,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Throws on invalid or unsupported data URIs with",
-   "tecnologia": "Function call",
+   "verbo": "Lança erro em data URIs inválidas ou não suportadas com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3284,8 +3284,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Extracts the URI scheme with",
-   "tecnologia": "Function call",
+   "verbo": "Extrai o esquema da URI com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3296,8 +3296,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Gets the Blob class from",
-   "tecnologia": "Function call",
+   "verbo": "Obtém a classe Blob de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3308,8 +3308,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Type checks with",
-   "tecnologia": "Function call",
+   "verbo": "Verifica tipos com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3320,8 +3320,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Compares URLs against the current origin through",
-   "tecnologia": "Function call",
+   "verbo": "Compara URLs com a origem atual por meio de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3332,8 +3332,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Builds the set of repeatable headers with",
-   "tecnologia": "Function call",
+   "verbo": "Monta o conjunto de cabeçalhos repetíveis com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3344,8 +3344,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Computes the transfer rate with",
-   "tecnologia": "Function call",
+   "verbo": "Calcula a taxa de transferência com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3356,8 +3356,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Limits how often events are emitted with",
-   "tecnologia": "Function call",
+   "verbo": "Limita a frequência de emissão de eventos com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3368,8 +3368,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Defers progress callbacks with asap from",
-   "tecnologia": "Function call",
+   "verbo": "Adia os callbacks de progresso com asap de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3380,8 +3380,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Throws on invalid auth or option values with",
-   "tecnologia": "Function call",
+   "verbo": "Lança erro em autenticação ou valores de opção inválidos com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3392,8 +3392,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Builds the merged request headers with",
-   "tecnologia": "Function call",
+   "verbo": "Monta os cabeçalhos mesclados da requisição com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3404,8 +3404,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Resolves the full URL with",
-   "tecnologia": "Function call",
+   "verbo": "Resolve a URL completa com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3416,8 +3416,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Merges the raw config with",
-   "tecnologia": "Function call",
+   "verbo": "Mescla a configuração bruta com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3428,8 +3428,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Applies the FormData header policy through",
-   "tecnologia": "Function call",
+   "verbo": "Aplica a política de cabeçalhos do FormData por meio de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3440,8 +3440,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Appends serialized params with",
-   "tecnologia": "Function call",
+   "verbo": "Acrescenta os params serializados com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3452,8 +3452,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Reads the XSRF cookie with",
-   "tecnologia": "Function call",
+   "verbo": "Lê o cookie XSRF com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3464,8 +3464,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Sends the XSRF header only to the same origin via",
-   "tecnologia": "Function call",
+   "verbo": "Envia o cabeçalho XSRF só para a mesma origem por meio de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3476,8 +3476,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Reads browser and worker environment flags from",
-   "tecnologia": "Function call",
+   "verbo": "Lê as flags de ambiente de navegador e de worker de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3488,8 +3488,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Reads config values safely and classifies FormData bodies with",
-   "tecnologia": "Function call",
+   "verbo": "Lê valores de configuração com segurança e classifica corpos FormData com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3500,8 +3500,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Iterates header values with forEach from",
-   "tecnologia": "Function call",
+   "verbo": "Percorre os valores de cabeçalho com forEach de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3512,8 +3512,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Throws on invalid input and excess depth with",
-   "tecnologia": "Function call",
+   "verbo": "Lança erro em entrada inválida e profundidade excessiva com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3524,8 +3524,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Converts buffers when Node.js is available through",
-   "tecnologia": "Function call",
+   "verbo": "Converte buffers quando o Node.js está disponível por meio de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3536,8 +3536,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Creates the form-data instance in Node.js via",
-   "tecnologia": "Function call",
+   "verbo": "Cria a instância do form-data no Node.js por meio de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3548,8 +3548,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Walks and type-checks values to flatten them with",
-   "tecnologia": "Function call",
+   "verbo": "Percorre e verifica o tipo dos valores para achatá-los com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3560,8 +3560,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Visits entries with a custom visitor in",
-   "tecnologia": "Function call",
+   "verbo": "Visita as entradas com um visitor personalizado em",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3572,8 +3572,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Reads the URLSearchParams class from",
-   "tecnologia": "Function call",
+   "verbo": "Lê a classe URLSearchParams de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3584,8 +3584,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Type checks with",
-   "tecnologia": "Function call",
+   "verbo": "Verifica tipos com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3596,8 +3596,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Throws option errors with",
-   "tecnologia": "Function call",
+   "verbo": "Lança erros de opção com",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3608,8 +3608,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Prints the version in deprecation warnings from",
-   "tecnologia": "Function call",
+   "verbo": "Imprime a versão nos avisos de descontinuação de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3620,8 +3620,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Falls back to when the native class is missing",
-   "tecnologia": "Function call",
+   "verbo": "Recorre a ele quando a classe nativa não existe",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3632,8 +3632,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Bundles the browser Blob from",
-   "tecnologia": "Function call",
+   "verbo": "Empacota o Blob do navegador de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3644,8 +3644,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Bundles the browser FormData from",
-   "tecnologia": "Function call",
+   "verbo": "Empacota o FormData do navegador de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3656,8 +3656,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Bundles the browser URLSearchParams from",
-   "tecnologia": "Function call",
+   "verbo": "Empacota o URLSearchParams do navegador de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3668,8 +3668,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Spreads the environment detection flags from",
-   "tecnologia": "Function call",
+   "verbo": "Espalha as flags de detecção de ambiente de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3680,8 +3680,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Spreads the Node.js platform descriptor from",
-   "tecnologia": "Function call",
+   "verbo": "Espalha o descritor da plataforma Node.js de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3692,8 +3692,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Bundles the Node.js FormData from",
-   "tecnologia": "Function call",
+   "verbo": "Empacota o FormData do Node.js de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3704,8 +3704,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Bundles the Node.js URLSearchParams from",
-   "tecnologia": "Function call",
+   "verbo": "Empacota o URLSearchParams do Node.js de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3716,8 +3716,8 @@
    "tipos": {
     "imports": 1
    },
-   "verbo": "Wraps functions with the bound-call helper from",
-   "tecnologia": "Function call",
+   "verbo": "Envolve funções com o auxiliar de chamada vinculada de",
+   "tecnologia": "Chamada de função",
    "manter": true,
    "sumiu_do_codigo": false
   },
@@ -3726,7 +3726,7 @@
    "para": "lib/adapters/http.js",
    "arestas": 0,
    "tipos": {},
-   "verbo": "Invokes the adapter picked from config.adapter, in Node.js",
+   "verbo": "Invoca o adaptador escolhido em config.adapter, no Node.js",
    "tecnologia": "config.adapter",
    "manter": true,
    "manual": true,
@@ -3737,7 +3737,7 @@
    "para": "lib/adapters/xhr.js",
    "arestas": 0,
    "tipos": {},
-   "verbo": "Invokes the adapter picked from config.adapter, in browsers",
+   "verbo": "Invoca o adaptador escolhido em config.adapter, nos navegadores",
    "tecnologia": "config.adapter",
    "manter": true,
    "manual": true,
@@ -3748,7 +3748,7 @@
    "para": "lib/adapters/fetch.js",
    "arestas": 0,
    "tipos": {},
-   "verbo": "Invokes the adapter picked from config.adapter, on fetch runtimes",
+   "verbo": "Invoca o adaptador escolhido em config.adapter, em ambientes com fetch",
    "tecnologia": "config.adapter",
    "manter": true,
    "manual": true,
@@ -3759,7 +3759,7 @@
    "para": "lib/adapters/adapters.js",
    "arestas": 0,
    "tipos": {},
-   "verbo": "Names the default adapter order xhr, http, fetch for",
+   "verbo": "Define a ordem padrão de adaptadores xhr, http, fetch para",
    "tecnologia": "config.adapter",
    "manter": true,
    "manual": true,
@@ -3770,7 +3770,7 @@
    "para": "lib/cancel/CancelToken.js",
    "arestas": 0,
    "tipos": {},
-   "verbo": "Asks the token whether cancellation was requested",
+   "verbo": "Pergunta ao token se o cancelamento foi solicitado",
    "tecnologia": "config.cancelToken",
    "manter": true,
    "manual": true,
@@ -3781,7 +3781,7 @@
    "para": "lib/cancel/CancelToken.js",
    "arestas": 0,
    "tipos": {},
-   "verbo": "Subscribes its abort handler to the token of",
+   "verbo": "Inscreve seu handler de cancelamento no token de",
    "tecnologia": "config.cancelToken",
    "manter": true,
    "manual": true,
@@ -3792,7 +3792,7 @@
    "para": "lib/cancel/CancelToken.js",
    "arestas": 0,
    "tipos": {},
-   "verbo": "Subscribes its abort handler to the token of",
+   "verbo": "Inscreve seu handler de cancelamento no token de",
    "tecnologia": "config.cancelToken",
    "manter": true,
    "manual": true,
@@ -3803,7 +3803,7 @@
    "para": "lib/cancel/CancelToken.js",
    "arestas": 0,
    "tipos": {},
-   "verbo": "Converts the token into an abort signal with",
+   "verbo": "Converte o token em sinal de cancelamento com",
    "tecnologia": "config.cancelToken",
    "manter": true,
    "manual": true,
@@ -3814,8 +3814,8 @@
    "para": "lib/platform/browser/index.js",
    "arestas": 0,
    "tipos": {},
-   "verbo": "Is replaced by the browser descriptor in browser and React Native bundles",
-   "tecnologia": "package.json browser field",
+   "verbo": "É substituído pelo descritor do navegador nos bundles de navegador e React Native",
+   "tecnologia": "campo browser do package.json",
    "manter": true,
    "manual": true,
    "sumiu_do_codigo": false
@@ -3825,8 +3825,8 @@
    "para": "lib/helpers/null.js",
    "arestas": 0,
    "tipos": {},
-   "verbo": "Receives a null stub instead of the HTTP adapter in browser bundles",
-   "tecnologia": "package.json browser field",
+   "verbo": "Recebe um módulo nulo no lugar do adaptador HTTP nos bundles de navegador",
+   "tecnologia": "campo browser do package.json",
    "manter": true,
    "manual": true,
    "sumiu_do_codigo": false
@@ -3836,8 +3836,8 @@
    "para": "lib/helpers/null.js",
    "arestas": 0,
    "tipos": {},
-   "verbo": "Receives null stubs instead of the Node.js Buffer and FormData in browser bundles",
-   "tecnologia": "package.json browser field",
+   "verbo": "Recebe módulos nulos no lugar do Buffer e do FormData do Node.js nos bundles de navegador",
+   "tecnologia": "campo browser do package.json",
    "manter": true,
    "manual": true,
    "sumiu_do_codigo": false

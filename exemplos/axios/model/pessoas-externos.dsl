@@ -1,36 +1,36 @@
-        // People and external systems. Externo/Nuvem draw a dashed orange border.
-        devApp = person "Application developer" "Writes the application code that installs axios and calls it to send HTTP requests from Node.js or the browser." {
+        // Pessoas e sistemas externos. Externo/Nuvem desenham uma borda laranja tracejada.
+        devApp = person "Desenvolvedor da aplicação" "Escreve o código da aplicação que instala o axios e o chama para enviar requisições HTTP a partir do Node.js ou do navegador." {
             properties {
-                "status" "Done"
+                "status" "Pronto"
             }
         }
 
-        nodeRuntime = softwareSystem "Node.js runtime" "Provides the http, https, http2, zlib and stream modules and the TCP/TLS sockets that the Node adapter drives." "Externo" {
+        nodeRuntime = softwareSystem "Ambiente de execução Node.js" "Fornece os módulos http, https, http2, zlib e stream e os sockets TCP/TLS que o adaptador do Node controla." "Externo" {
             properties {
-                "status" "Done"
+                "status" "Pronto"
             }
         }
 
-        browserXhr = softwareSystem "Browser XMLHttpRequest" "The browser's built-in XMLHttpRequest API, used by the XHR adapter for requests, upload/download progress events and aborts." "Externo,WebBrowser" {
+        browserXhr = softwareSystem "XMLHttpRequest do navegador" "A API XMLHttpRequest embutida no navegador, usada pelo adaptador XHR para requisições, eventos de progresso de upload e download e cancelamentos." "Externo,WebBrowser" {
             properties {
-                "status" "Done"
+                "status" "Pronto"
             }
         }
 
-        fetchApi = softwareSystem "Fetch API" "The fetch, Request and Response globals of browsers, Node.js, Deno and Bun, used by the fetch adapter, including streamed bodies." "Externo" {
+        fetchApi = softwareSystem "Fetch API" "Os globais fetch, Request e Response de navegadores, Node.js, Deno e Bun, usados pelo adaptador fetch, inclusive com corpos em stream." "Externo" {
             properties {
-                "status" "Done"
+                "status" "Pronto"
             }
         }
 
-        proxyServer = softwareSystem "HTTP proxy" "Optional forward proxy (configured or taken from the proxy environment variables) through which the Node adapter routes requests." "Externo,Nuvem" {
+        proxyServer = softwareSystem "Proxy HTTP" "Proxy de encaminhamento opcional (configurado ou lido das variáveis de ambiente de proxy) pelo qual o adaptador do Node roteia as requisições." "Externo,Nuvem" {
             properties {
-                "status" "Done"
+                "status" "Pronto"
             }
         }
 
-        remoteServer = softwareSystem "Remote HTTP server" "The web API or site that receives the request and returns the response axios hands back to the caller." "Externo,Nuvem" {
+        remoteServer = softwareSystem "Servidor HTTP remoto" "A API web ou o site que recebe a requisição e devolve a resposta que o axios entrega a quem chamou." "Externo,Nuvem" {
             properties {
-                "status" "Done"
+                "status" "Pronto"
             }
         }

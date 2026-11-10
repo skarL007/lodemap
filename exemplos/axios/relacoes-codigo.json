@@ -1,6 +1,6 @@
 {
  "fonte": "ast",
- "geradoEm": "2026-11-09T22:41:06-03:00",
+ "geradoEm": "2026-11-10T04:24:43-03:00",
  "aviso": "Sugestões, não verdade: o modelador confirma e dá o verbo. Confiança: alta = calls com 3 arestas ou mais; media = imports (ou 2 arestas; no modo ast, qualquer import); baixa = 1 aresta.",
  "arquivosAmbiguos": 0,
  "arquivosSemComponente": 233,
@@ -16,8 +16,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Iterates the adapter registry and checks adapter types with",
-    "tecnologia": "Function call"
+    "descricao": "Percorre o registro de adaptadores e verifica os tipos de adaptador com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -31,8 +31,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Registers it as the Node.js http adapter",
-    "tecnologia": "Adapter registry"
+    "descricao": "Registra-o como adaptador http do Node.js",
+    "tecnologia": "Registro de adaptadores"
    }
   },
   {
@@ -46,8 +46,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Registers it as the browser xhr adapter",
-    "tecnologia": "Adapter registry"
+    "descricao": "Registra-o como adaptador xhr do navegador",
+    "tecnologia": "Registro de adaptadores"
    }
   },
   {
@@ -61,8 +61,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Registers the lazy fetch getter as the fetch adapter",
-    "tecnologia": "Adapter registry"
+    "descricao": "Registra o getter preguiçoso do fetch como adaptador fetch",
+    "tecnologia": "Registro de adaptadores"
    }
   },
   {
@@ -76,8 +76,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Throws unknown or unsupported adapter errors with",
-    "tecnologia": "Function call"
+    "descricao": "Lança erros de adaptador desconhecido ou não suportado com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -91,8 +91,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Reads runtime capability flags from",
-    "tecnologia": "Function call"
+    "descricao": "Lê as flags de capacidade do ambiente de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -106,8 +106,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Classifies body types and merges config values with",
-    "tecnologia": "Function call"
+    "descricao": "Classifica os tipos de corpo e mescla valores de configuração com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -121,8 +121,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Raises network, timeout and bad-response errors with",
-    "tecnologia": "Function call"
+    "descricao": "Levanta erros de rede, timeout e resposta inválida com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -136,8 +136,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Merges the abort signal, cancel token and timeout through",
-    "tecnologia": "Function call"
+    "descricao": "Mescla o sinal de cancelamento, o token de cancelamento e o timeout por meio de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -151,8 +151,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Counts streamed request and response bytes through",
-    "tecnologia": "Function call"
+    "descricao": "Conta os bytes de requisição e resposta em stream por meio de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -166,8 +166,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Builds the multipart Blob for size-limited or streamed uploads with",
-    "tecnologia": "Function call"
+    "descricao": "Monta o Blob multipart para uploads com tamanho limitado ou em stream com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -181,8 +181,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Builds request headers and wraps response headers with",
-    "tecnologia": "Function call"
+    "descricao": "Monta os cabeçalhos da requisição e envolve os da resposta com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -196,8 +196,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Emits upload and download progress through",
-    "tecnologia": "Function call"
+    "descricao": "Emite o progresso de upload e de download por meio de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -211,8 +211,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Resolves URL, headers, auth and body policy with",
-    "tecnologia": "Function call"
+    "descricao": "Resolve URL, cabeçalhos, autenticação e política do corpo com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -226,8 +226,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Settles the promise from the response status through",
-    "tecnologia": "Function call"
+    "descricao": "Resolve a promise a partir do status da resposta por meio de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -241,8 +241,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Checks the size of data: URLs before decoding with",
-    "tecnologia": "Function call"
+    "descricao": "Verifica o tamanho das URLs data: antes de decodificar com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -256,8 +256,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Reads the package version for the User-Agent from",
-    "tecnologia": "Function call"
+    "descricao": "Lê a versão do pacote para o User-Agent de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -271,8 +271,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Converts header values to byte strings with",
-    "tecnologia": "Function call"
+    "descricao": "Converte os valores de cabeçalho em strings de bytes com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -286,8 +286,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Classifies body types, stream kinds and numeric limits with",
-    "tecnologia": "Function call"
+    "descricao": "Classifica tipos de corpo, tipos de stream e limites numéricos com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -301,8 +301,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Settles the promise from the response status through",
-    "tecnologia": "Function call"
+    "descricao": "Resolve a promise a partir do status da resposta por meio de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -316,8 +316,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Joins baseURL and url into the request URL with",
-    "tecnologia": "Function call"
+    "descricao": "Junta baseURL e url na URL da requisição com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -331,8 +331,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Appends serialized params to the URL with",
-    "tecnologia": "Function call"
+    "descricao": "Acrescenta os params serializados à URL com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -346,8 +346,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Reads the package version for the User-Agent and boundary tag from",
-    "tecnologia": "Function call"
+    "descricao": "Lê a versão do pacote para o User-Agent e a marca do boundary de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -361,8 +361,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Reads transitional behavior flags from",
-    "tecnologia": "Function call"
+    "descricao": "Lê as flags de comportamento transitório de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -376,8 +376,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Raises network, timeout, size and redirect errors with",
-    "tecnologia": "Function call"
+    "descricao": "Levanta erros de rede, timeout, tamanho e redirecionamento com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -391,8 +391,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Aborts the request with",
-    "tecnologia": "Function call"
+    "descricao": "Aborta a requisição com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -406,8 +406,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Reads runtime capability flags from",
-    "tecnologia": "Function call"
+    "descricao": "Lê as flags de capacidade do ambiente de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -421,8 +421,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Decodes data: URLs without a network call with",
-    "tecnologia": "Function call"
+    "descricao": "Decodifica URLs data: sem chamada de rede com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -436,8 +436,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Builds request headers and wraps response headers with",
-    "tecnologia": "Function call"
+    "descricao": "Monta os cabeçalhos da requisição e envolve os da resposta com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -451,8 +451,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Applies the multipart header policy through",
-    "tecnologia": "Function call"
+    "descricao": "Aplica a política de cabeçalhos multipart por meio de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -466,8 +466,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Throttles upload and download streams with",
-    "tecnologia": "Node.js streams"
+    "descricao": "Limita a taxa dos streams de upload e de download com",
+    "tecnologia": "Streams do Node.js"
    }
   },
   {
@@ -481,8 +481,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Streams multipart FormData bodies with",
-    "tecnologia": "Node.js streams"
+    "descricao": "Envia corpos FormData multipart em stream com",
+    "tecnologia": "Streams do Node.js"
    }
   },
   {
@@ -496,8 +496,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Reads Blob bodies as chunks with",
-    "tecnologia": "Function call"
+    "descricao": "Lê corpos Blob em blocos com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -511,8 +511,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Repairs compressed response streams with",
-    "tecnologia": "Node.js streams"
+    "descricao": "Repara streams de resposta comprimida com",
+    "tecnologia": "Streams do Node.js"
    }
   },
   {
@@ -526,8 +526,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Reuses pooled HTTP/2 sessions from",
-    "tecnologia": "Function call"
+    "descricao": "Reaproveita sessões HTTP/2 do pool de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -541,8 +541,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Wraps the async DNS lookup as a callback with",
-    "tecnologia": "Function call"
+    "descricao": "Envolve a resolução de DNS assíncrona como callback com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -556,8 +556,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Matches NO_PROXY rules with",
-    "tecnologia": "Function call"
+    "descricao": "Confere as regras de NO_PROXY com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -571,8 +571,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Rebinds the pooled agent hooks of the direct connection with",
-    "tecnologia": "Function call"
+    "descricao": "Religa os hooks do agente em pool da conexão direta com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -586,8 +586,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Converts header values to byte strings with",
-    "tecnologia": "Function call"
+    "descricao": "Converte os valores de cabeçalho em strings de bytes com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -601,8 +601,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Emits upload and download progress through",
-    "tecnologia": "Function call"
+    "descricao": "Emite o progresso de upload e de download por meio de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -616,8 +616,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Caps buffer allocation for data: URLs with",
-    "tecnologia": "Function call"
+    "descricao": "Limita a alocação de buffer para URLs data: com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -631,8 +631,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Iterates headers with forEach and checks for undefined with",
-    "tecnologia": "Function call"
+    "descricao": "Percorre os cabeçalhos com forEach e verifica undefined com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -646,8 +646,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Settles the promise from the response status through",
-    "tecnologia": "Function call"
+    "descricao": "Resolve a promise a partir do status da resposta por meio de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -661,8 +661,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Reads timeout-clarification flags from",
-    "tecnologia": "Function call"
+    "descricao": "Lê as flags de esclarecimento de timeout de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -676,8 +676,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Raises network, timeout and abort errors with",
-    "tecnologia": "Function call"
+    "descricao": "Levanta erros de rede, timeout e cancelamento com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -691,8 +691,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Aborts the request with",
-    "tecnologia": "Function call"
+    "descricao": "Aborta a requisição com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -706,8 +706,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Normalizes the URL before the scheme check with",
-    "tecnologia": "Function call"
+    "descricao": "Normaliza a URL antes da verificação do esquema com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -721,8 +721,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Rejects unsupported URL schemes with",
-    "tecnologia": "Function call"
+    "descricao": "Rejeita esquemas de URL não suportados com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -736,8 +736,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Checks the browser environment through",
-    "tecnologia": "Function call"
+    "descricao": "Verifica o ambiente de navegador por meio de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -751,8 +751,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Wraps request and response headers with",
-    "tecnologia": "Function call"
+    "descricao": "Envolve os cabeçalhos da requisição e da resposta com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -766,8 +766,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Reads the XSRF cookie asynchronously through",
-    "tecnologia": "Function call"
+    "descricao": "Lê o cookie XSRF de forma assíncrona por meio de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -781,8 +781,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Emits upload and download progress through",
-    "tecnologia": "Function call"
+    "descricao": "Emite o progresso de upload e de download por meio de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -796,8 +796,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Resolves URL, headers, auth and body policy with",
-    "tecnologia": "Function call"
+    "descricao": "Resolve URL, cabeçalhos, autenticação e política do corpo com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -811,8 +811,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Converts header values to byte strings with",
-    "tecnologia": "Function call"
+    "descricao": "Converte os valores de cabeçalho em strings de bytes com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -826,8 +826,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Copies prototype members onto the instance and detects HTML forms with",
-    "tecnologia": "Function call"
+    "descricao": "Copia membros do protótipo para a instância e detecta formulários HTML com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -841,8 +841,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Binds the request method to the instance with",
-    "tecnologia": "Function call"
+    "descricao": "Liga o método request à instância com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -856,8 +856,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Instantiates the client and binds request on it with",
-    "tecnologia": "Function call"
+    "descricao": "Instancia o cliente e liga request a ele com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -871,8 +871,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Merges instance config in axios.create with",
-    "tecnologia": "Function call"
+    "descricao": "Mescla a configuração da instância em axios.create com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -886,8 +886,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Seeds the default instance with",
-    "tecnologia": "Function call"
+    "descricao": "Inicializa a instância padrão com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -901,8 +901,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Exposes axios.formToJSON with",
-    "tecnologia": "Function call"
+    "descricao": "Expõe axios.formToJSON com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -916,8 +916,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Exposes the cancellation error from",
-    "tecnologia": "Function call"
+    "descricao": "Expõe o erro de cancelamento de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -931,8 +931,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Exposes the cancel token class from",
-    "tecnologia": "Function call"
+    "descricao": "Expõe a classe do token de cancelamento de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -946,8 +946,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Exposes the cancellation check from",
-    "tecnologia": "Function call"
+    "descricao": "Expõe a verificação de cancelamento de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -961,8 +961,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Exposes the package version from",
-    "tecnologia": "Function call"
+    "descricao": "Expõe a versão do pacote de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -976,8 +976,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Exposes axios.toFormData with",
-    "tecnologia": "Function call"
+    "descricao": "Expõe axios.toFormData com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -991,8 +991,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Exposes the error class from",
-    "tecnologia": "Function call"
+    "descricao": "Expõe a classe de erro de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1006,8 +1006,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Exposes axios.spread with",
-    "tecnologia": "Function call"
+    "descricao": "Expõe axios.spread com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1021,8 +1021,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Exposes axios.isAxiosError with",
-    "tecnologia": "Function call"
+    "descricao": "Expõe axios.isAxiosError com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1036,8 +1036,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Exposes the headers class from",
-    "tecnologia": "Function call"
+    "descricao": "Expõe a classe de cabeçalhos de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1051,8 +1051,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Exposes getAdapter from",
-    "tecnologia": "Function call"
+    "descricao": "Expõe getAdapter de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1066,8 +1066,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Exposes the status code table from",
-    "tecnologia": "Function call"
+    "descricao": "Expõe a tabela de códigos de status de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1081,8 +1081,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Builds the cancellation reason with",
-    "tecnologia": "Function call"
+    "descricao": "Monta o motivo do cancelamento com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1096,8 +1096,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Extends as a subclass of",
-    "tecnologia": "Function call"
+    "descricao": "Estende como subclasse de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1111,8 +1111,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Merges config and iterates the method list with",
-    "tecnologia": "Function call"
+    "descricao": "Mescla a configuração e percorre a lista de métodos com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1126,8 +1126,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Serializes params in getUri with",
-    "tecnologia": "Function call"
+    "descricao": "Serializa os params em getUri com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1141,8 +1141,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Registers and runs request and response interceptors from",
-    "tecnologia": "Promise chain"
+    "descricao": "Registra e executa os interceptors de requisição e de resposta de",
+    "tecnologia": "Cadeia de promises"
    }
   },
   {
@@ -1156,8 +1156,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Hands the merged config over for dispatch to",
-    "tecnologia": "Promise chain"
+    "descricao": "Entrega a configuração mesclada para despacho a",
+    "tecnologia": "Cadeia de promises"
    }
   },
   {
@@ -1171,8 +1171,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Merges instance defaults with each call config through",
-    "tecnologia": "Function call"
+    "descricao": "Mescla os padrões da instância com a configuração de cada chamada por meio de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1186,8 +1186,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Builds the full URL in getUri with",
-    "tecnologia": "Function call"
+    "descricao": "Monta a URL completa em getUri com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1201,8 +1201,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Generates the get/post/put shortcut methods from",
-    "tecnologia": "Function call"
+    "descricao": "Gera os métodos de atalho get/post/put de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1216,8 +1216,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Validates config options and transitional flags with",
-    "tecnologia": "Function call"
+    "descricao": "Valida as opções de configuração e as flags transitórias com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1231,8 +1231,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Merges common and per-method headers with",
-    "tecnologia": "Function call"
+    "descricao": "Mescla os cabeçalhos comuns e os de cada método com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1246,8 +1246,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Falls back to the default transitional flags from",
-    "tecnologia": "Function call"
+    "descricao": "Recorre às flags transitórias padrão de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1261,8 +1261,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Finds the wrapped cause in the error stack with",
-    "tecnologia": "Function call"
+    "descricao": "Encontra a causa embutida na pilha do erro com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1276,8 +1276,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Serializes the error to plain JSON and checks types with",
-    "tecnologia": "Function call"
+    "descricao": "Serializa o erro em JSON simples e verifica tipos com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1291,8 +1291,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Redacts and serializes headers of the failed config with",
-    "tecnologia": "Function call"
+    "descricao": "Oculta e serializa os cabeçalhos da configuração que falhou com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1306,8 +1306,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Normalizes header names and checks value types with",
-    "tecnologia": "Function call"
+    "descricao": "Normaliza os nomes dos cabeçalhos e verifica os tipos dos valores com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1321,8 +1321,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Parses raw header strings with",
-    "tecnologia": "Function call"
+    "descricao": "Analisa strings brutas de cabeçalho com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1336,8 +1336,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Strips unsafe characters from header values with",
-    "tecnologia": "Function call"
+    "descricao": "Remove caracteres inseguros dos valores de cabeçalho com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1351,8 +1351,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Iterates registered handlers with forEach from",
-    "tecnologia": "Function call"
+    "descricao": "Percorre os handlers registrados com forEach de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1366,8 +1366,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Checks plain objects and arrays and reads own properties with",
-    "tecnologia": "Function call"
+    "descricao": "Verifica objetos simples e arrays e lê propriedades próprias com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1381,8 +1381,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Throws ERR_BAD_OPTION_VALUE on a circular reference with",
-    "tecnologia": "Function call"
+    "descricao": "Lança ERR_BAD_OPTION_VALUE diante de uma referência circular com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1396,8 +1396,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Throws on unsafe URLs and redacts credentials with",
-    "tecnologia": "Function call"
+    "descricao": "Lança erro em URLs inseguras e oculta credenciais com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1411,8 +1411,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Skips joining for absolute URLs with",
-    "tecnologia": "Function call"
+    "descricao": "Dispensa a junção para URLs absolutas com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1426,8 +1426,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Joins the base and relative URL with",
-    "tecnologia": "Function call"
+    "descricao": "Junta a URL base e a relativa com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1441,8 +1441,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Normalizes the URL before the scheme check with",
-    "tecnologia": "Function call"
+    "descricao": "Normaliza a URL antes da verificação do esquema com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1456,8 +1456,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Checks for functions and reads the global crypto with",
-    "tecnologia": "Function call"
+    "descricao": "Verifica funções e lê o crypto global com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1471,8 +1471,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Reads the random string generator from",
-    "tecnologia": "Function call"
+    "descricao": "Lê o gerador de strings aleatórias de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1486,8 +1486,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Raises unsupported-Blob, random-source and serialization errors with",
-    "tecnologia": "Function call"
+    "descricao": "Levanta erros de Blob não suportado, de fonte aleatória e de serialização com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1501,8 +1501,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Serializes the FormData into a Blob with",
-    "tecnologia": "Function call"
+    "descricao": "Serializa o FormData em um Blob com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1516,8 +1516,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Runs transformRequest and transformResponse through",
-    "tecnologia": "Function call"
+    "descricao": "Executa transformRequest e transformResponse por meio de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1531,8 +1531,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Tells cancellations from other rejections with",
-    "tecnologia": "Function call"
+    "descricao": "Distingue cancelamentos de outras rejeições com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1546,8 +1546,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Reads the default adapter from",
-    "tecnologia": "Function call"
+    "descricao": "Lê o adaptador padrão de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1561,8 +1561,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Throws when the abort signal has fired with",
-    "tecnologia": "Function call"
+    "descricao": "Lança erro quando o sinal de cancelamento já disparou com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1576,8 +1576,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Wraps request and response headers with",
-    "tecnologia": "Function call"
+    "descricao": "Envolve os cabeçalhos da requisição e da resposta com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1591,8 +1591,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Resolves config.adapter or the default list through",
-    "tecnologia": "Function call"
+    "descricao": "Resolve config.adapter ou a lista padrão por meio de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1606,8 +1606,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Copies the config safely with",
-    "tecnologia": "Function call"
+    "descricao": "Copia a configuração com segurança com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1621,8 +1621,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Merges plain-object config values and checks types with",
-    "tecnologia": "Function call"
+    "descricao": "Mescla valores de configuração em objeto simples e verifica tipos com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1636,8 +1636,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Flattens header instances before merging with",
-    "tecnologia": "Function call"
+    "descricao": "Achata as instâncias de cabeçalhos antes de mesclar com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1651,8 +1651,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Rejects circular params after merging them with",
-    "tecnologia": "Function call"
+    "descricao": "Rejeita params circulares depois de mesclá-los com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1666,8 +1666,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Rejects out-of-range statuses with",
-    "tecnologia": "Function call"
+    "descricao": "Rejeita status fora do intervalo com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1681,8 +1681,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Iterates the transform functions with forEach from",
-    "tecnologia": "Function call"
+    "descricao": "Percorre as funções de transformação com forEach de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1696,8 +1696,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Falls back to the default transforms from",
-    "tecnologia": "Function call"
+    "descricao": "Recorre às transformações padrão de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1711,8 +1711,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Hands normalized headers to each transform with",
-    "tecnologia": "Function call"
+    "descricao": "Entrega os cabeçalhos normalizados a cada transformação com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1726,8 +1726,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Classifies body types to pick the request serializer with",
-    "tecnologia": "Function call"
+    "descricao": "Classifica os tipos de corpo para escolher o serializador da requisição com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1741,8 +1741,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Raises JSON parse errors with",
-    "tecnologia": "Function call"
+    "descricao": "Levanta erros de leitura de JSON com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1756,8 +1756,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Embeds the default transitional flags from",
-    "tecnologia": "Function call"
+    "descricao": "Embute as flags transitórias padrão de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1771,8 +1771,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Serializes objects to multipart bodies with",
-    "tecnologia": "Function call"
+    "descricao": "Serializa objetos em corpos multipart com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1786,8 +1786,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Serializes objects to urlencoded bodies with",
-    "tecnologia": "Function call"
+    "descricao": "Serializa objetos em corpos urlencoded com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1801,8 +1801,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Picks the platform FormData and Blob classes from",
-    "tecnologia": "Function call"
+    "descricao": "Escolhe as classes FormData e Blob da plataforma de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1816,8 +1816,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Converts FormData bodies to JSON with",
-    "tecnologia": "Function call"
+    "descricao": "Converte corpos FormData em JSON com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1831,8 +1831,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Creates a header bucket per method from",
-    "tecnologia": "Function call"
+    "descricao": "Cria um grupo de cabeçalhos por método a partir de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1846,8 +1846,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Copies stream options with",
-    "tecnologia": "Function call"
+    "descricao": "Copia as opções de stream com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1861,8 +1861,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Encodes key/value pairs with",
-    "tecnologia": "Function call"
+    "descricao": "Codifica pares chave/valor com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1876,8 +1876,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Reads params safely and checks types with",
-    "tecnologia": "Function call"
+    "descricao": "Lê os params com segurança e verifica tipos com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1891,8 +1891,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Serializes params into the query string with",
-    "tecnologia": "Function call"
+    "descricao": "Serializa os params na query string com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1906,8 +1906,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Detects async functions with",
-    "tecnologia": "Function call"
+    "descricao": "Detecta funções assíncronas com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1921,8 +1921,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Aborts with",
-    "tecnologia": "Function call"
+    "descricao": "Aborta com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1936,8 +1936,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Aborts with a timeout error from",
-    "tecnologia": "Function call"
+    "descricao": "Aborta com um erro de timeout de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1951,8 +1951,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Defers the abort callback with asap from",
-    "tecnologia": "Function call"
+    "descricao": "Adia o callback de cancelamento com asap de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1966,8 +1966,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Type checks with",
-    "tecnologia": "Function call"
+    "descricao": "Verifica tipos com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1981,8 +1981,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Enables itself only in standard browser environments via",
-    "tecnologia": "Function call"
+    "descricao": "Só se habilita em ambientes de navegador padrão por meio de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -1996,8 +1996,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Checks string and function types with",
-    "tecnologia": "Function call"
+    "descricao": "Verifica tipos string e função com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -2011,8 +2011,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Iterates FormData entries and checks types with",
-    "tecnologia": "Function call"
+    "descricao": "Percorre as entradas do FormData e verifica tipos com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -2026,8 +2026,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Throws on excessive nesting with",
-    "tecnologia": "Function call"
+    "descricao": "Lança erro diante de aninhamento excessivo com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -2041,8 +2041,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Shares the maximum nesting depth constant with",
-    "tecnologia": "Function call"
+    "descricao": "Compartilha a constante de profundidade máxima de aninhamento com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -2056,8 +2056,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Classifies parts and sizes multipart bodies with",
-    "tecnologia": "Function call"
+    "descricao": "Classifica as partes e mede corpos multipart com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -2071,8 +2071,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Reads blob parts with",
-    "tecnologia": "Function call"
+    "descricao": "Lê partes de blob com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -2086,8 +2086,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Generates the multipart boundary with",
-    "tecnologia": "Function call"
+    "descricao": "Gera o boundary multipart com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -2101,8 +2101,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Throws on invalid or unsupported data URIs with",
-    "tecnologia": "Function call"
+    "descricao": "Lança erro em data URIs inválidas ou não suportadas com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -2116,8 +2116,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Extracts the URI scheme with",
-    "tecnologia": "Function call"
+    "descricao": "Extrai o esquema da URI com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -2131,8 +2131,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Gets the Blob class from",
-    "tecnologia": "Function call"
+    "descricao": "Obtém a classe Blob de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -2146,8 +2146,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Type checks with",
-    "tecnologia": "Function call"
+    "descricao": "Verifica tipos com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -2161,8 +2161,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Compares URLs against the current origin through",
-    "tecnologia": "Function call"
+    "descricao": "Compara URLs com a origem atual por meio de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -2176,8 +2176,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Builds the set of repeatable headers with",
-    "tecnologia": "Function call"
+    "descricao": "Monta o conjunto de cabeçalhos repetíveis com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -2191,8 +2191,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Computes the transfer rate with",
-    "tecnologia": "Function call"
+    "descricao": "Calcula a taxa de transferência com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -2206,8 +2206,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Limits how often events are emitted with",
-    "tecnologia": "Function call"
+    "descricao": "Limita a frequência de emissão de eventos com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -2221,8 +2221,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Defers progress callbacks with asap from",
-    "tecnologia": "Function call"
+    "descricao": "Adia os callbacks de progresso com asap de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -2236,8 +2236,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Reads browser and worker environment flags from",
-    "tecnologia": "Function call"
+    "descricao": "Lê as flags de ambiente de navegador e de worker de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -2251,8 +2251,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Reads config values safely and classifies FormData bodies with",
-    "tecnologia": "Function call"
+    "descricao": "Lê valores de configuração com segurança e classifica corpos FormData com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -2266,8 +2266,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Throws on invalid auth or option values with",
-    "tecnologia": "Function call"
+    "descricao": "Lança erro em autenticação ou valores de opção inválidos com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -2281,8 +2281,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Sends the XSRF header only to the same origin via",
-    "tecnologia": "Function call"
+    "descricao": "Envia o cabeçalho XSRF só para a mesma origem por meio de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -2296,8 +2296,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Reads the XSRF cookie with",
-    "tecnologia": "Function call"
+    "descricao": "Lê o cookie XSRF com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -2311,8 +2311,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Resolves the full URL with",
-    "tecnologia": "Function call"
+    "descricao": "Resolve a URL completa com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -2326,8 +2326,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Merges the raw config with",
-    "tecnologia": "Function call"
+    "descricao": "Mescla a configuração bruta com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -2341,8 +2341,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Builds the merged request headers with",
-    "tecnologia": "Function call"
+    "descricao": "Monta os cabeçalhos mesclados da requisição com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -2356,8 +2356,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Applies the FormData header policy through",
-    "tecnologia": "Function call"
+    "descricao": "Aplica a política de cabeçalhos do FormData por meio de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -2371,8 +2371,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Appends serialized params with",
-    "tecnologia": "Function call"
+    "descricao": "Acrescenta os params serializados com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -2386,8 +2386,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Iterates header values with forEach from",
-    "tecnologia": "Function call"
+    "descricao": "Percorre os valores de cabeçalho com forEach de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -2401,8 +2401,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Walks and type-checks values to flatten them with",
-    "tecnologia": "Function call"
+    "descricao": "Percorre e verifica o tipo dos valores para achatá-los com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -2416,8 +2416,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Throws on invalid input and excess depth with",
-    "tecnologia": "Function call"
+    "descricao": "Lança erro em entrada inválida e profundidade excessiva com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -2431,8 +2431,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Creates the form-data instance in Node.js via",
-    "tecnologia": "Function call"
+    "descricao": "Cria a instância do form-data no Node.js por meio de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -2446,8 +2446,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Converts buffers when Node.js is available through",
-    "tecnologia": "Function call"
+    "descricao": "Converte buffers quando o Node.js está disponível por meio de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -2461,8 +2461,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Type checks with",
-    "tecnologia": "Function call"
+    "descricao": "Verifica tipos com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -2476,8 +2476,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Visits entries with a custom visitor in",
-    "tecnologia": "Function call"
+    "descricao": "Visita as entradas com um visitor personalizado em",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -2491,8 +2491,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Reads the URLSearchParams class from",
-    "tecnologia": "Function call"
+    "descricao": "Lê a classe URLSearchParams de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -2506,8 +2506,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Prints the version in deprecation warnings from",
-    "tecnologia": "Function call"
+    "descricao": "Imprime a versão nos avisos de descontinuação de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -2521,8 +2521,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Throws option errors with",
-    "tecnologia": "Function call"
+    "descricao": "Lança erros de opção com",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -2536,8 +2536,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Falls back to when the native class is missing",
-    "tecnologia": "Function call"
+    "descricao": "Recorre a ele quando a classe nativa não existe",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -2551,8 +2551,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Bundles the browser URLSearchParams from",
-    "tecnologia": "Function call"
+    "descricao": "Empacota o URLSearchParams do navegador de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -2566,8 +2566,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Bundles the browser FormData from",
-    "tecnologia": "Function call"
+    "descricao": "Empacota o FormData do navegador de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -2581,8 +2581,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Bundles the browser Blob from",
-    "tecnologia": "Function call"
+    "descricao": "Empacota o Blob do navegador de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -2596,8 +2596,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Spreads the Node.js platform descriptor from",
-    "tecnologia": "Function call"
+    "descricao": "Espalha o descritor da plataforma Node.js de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -2611,8 +2611,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Spreads the environment detection flags from",
-    "tecnologia": "Function call"
+    "descricao": "Espalha as flags de detecção de ambiente de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -2626,8 +2626,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Bundles the Node.js URLSearchParams from",
-    "tecnologia": "Function call"
+    "descricao": "Empacota o URLSearchParams do Node.js de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -2641,8 +2641,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Bundles the Node.js FormData from",
-    "tecnologia": "Function call"
+    "descricao": "Empacota o FormData do Node.js de",
+    "tecnologia": "Chamada de função"
    }
   },
   {
@@ -2656,8 +2656,8 @@
    "confianca": "media",
    "noModelo": true,
    "relacaoModelo": {
-    "descricao": "Wraps functions with the bound-call helper from",
-    "tecnologia": "Function call"
+    "descricao": "Envolve funções com o auxiliar de chamada vinculada de",
+    "tecnologia": "Chamada de função"
    }
   }
  ],

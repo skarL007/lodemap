@@ -1,88 +1,84 @@
-# Overview and how to use
+# Visão e como usar
 
-This is the architecture of axios in the C4 model, written in Structurizr. `workspace.dsl` and the fragments in
-`model/` and `views/` are the source. Everything shown in the diagrams, the explorer, the reader and the derived
-documents comes from them.
+Esta é a arquitetura de axios no modelo C4, escrita no Structurizr. O `workspace.dsl` e os fragmentos em
+`model/` e `views/` são a fonte. Tudo o que aparece nos diagramas, no explorador, no leitor e nos documentos
+derivados sai deles.
 
-## How to open
+## Como abrir
 
-To regenerate, on any system (Windows, Linux and macOS; Python 3.10+ and the Structurizr CLI), in the architecture folder:
+Para regenerar, em qualquer sistema (Windows, Linux e macOS; Python 3.10+ e Structurizr CLI), na pasta da arquitetura:
 
 ```
-python scripts/atualizar.py                       # validates and regenerates docs, reader and explorer, opens nothing
+python scripts/atualizar.py                       # valida e regenera docs, leitor e explorador, sem abrir nada
 python scripts/atualizar.py --incremental --checkpoint "merge feat/x"
-python scripts/atualizar.py --com-site            # also the Structurizr static site
+python scripts/atualizar.py --com-site            # também o site estático do Structurizr
 ```
 
-`atualizar.py` finds the Structurizr CLI in `STRUCTURIZR_CLI`, then in `~/.structurizr/cli/`, then on the PATH
-(`structurizr.bat` on Windows, `structurizr.sh` elsewhere). On Windows, `atualizar.ps1` still exists as a thin wrapper
-that calls `atualizar.py` with the same parameters (`-Incremental`, `-Checkpoint`, `-ComSite`).
+O `atualizar.py` acha o Structurizr CLI em `STRUCTURIZR_CLI`, depois em `~/.structurizr/cli/` e depois no PATH
+(`structurizr.bat` no Windows, `structurizr.sh` nos outros sistemas). No Windows, o `atualizar.ps1` continua existindo
+como invólucro que chama o `atualizar.py` com os mesmos parâmetros (`-Incremental`, `-Checkpoint`, `-ComSite`).
 
-To open, in PowerShell (Windows):
+Para abrir, no PowerShell (Windows):
 
 ```
-.\scripts\ver-arquitetura.ps1                 # explorer (diagrams and flows) on localhost
-.\scripts\ver-arquitetura.ps1 -Abrir Leitor   # docs and decisions reader
-.\scripts\ver-arquitetura.ps1 -ComLite        # Structurizr Lite as well
+.\scripts\ver-arquitetura.ps1                 # explorador (diagramas e fluxos) em localhost
+.\scripts\ver-arquitetura.ps1 -Abrir Leitor   # leitor de documentação e decisões
+.\scripts\ver-arquitetura.ps1 -ComLite        # também o Structurizr Lite
 ```
 
-Outside Windows, serve the folder with `python -m http.server --bind 127.0.0.1` and open `explorador/index.html` or `leitor/index.html`.
+Fora do Windows, sirva a pasta com `python -m http.server --bind 127.0.0.1` e abra `explorador/index.html` ou `leitor/index.html`.
 
-The explorer is at `http://127.0.0.1:8791/explorador/` and the reader at `http://127.0.0.1:8791/leitor/`, both served by `python -m http.server --bind 127.0.0.1`; they also open straight from disk. Structurizr Lite (`http://localhost:8790`) only starts with `-ComLite`. The URLs live in `lodemap.json` (`lite` and `explorador`). If the port already serves the architecture, the script only opens the browser.
+O explorador fica em `http://127.0.0.1:8791/explorador/` e o leitor em `http://127.0.0.1:8791/leitor/`, os dois servidos por `python -m http.server --bind 127.0.0.1`; também abrem direto do disco. O Structurizr Lite (`http://localhost:8790`) só sobe com `-ComLite`. As URLs ficam no `lodemap.json` (`lite` e `explorador`). Se a porta já tem a arquitetura no ar, o script só abre o navegador.
 
-The Structurizr static site is off by default: `atualizar.py --com-site`. Your own scripts, outside the repository, plug in as local extensions: list them under `"extensoes"` in `lodemap.json` (or in `LODEMAP_EXTENSOES`, separated by `;` and, outside Windows, also by `:`); each one receives `workspace.json`, `--arq` and `--repo`.
+O site estático do Structurizr saiu do padrão: `atualizar.py --com-site`. Scripts seus, fora do repositório, entram como extensões locais: liste-os em `"extensoes"` no `lodemap.json` (ou em `LODEMAP_EXTENSOES`, separados por `;` e, fora do Windows, também por `:`); cada um recebe o `workspace.json`, `--arq` e `--repo`.
 
-## Language
+## Atualização por checkpoint
 
-The generated outputs follow `"idioma"` in `lodemap.json` (`pt` by default, `en` available). The explorer and the reader have a PT | EN switch in the top bar; the choice is remembered in the browser. Status values in the DSL may be written in either language ("Em andamento" or "In progress"); the generators read both.
+`--checkpoint` (`-Checkpoint` no `.ps1`) grava o rótulo em `.lodemap/estado.json` (e o passa às extensões locais); `--incremental` só regenera se algo
+mudou desde a última geração (`scripts/lodemap_diff.py`). O gancho do git é opt-in:
+`.\scripts\instalar-gancho.ps1 -Python <python> -Ferramentas <pasta>` (e `-Remover`). Ele roda o `atualizar.ps1` (que chama o `atualizar.py`)
+em segundo plano a cada commit que toca o código ou o DSL e a cada merge, com log em `.lodemap/ultimo-atualizar.log`.
 
-## Checkpoint updates
+## Explorador interativo
 
-`--checkpoint` (`-Checkpoint` in the `.ps1`) writes the label to `.lodemap/estado.json` (and passes it to local extensions); `--incremental` only regenerates when something
-changed since the last generation (`scripts/lodemap_diff.py`). The git hook is opt-in:
-`.\scripts\instalar-gancho.ps1 -Python <python> -Ferramentas <folder>` (and `-Remover`). It runs `atualizar.ps1` (which calls `atualizar.py`)
-in the background on every commit that touches the code or the DSL and on every merge, logging to `.lodemap/ultimo-atualizar.log`.
+`explorador/index.html` lê `explorador/dados.js` (gerado; não edite à mão). Clique num nó para acender as ligações
+dele; `Shift`+clique mostra o caminho entre dois nós; duplo clique abre a vizinhança no modelo inteiro; as visões
+dinâmicas tocam passo a passo. O painel mostra status, código (VS Code e GitHub), observabilidade, métricas (atual ×
+meta, data e fonte), o impacto de mudar e os links para o leitor. O endereço `index.html#<identificador do DSL>`
+abre a menor visão que contém o elemento, já em foco.
 
-## Interactive explorer
+## Leitor de documentação e decisões
 
-`explorador/index.html` reads `explorador/dados.js` (generated; do not edit by hand). Click a node to light up its
-links; `Shift`+click shows the path between two nodes; double click opens its neighborhood in the whole model; the
-dynamic views play step by step. The panel shows status, code (VS Code and GitHub), observability, metrics (current ×
-target, date and source), the impact of a change and the links to the reader. The address `index.html#<DSL identifier>`
-opens the smallest view that contains the element, already focused.
+`leitor/index.html` lê `leitor/dados.js`, gerado de `docs/*.md` e `adrs/*.md` por `scripts/gerar_leitor.py` (não edite à mão). Os documentos ficam em Explicação, Guias e Referência (os gerados 02, 90 e 91) e os ADRs numa linha do tempo com status. Tem sumário lateral, busca no texto (tecla `/`), tema claro e escuro (`?tema=claro` ou `?tema=escuro`) e âncoras estáveis: `leitor/index.html#doc-<arquivo sem .md>` e `#adr-<id de 4 dígitos>`. Todo elemento citado leva ao mapa (`explorador/index.html#<identificador>`).
 
-## Docs and decisions reader
+## Decisões (ADRs)
 
-`leitor/index.html` reads `leitor/dados.js`, generated from `docs/*.md` and `adrs/*.md` by `scripts/gerar_leitor.py` (do not edit by hand). Documents are grouped into Explanation, Guides and Reference (the generated 02, 90 and 91) and the ADRs sit on a timeline with their status. It has a side table of contents, full-text search (`/` key), light and dark themes (`?tema=claro` or `?tema=escuro`) and stable anchors: `leitor/index.html#doc-<file without .md>` and `#adr-<4-digit id>`. Every element it cites links to the map (`explorador/index.html#<identifier>`).
+Um formato só, em `adrs/NNNN-<titulo>.md`: cabeçalho YAML com `id`, `titulo`, `status` (`proposta`, `aceita`, `substituida` ou `rejeitada`), `data`, `date` (cópia de `data`, lida pelo Structurizr), `decisores`, `elementos` (identificadores do modelo), `substitui`, `substituida_por` e `evidencia`; depois as seções Contexto, Decisão, Alternativas e Consequências. O índice `92-indice-de-decisoes.md` é gerado, e o teste `test_adrs_formato.py` falha se um ADR citar elemento inexistente, se a substituição não for recíproca ou se o status for inválido.
 
-## Decisions (ADRs)
+## Cores e formas
 
-One format, in `adrs/NNNN-<title>.md`: a YAML header with `id`, `titulo`, `status` (`proposta`, `aceita`, `substituida` or `rejeitada`; shown as Proposed, Accepted, Superseded, Rejected), `data`, `date` (a copy of `data`, read by Structurizr), `decisores`, `elementos` (model identifiers), `substitui`, `substituida_por` and `evidencia`; then the sections Context, Decision, Alternatives and Consequences. The index `92-indice-de-decisoes.md` is generated, and the test `test_adrs_formato.py` fails if an ADR cites an element that does not exist, if a supersession is not reciprocal or if the status is invalid.
-
-## Colors and shapes
-
-| Color | Status | Meaning |
+| Cor | Status | Significado |
 |---|---|---|
-| Green | Done | In the code, tested and integrated. |
-| Amber | In progress | Someone is working on it now. |
-| Purple | Waiting | Waiting for review, a decision or another team. |
-| Dashed blue-gray | Planned | In the design, not in the code. |
-| Dimmed gray | Out of focus | Exists, but is not a priority. |
+| Verde | Pronto | No código, testado e integrado. |
+| Âmbar | Em andamento | Alguém está mexendo agora. |
+| Roxo | Aguardando | Espera revisão, decisão ou outra equipe. |
+| Cinza-azulado tracejado | Planejado | Existe no design, não no código. |
+| Cinza escurecido | Fora do foco | Existe, mas não é prioridade. |
 
-| Shape | Tag | Meaning |
+| Forma | Tag | Significado |
 |---|---|---|
-| Cylinder | Dados | Stores data. |
-| Hexagon | Gate | Privacy, cost or contract guard. |
-| Robot | Modelo | Process that serves a model. |
-| Browser | WebBrowser | Page. |
-| Window | Janela | Desktop window. |
-| Pipe | Barramento | Event stream. |
-| Dashed orange border | Externo, Nuvem | Off the machine. |
-| Thick yellow border | Privacidade | Touches private data. |
+| Cilindro | Dados | Guarda dados. |
+| Hexágono | Gate | Guarda de privacidade, custo ou contrato. |
+| Robô | Modelo | Processo que serve um modelo. |
+| Navegador | WebBrowser | Página. |
+| Janela | Janela | Janela de desktop. |
+| Cano | Barramento | Fluxo de eventos. |
+| Borda tracejada laranja | Externo, Nuvem | Fora da máquina. |
+| Borda amarela grossa | Privacidade | Toca dado privado. |
 
-## How to change it
+## Como alterar
 
-1. Edit the right fragment in `model/` or `views/`.
-2. Run `python scripts/atualizar.py` (or `scripts\atualizar.ps1` on Windows).
-3. Record the reason in `99-registro-de-atualizacoes.md`.
-4. Run the tests `test_arquitetura_cobertura.py`, `test_arquitetura_metricas.py`, `test_adrs_formato.py` and `test_leitor_gerador.py`.
+1. Edite o fragmento certo em `model/` ou `views/`.
+2. Rode `python scripts/atualizar.py` (ou `scripts\atualizar.ps1` no Windows).
+3. Registre o motivo no `99-registro-de-atualizacoes.md`.
+4. Rode os testes `test_arquitetura_cobertura.py`, `test_arquitetura_metricas.py`, `test_adrs_formato.py` e `test_leitor_gerador.py`.

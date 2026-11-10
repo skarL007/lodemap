@@ -1,4 +1,4 @@
-workspace "axios" "Architecture of axios." {
+workspace "axios" "Arquitetura do axios." {
 
     !identifiers flat
     !impliedRelationships false
@@ -16,7 +16,7 @@ workspace "axios" "Architecture of axios." {
     model {
         !include model/pessoas-externos.dsl
 
-        sistema = softwareSystem "axios" "Architecture of axios." "Pronto" {
+        sistema = softwareSystem "axios" "Arquitetura do axios." "Pronto" {
             !include model/containers.dsl
         }
 

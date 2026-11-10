@@ -1,8 +1,8 @@
 // Gerado por scripts/esqueleto.py a partir de .lodemap/decisoes-modelo.json. Edite o JSON, não este arquivo.
 
-axiosLib = container "axios package" "The single npm package that ships axios: the lib/ sources, bundled into Node (CJS), browser (CJS), ESM and UMD builds that run inside the host application's process." "JavaScript (ESM, bundled to CJS and UMD)" "Pronto" {
+axiosLib = container "Pacote axios" "O único pacote npm que distribui o axios: as fontes de lib/, empacotadas nos builds Node (CJS), navegador (CJS), ESM e UMD que rodam dentro do processo da aplicação hospedeira." "JavaScript (ESM, empacotado em CJS e UMD)" "Pronto" {
     properties {
-        "status" "Done"
+        "status" "Pronto"
         "codigo" "lib/"
     }
     !include componentes-axiosLib.dsl

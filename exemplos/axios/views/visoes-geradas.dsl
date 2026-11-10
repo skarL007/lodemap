@@ -1,67 +1,67 @@
 // Gerado por scripts/esqueleto.py a partir de .lodemap/decisoes-modelo.json. Fluxos: views/visoes.dsl.
 
-systemContext sistema "Contexto" "Who uses the system and what it talks to." {
+systemContext sistema "Contexto" "Quem usa o sistema e com o que ele conversa." {
     include *
     autoLayout lr 150 50
-    title "Context"
+    title "Contexto"
 }
 
-container sistema "Containers" "The processes and the data." {
+container sistema "Containers" "Os processos e os dados." {
     include *
     autoLayout lr 150 50
     title "Containers"
 }
 
-component axiosLib "Componentes-axiosLib" "Every component of axios package." {
+component axiosLib "Componentes-axiosLib" "Todos os componentes de Pacote axios." {
     include *
     autoLayout lr 150 50
-    title "axios package: components"
+    title "Pacote axios: componentes"
 }
 
-component axiosLib "Area-axiosLib-Client" "Components of the Client and configuration area in axios package." {
+component axiosLib "Area-axiosLib-Client" "Componentes da área Cliente e configuração em Pacote axios." {
     include "element.tag==AreaClient"
     autoLayout lr 150 50
-    title "axios package: Client and configuration"
+    title "Pacote axios: Cliente e configuração"
 }
 
-component axiosLib "Area-axiosLib-Pipeline" "Components of the Request pipeline area in axios package." {
+component axiosLib "Area-axiosLib-Pipeline" "Componentes da área Pipeline da requisição em Pacote axios." {
     include "element.tag==AreaPipeline"
     autoLayout lr 150 50
-    title "axios package: Request pipeline"
+    title "Pacote axios: Pipeline da requisição"
 }
 
-component axiosLib "Area-axiosLib-Adapters" "Components of the Transport adapters area in axios package." {
+component axiosLib "Area-axiosLib-Adapters" "Componentes da área Adaptadores de transporte em Pacote axios." {
     include "element.tag==AreaAdapters"
     autoLayout lr 150 50
-    title "axios package: Transport adapters"
+    title "Pacote axios: Adaptadores de transporte"
 }
 
-component axiosLib "Area-axiosLib-UrlHeaders" "Components of the URLs and headers area in axios package." {
+component axiosLib "Area-axiosLib-UrlHeaders" "Componentes da área URLs e cabeçalhos em Pacote axios." {
     include "element.tag==AreaUrlHeaders"
     autoLayout lr 150 50
-    title "axios package: URLs and headers"
+    title "Pacote axios: URLs e cabeçalhos"
 }
 
-component axiosLib "Area-axiosLib-Payload" "Components of the Payload encoding area in axios package." {
+component axiosLib "Area-axiosLib-Payload" "Componentes da área Codificação do corpo em Pacote axios." {
     include "element.tag==AreaPayload"
     autoLayout lr 150 50
-    title "axios package: Payload encoding"
+    title "Pacote axios: Codificação do corpo"
 }
 
-component axiosLib "Area-axiosLib-Streaming" "Components of the Streams and progress area in axios package." {
+component axiosLib "Area-axiosLib-Streaming" "Componentes da área Streams e progresso em Pacote axios." {
     include "element.tag==AreaStreaming"
     autoLayout lr 150 50
-    title "axios package: Streams and progress"
+    title "Pacote axios: Streams e progresso"
 }
 
-component axiosLib "Area-axiosLib-Errors" "Components of the Errors and cancellation area in axios package." {
+component axiosLib "Area-axiosLib-Errors" "Componentes da área Erros e cancelamento em Pacote axios." {
     include "element.tag==AreaErrors"
     autoLayout lr 150 50
-    title "axios package: Errors and cancellation"
+    title "Pacote axios: Erros e cancelamento"
 }
 
-component axiosLib "Area-axiosLib-Platform" "Components of the Platform and utilities area in axios package." {
+component axiosLib "Area-axiosLib-Platform" "Componentes da área Plataforma e utilitários em Pacote axios." {
     include "element.tag==AreaPlatform"
     autoLayout lr 150 50
-    title "axios package: Platform and utilities"
+    title "Pacote axios: Plataforma e utilitários"
 }

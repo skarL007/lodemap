@@ -1,8 +1,9 @@
-# Change log
+# Registro de atualizações
 
-One row per change to the model, newest first.
+Uma linha por mudança no modelo, da mais nova para a mais antiga.
 
-| Date | What changed | Why |
+| Data | O que mudou | Motivo |
 |---|---|---|
-| 2026-11-09 | Updated to axios v1.21.1: three new components (Params cycle guard, Multipart body builder, FormData to Blob), 12 new relationships, and the description of the cookie helper now mentions the Cookie Store API. | The coverage test failed after merging the v1.21.1 tag: three new files under `lib/` had no component. |
-| 2026-11-09 | Model created with the lodemap skill. | C4 architecture as the single source, with the explorer, the reader and metrics. |
+| 2026-11-10 | Mapa traduzido para o português (nomes, descrições, verbos das relações, visões, fluxos e documentos), sem mudar a estrutura. | Idioma do mapa passa a ser `pt` no `lodemap.json`. |
+| 2026-11-09 | Atualizado para o axios v1.21.1: três componentes novos (Guarda de ciclos nos params, Construtor de corpo multipart, FormData para Blob), 12 relações novas, e a descrição do auxiliar de cookies passa a citar a Cookie Store API. | O teste de cobertura falhou depois de mesclar a tag v1.21.1: três arquivos novos em `lib/` estavam sem componente. |
+| 2026-11-09 | Modelo criado com a skill lodemap. | Arquitetura C4 como fonte única, com explorador, leitor e métricas. |

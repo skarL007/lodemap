@@ -37,17 +37,17 @@ PRIVADO = re.compile(r"(?i:zpka2|machuca|\baxon\b|synapse|fabrica|uacr)|(?<![A-Z
 
 
 def _rodar(cmd, cwd=None, env=None, timeout=900):
-    e = dict(os.environ, LODEMAP_IDIOMA="en", **(env or {}))
+    e = dict(os.environ, LODEMAP_IDIOMA="pt", **(env or {}))
     return subprocess.run(cmd, cwd=cwd, env=e, capture_output=True, text=True, encoding="utf-8", errors="replace",
                           timeout=timeout)
 
 
 # ---------- consistency (always) ----------
 
-def test_o_exemplo_e_um_mapa_em_ingles_do_axios():
+def test_o_exemplo_e_um_mapa_em_portugues_do_axios():
     cfg = json.loads((EXEMPLO / "lodemap.json").read_text(encoding="utf-8"))
     assert cfg["projeto"] == "axios"
-    assert cfg["idioma"] == "en"
+    assert cfg["idioma"] == "pt"
     assert cfg["modulos"] == ["lib/**/*.js"]
     assert (EXEMPLO / "workspace.dsl").is_file()
     assert (EXEMPLO / ".lodemap" / "decisoes-modelo.json").is_file()
@@ -112,7 +112,7 @@ def projeto(tmp_path_factory):
         subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@t", *c], cwd=r, check=True,
                        capture_output=True)
     novo = _rodar([sys.executable, str(RAIZ / "scripts" / "novo_mapa.py"), "--repo", str(r), "--project", "axios",
-                   "--language", "en", "--code-root", "lib", "--modules", "lib/**/*.js",
+                   "--language", "pt", "--code-root", "lib", "--modules", "lib/**/*.js",
                    "--github", "https://github.com/axios/axios"])
     assert novo.returncode == 0, novo.stdout + novo.stderr
     destino = r / "docs" / "architecture" / "structurizr"
@@ -135,7 +135,7 @@ def test_o_pipeline_completo_valida_exporta_e_gera_tudo(atualizado):
         assert passo in saida, saida[-2000:]
     assert (arq / ".structurizr" / "export" / "workspace.json").is_file()
     dados = (arq / "explorador" / "dados.js").read_text(encoding="utf-8")
-    assert '"idioma": "en"' in dados and '"nome": "axios"' in dados
+    assert '"idioma": "pt"' in dados and '"nome": "axios"' in dados
     componentes = len(re.findall(r'"tipo":\s*"Componente"', dados))
     assert componentes == 72, componentes
     assert (arq / "leitor" / "dados.js").is_file()

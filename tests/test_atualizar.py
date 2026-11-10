@@ -415,6 +415,73 @@ def test_ponta_a_ponta_com_o_structurizr_cli_real(tmp_path):
     assert r.returncode == 0, r.stdout[-2000:] + r.stderr[-2000:]
     assert (arq / ".structurizr" / "export" / "workspace.json").is_file()
     assert (arq / "leitor" / "dados.js").is_file() and (arq / "explorador" / "dados.js").is_file()
+    evidencias_js = (arq / "explorador" / "evidencias.js").read_text(encoding="utf-8")
+    assert evidencias_js.startswith("window.LODEMAP_EVIDENCIAS = ")
+    evidencias = json.loads(evidencias_js.split(" = ", 1)[1].rstrip(";\n"))
+    assert evidencias["componentes"]
+    assert evidencias["referencia"]["commit"]
+    assert all(x["cobertura"]["estado"] == "ausente" for x in evidencias["componentes"].values())
+    assert all((arq / "explorador" / nome).is_file() for nome in ("saude.js", "linha-do-tempo-ui.js"))
     estado = json.loads((arq / ".lodemap" / "estado.json").read_text(encoding="utf-8"))
     assert estado.get("ultimoCommit") and estado.get("checkpoint") == "teste e2e"
     assert "Pronto." in r.stdout
+
+
+def test_arquivos_fixos_novos_sem_mudar_interface_customizada(projeto, monkeypatch):
+    for nome in ('linha-do-tempo-ui.js', 'saude.js'):
+        (projeto.tpl / 'explorador' / nome).write_text('novo ' + nome, encoding='utf8')
+    (projeto.raiz / 'explorador').mkdir()
+    (projeto.raiz / 'explorador' / 'index.html').write_text('personalizado', encoding='utf8')
+    _rodar(projeto, monkeypatch, Simulador(topo=str(projeto.tmp / 'repo')))
+    assert (projeto.raiz / 'explorador' / 'index.html').read_text(encoding='utf8') == 'personalizado'
+    for nome in ('linha-do-tempo-ui.js', 'saude.js'):
+        assert (projeto.raiz / 'explorador' / nome).read_text(encoding='utf8') == 'novo ' + nome
+
+
+def test_atualizar_interface_cria_backups_unicos(projeto, monkeypatch):
+    for rel in ('explorador/index.html', 'leitor/index.html', 'explorador/saude.js', 'explorador/linha-do-tempo-ui.js'):
+        destino = projeto.raiz / rel
+        destino.parent.mkdir(parents=True, exist_ok=True)
+        destino.write_text('personalizado ' + rel, encoding='utf8')
+        origem = projeto.tpl / rel
+        origem.parent.mkdir(parents=True, exist_ok=True)
+        origem.write_text('template ' + rel, encoding='utf8')
+        (destino.parent / (destino.name + '.lodemap-bak')).write_text('backup antigo', encoding='utf8')
+    assert _rodar(projeto, monkeypatch, Simulador(topo=str(projeto.tmp / 'repo')), '--atualizar-interface') == 0
+    for rel in ('explorador/index.html', 'leitor/index.html', 'explorador/saude.js', 'explorador/linha-do-tempo-ui.js'):
+        destino = projeto.raiz / rel
+        assert destino.read_text(encoding='utf8') == 'template ' + rel
+        assert (destino.parent / (destino.name + '.lodemap-bak')).read_text(encoding='utf8') == 'backup antigo'
+        assert (destino.parent / (destino.name + '.lodemap-bak.1')).read_text(encoding='utf8') == 'personalizado ' + rel
+
+
+def test_incremental_atualiza_interface_e_copia_arquivos_faltantes(projeto, monkeypatch):
+    (projeto.tpl / 'explorador' / 'saude.js').write_text('saude', encoding='utf8')
+    sim = Simulador(relevante=1, topo=str(projeto.tmp / 'repo'))
+    assert _rodar(projeto, monkeypatch, sim, '--incremental') == 0
+    assert (projeto.raiz / 'explorador' / 'saude.js').read_text(encoding='utf8') == 'saude'
+    assert sim.etapas() == ['--relevante']
+
+
+def test_atualizar_interface_vence_incremental_sem_mudanca(projeto, monkeypatch):
+    sim = Simulador(relevante=1, topo=str(projeto.tmp / 'repo'))
+    assert _rodar(projeto, monkeypatch, sim, '--incremental', '--atualizar-interface') == 0
+    assert 'validate' in sim.etapas() and '--relevante' not in sim.etapas()
+
+
+def test_evidencias_opcional_apos_gerar_explorador(projeto, monkeypatch):
+    evidencia = projeto.tmp / 'skill' / 'scripts' / 'evidencias.py'
+    evidencia.write_text('pass\n', encoding='utf8')
+    sim = Simulador(topo=str(projeto.tmp / 'repo'))
+    assert _rodar(projeto, monkeypatch, sim) == 0
+    indice = next(i for i, (cmd, _) in enumerate(sim.chamadas) if str(evidencia) in cmd)
+    assert sim.etapas().index('gerar_explorador') < indice
+    cmd = sim.chamadas[indice][0]
+    assert cmd[2:] == ['--repositorio', str(projeto.tmp / 'repo'), '--mapa', str(projeto.raiz)]
+
+
+def test_falha_evidencias_so_avisa(projeto, monkeypatch, capsys):
+    (projeto.tmp / 'skill' / 'scripts' / 'evidencias.py').write_text('pass\n', encoding='utf8')
+    sim = Simulador(falhar={'evidencias.py': 2}, topo=str(projeto.tmp / 'repo'))
+    assert _rodar(projeto, monkeypatch, sim) == 0
+    assert 'evidência' in capsys.readouterr().err.lower()

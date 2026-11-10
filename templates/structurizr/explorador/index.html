@@ -18,6 +18,7 @@
 })();
 </script>
 <script src="dados.js"></script>
+<script src="saude.js"></script>
 <script>
 /* Textos da interface do explorador, em português (padrão) e inglês. Funções recebem valores já escapados; listas de
    dois itens (p*) são singular e plural. O conteúdo do modelo (nomes, descrições, ADRs) não passa por aqui. */
@@ -653,6 +654,21 @@ footer.visivel { display: flex; }
   #paleta { padding-top: var(--space-4); }
   .paleta-rodape { display: none; }
 }
+#timelinePanel { position:absolute; inset:0; z-index:12; display:flex; flex-direction:column; gap:8px; padding:16px; background:var(--bg-grouped); overflow:auto; }
+#timelinePanel[hidden] { display:none; }
+.tl-cab, .tl-controles { display:flex; justify-content:space-between; align-items:center; gap:8px; }
+.tl-cab p { margin:4px 0; color:var(--label-2); font-size:var(--text-sm); }
+.tl-filtros { display:flex; align-items:center; gap:8px; min-width:0; } .tl-filtros select { flex:1; min-width:0; }
+.tl-trilho { display:flex; gap:8px; overflow-x:auto; flex:none; padding:4px 0 8px; }
+.tl-versao { min-width:120px; text-align:left; display:flex; flex-direction:column; gap:4px; background:var(--surface); color:var(--label); border:1px solid var(--separator-strong); border-radius:var(--radius-control); padding:8px; cursor:pointer; }
+.tl-versao[aria-pressed="true"] { outline:2px solid var(--brand); outline-offset:-2px; }
+.tl-versao:focus-visible, #timelinePanel button:focus-visible { outline:2px solid var(--focus); outline-offset:2px; }
+.tl-versao span, .tl-versao small, .tl-legenda { color:var(--label-2); font-size:var(--text-xs); }
+.tl-zero { opacity:.6; } .tl-legenda { display:flex; flex-wrap:wrap; gap:12px; }
+.tl-corpo { display:grid; grid-template-columns:minmax(0,1fr) minmax(180px,260px); min-height:260px; flex:1; gap:8px; }
+#tlGrafo, #tlInspetor { min-width:0; border:1px solid var(--separator); background:var(--surface); }
+#tlGrafo { min-height:240px; } #tlInspetor { overflow:auto; padding:12px; font-size:var(--text-sm); overflow-wrap:anywhere; }
+@media(max-width:900px) { #timelinePanel { padding:8px; } .tl-corpo { grid-template-columns:1fr; grid-template-rows:minmax(220px,1fr) auto; } #tlInspetor { max-height:140px; } }
 </style>
 </head>
 <body class="sds" data-lm-pagina="mapa">
@@ -1150,6 +1166,7 @@ footer.visivel { display: flex; }
   function corDoNo(e) {
     const p = colorir;
     if (p.startsWith("tag:")) return e.tags.includes(p.slice(4)) ? C.brand : C.st["Fora do foco"];
+    if (p === "saude") return ({referenciado:C.ok, sem_referencia:C.warn, desconhecido:C.label3})[window.LodemapSaude.estado(e)];
     if (p === "area") return paletaArea[areaDe(e)];
     if (p === "container") return paletaCont[(containerDe(e) || {}).nome || e.tipo];
     if (p === "obs") return temObs(e) ? C.ok : C.st["Fora do foco"];
@@ -1638,6 +1655,7 @@ footer.visivel { display: flex; }
     const p = colorir; let itens;
     if (p.startsWith("tag:")) itens = [["var(--brand)", t("marcadoComo", nomeTag(p.slice(4)))], ["var(--status-fora)", t("semMarcador")]];
     else if (p === "status") itens = STATUS.map(x => [`var(${x[2]})`, rotSt(x[0])]).concat([["var(--label-3)", rotSt("Externo")]]);
+    else if (p === "saude") itens = [["var(--ok)", "Teste referencia código"], ["var(--warn)", "Sem referência encontrada"], ["var(--label-3)", "Desconhecido"]];
     else if (p === "area") itens = Object.entries(paletaArea).map(([k, c]) => [c, rotTipo(k)]);
     else if (p === "container") itens = Object.entries(paletaCont).map(([k, c]) => [c, rotTipo(k)]);
     else if (p === "obs") itens = [["var(--ok)", t("obsSim")], ["var(--status-fora)", t("obsNao")]];
@@ -1737,6 +1755,7 @@ footer.visivel { display: flex; }
       ${seg}
       ${mudou ? `<div class="impacto aviso"><b>${esc(t("mudouDesde", curto(MUD.de)))}</b><ul>${mudou.map(m => `<li><code>${esc(m)}</code></li>`).join("")}</ul></div>` : ""}
       ${extra || ""}
+      ${window.LodemapSaude ? window.LodemapSaude.texto(e) : ""}
       <table class="tabela">${linhas.map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join("")}</table>
       ${mets.length ? `<h2>${t("metricasTitulo", mets.length)}</h2><table class="tabela">${mets.join("")}</table>` : ""}
       <div class="impacto" title="${esc(t("impactoTitulo"))}"><b>${t("impactoCab")}</b><br>
@@ -1942,6 +1961,18 @@ footer.visivel { display: flex; }
   $("fecharDetalhe").addEventListener("click", () => { if (fluxo && inspetor !== "percurso") { focoId = null; estadoBase(); mostrarPercurso(); } folha(false); });
   $("btnMostrarTodos").addEventListener("click", () => { ocultos.clear(); $("filtrosStatus").querySelectorAll("input").forEach(i => { i.checked = true; }); aplicarFiltros(); });
   $("colorir").addEventListener("change", ev => definirColorir(ev.target.value));
+  const saudeBtn = document.createElement("button"); saudeBtn.className="item"; saudeBtn.textContent="Saúde dos componentes";
+  $("esq").insertBefore(saudeBtn, $("esq").firstChild);
+  saudeBtn.addEventListener("click", async () => {
+    painel(false);
+    const dados=await window.LodemapSaude.carregar();
+    if (!dados) { $("aviso").textContent="Evidências indisponíveis. Gere evidencias.js para este mapa."; $("aviso").hidden=false; return; }
+    const vs=window.LODEMAP_LINHA_DO_TEMPO && window.LODEMAP_LINHA_DO_TEMPO.versoes;
+    window.LodemapSaude.referencia(vs && vs.length ? vs[vs.length-1].sha_completo : null);
+    if (!$('colorir').querySelector('[value="saude"]')) $('colorir').insertAdjacentHTML('beforeend', '<option value="saude">Saúde</option>');
+    definirColorir('saude');
+    $("aviso").textContent="Saúde: referências estáticas, não execução. Árvore de trabalho não verificada."; $("aviso").hidden=false;
+  });
   $("btnReorganizar").addEventListener("click", () => rodarLayout(true));
   $("btnEnquadrar").addEventListener("click", enquadrar);
   $("chipMudou").addEventListener("click", () => definirDestaque("mudou"));
@@ -2001,5 +2032,6 @@ footer.visivel { display: flex; }
   rotear(true);
 })();
 </script>
+<script src="linha-do-tempo-ui.js"></script>
 </body>
 </html>

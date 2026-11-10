@@ -873,7 +873,7 @@ mark { background: var(--warn-tint); color: inherit; border-radius: 2px; box-sha
 
   // ------------------------------------------------------------ sumário lateral
   function montarLateral() {
-    var h = ['<div class="grupo-nav"><ul class="nav-lista"><li><a class="nav-item" href="#inicio" data-ancora="inicio">' + esc(t("visaoGeral")) + "</a></li></ul></div>"];
+    var h = ['<div class="grupo-nav"><ul class="nav-lista"><li><a class="nav-item" href="#inicio" data-ancora="inicio">' + esc(t("visaoGeral")) + '</a></li><li><a class="nav-item" href="#evolucao" data-ancora="evolucao">Evolução da arquitetura</a></li></ul></div>'];
     ["explicacao", "guia", "referencia"].forEach(function (k) {
       var docs = D.docs.filter(function (d) { return d.secao === k; });
       if (!docs.length) return;
@@ -1049,6 +1049,33 @@ mark { background: var(--warn-tint); color: inherit; border-radius: 2px; box-sha
       '<a class="sds-btn sds-btn--primary" href="#inicio">' + esc(t("voltar")) + "</a></section>", toc: [] };
   }
 
+  // Relatório calculado pelo script da linha do tempo; sem chamadas de modelo.
+  function paginaEvolucao() {
+    var tempo = window.LODEMAP_LINHA_DO_TEMPO;
+    if (!tempo || !Array.isArray(tempo.versoes)) return {html:'<article><h1>Evolução da arquitetura</h1><p id="evolucaoEstado">'+(erroEvolucao?'Histórico indisponível. Gere a linha do tempo para este mapa.':'Carregando histórico…')+'</p></article>', toc:[]};
+    if (!tempo.versoes.length) return {html:'<article><h1>Evolução da arquitetura</h1><p>Nenhuma versão disponível.</p></article>',toc:[]};
+    var lista = tempo.versoes.slice().reverse().map(function(v) {
+      var r=v.resumo, titulo=esc(v.tag || v.sha || 'Trabalho não commitado');
+      if (!v.dados || !r) return '<section><h2>'+titulo+'</h2><p>Dados indisponíveis para esta versão.</p></section>';
+      var componentes=v.componentes, itens=[];
+      [['adicionados','Entraram'],['removidos','Saíram'],['alterados','Mudaram']].forEach(function(par) {
+        var xs=componentes[par[0]] || []; if(xs.length) itens.push('<li>'+par[1]+' ('+xs.length+'): '+xs.slice(0,8).map(function(x){return esc(x.nome||x.ident);}).join(', ')+(xs.length>8?' e mais '+(xs.length-8):'')+'</li>');
+      });
+      return '<section><h2>'+titulo+'</h2><p>'+esc(v.data||'')+' · '+(v.mudou_idioma?'Tradução · ':'')+r.total+' alterações</p><ul>' +
+        itens.join('')+'<li>Relações: '+r.relacoes_novas+' novas, '+r.relacoes_removidas+' removidas.</li><li>Fluxos: '+r.fluxos_adicionados+' novos, '+r.fluxos_removidos+' removidos, '+r.fluxos_alterados+' alterados.</li></ul>'+
+        (v.registro||[]).map(function(x){return '<p>'+esc(x.mudou)+' — '+esc(x.motivo)+'</p>';}).join('')+'</section>';
+    });
+    return {html:'<article><h1>Evolução da arquitetura</h1><p>Alterações calculadas entre versões do mapa.</p>'+lista.join('')+'</article>',toc:[]};
+  }
+  var carregandoEvolucao = false, erroEvolucao = false;
+  function carregarEvolucao() {
+    if (window.LODEMAP_LINHA_DO_TEMPO || carregandoEvolucao || erroEvolucao) return;
+    carregandoEvolucao=true;
+    function erro(){erroEvolucao=true;carregandoEvolucao=false;var el=document.getElementById('evolucaoEstado');if(el) el.textContent='Histórico indisponível. Gere a linha do tempo para este mapa.';}
+    function inserir(){var s=document.createElement('script');s.src='../explorador/linha-do-tempo.js';s.onload=function(){paginaAtual=null;if(location.hash==='#evolucao')rotear();};s.onerror=erro;document.head.appendChild(s);}
+    if(location.protocol==='file:') inserir(); else fetch('../explorador/linha-do-tempo.js',{method:'HEAD'}).then(function(r){if(r.ok)inserir();else erro();}).catch(erro);
+  }
+
   // ------------------------------------------------------------ roteamento
   var paginaAtual = null, observador = null;
   function rotear() {
@@ -1058,6 +1085,7 @@ mark { background: var(--warn-tint); color: inherit; border-radius: 2px; box-sha
     var p;
     if (base === "inicio") p = paginaInicio();
     else if (base === "decisoes") p = paginaDecisoes();
+    else if (base === "evolucao") { p = paginaEvolucao(); carregarEvolucao(); }
     else if (POR_ANCORA[base]) p = POR_ANCORA[base].tipo === "doc" ? paginaDoc(POR_ANCORA[base].item) : paginaAdr(POR_ANCORA[base].item);
     else { p = paginaErro(hash); base = ""; }
     ativarBarra(base);

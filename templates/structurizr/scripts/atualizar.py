@@ -21,6 +21,7 @@ Mapeamento dos parâmetros do atualizar.ps1 para as flags (os padrões via ambie
   -SemSite               --sem-site              (compatibilidade: o site já fica de fora sem --com-site)
   -Incremental           --incremental
   (novo)                 --cli <arquivo>         força o structurizr.bat / structurizr.sh
+                         --atualizar-interface   atualiza HTML e JS fixos, com backup dos arquivos anteriores
 
 Structurizr CLI (structurizr.bat no Windows, structurizr.sh nos outros sistemas), nesta ordem:
   1. env STRUCTURIZR_CLI (o arquivo, ou a pasta que o contém);
@@ -34,7 +35,7 @@ Etapas, na ordem: [incremental] páginas fixas faltantes; 1 validate; 2 export j
 LODEMAP_EXTENSOES, separada por ";" e, fora do Windows, também por ":"); 7 site estático (--com-site);
 por fim lodemap_diff --marcar e, se o script da skill existir, a linha do tempo da arquitetura (linha_do_tempo.py,
 lida do git; sem repositório git ela é pulada com aviso). Falha de etapa obrigatória (1 a 5): código 1. Falha de
-extensão, da ponte, do site, do --marcar ou da linha do tempo: só aviso.
+extensão, da ponte, do site, do --marcar, da linha do tempo ou das evidências: só aviso.
 """
 from __future__ import annotations
 
@@ -49,7 +50,10 @@ from pathlib import Path
 NOME_CLI_WINDOWS = ("structurizr.bat",)
 NOME_CLI_OUTROS = ("structurizr.sh", "structurizr", "structurizr-cli")
 FIXOS = (Path("explorador") / "index.html", Path("explorador") / "vendor",
-         Path("leitor") / "index.html", Path("leitor") / "vendor")
+         Path("leitor") / "index.html", Path("leitor") / "vendor",
+         Path("explorador") / "linha-do-tempo-ui.js", Path("explorador") / "saude.js")
+INTERFACE = frozenset((Path("explorador") / "index.html", Path("leitor") / "index.html",
+                       Path("explorador") / "linha-do-tempo-ui.js", Path("explorador") / "saude.js"))
 
 
 class Falha(Exception):
@@ -130,6 +134,9 @@ def parse_args(argv=None, env=None) -> argparse.Namespace:
     ap.add_argument("--incremental", action="store_true",
                     help=("exit without regenerating if nothing changed since the last run" if en
                           else "sai sem regenerar se nada mudou desde a última geração"))
+    ap.add_argument("--atualizar-interface", "--update-interface", action="store_true",
+                    help=("replace fixed HTML and JS with a backup of each changed file" if en
+                          else "atualiza HTML e JS fixos, preservando backup de cada arquivo alterado"))
     a = ap.parse_args(argv)
     if a.checkpoint_env and not a.checkpoint:
         a.checkpoint = env.get("LODEMAP_CHECKPOINT", "")
@@ -285,17 +292,34 @@ def rodar_extensoes(extensoes: list[str], python: str, json_ws: Path, raiz: Path
 
 # --------------------------------------------------------------------------------------------- pipeline
 
-def _copiar_fixos(raiz: Path, template: Path) -> bool:
-    """Copia do template as páginas fixas que faltarem. Devolve se o template é utilizável."""
+def _copiar_fixos(raiz: Path, template: Path, atualizar_interface: bool = False) -> bool:
+    """Copia fixos faltantes e, quando solicitado, atualiza a interface com backups exclusivos."""
     try:
         tpl_ok = template.is_dir() and template.resolve() != raiz.resolve()
     except OSError:
         tpl_ok = False
     for rel in FIXOS:
         destino = raiz / rel
-        if destino.exists():
-            continue
         origem = template / rel
+        if destino.exists():
+            if not (atualizar_interface and rel in INTERFACE and tpl_ok and origem.is_file() and destino.is_file()):
+                continue
+            if destino.read_bytes() == origem.read_bytes():
+                continue
+            # A abertura exclusiva preserva backups de execuções anteriores, inclusive após interrupção.
+            n = 0
+            while True:
+                backup = destino.with_name(destino.name + ".lodemap-bak" + (f".{n}" if n else ""))
+                try:
+                    with backup.open("xb") as saida, destino.open("rb") as entrada:
+                        shutil.copyfileobj(entrada, saida)
+                    break
+                except FileExistsError:
+                    n += 1
+            shutil.copy2(origem, destino)
+            info(f"interface atualizada: {rel.as_posix()} (backup: {backup.name})",
+                 f"interface updated: {rel.as_posix()} (backup: {backup.name})")
+            continue
         if tpl_ok and origem.exists():
             destino.parent.mkdir(parents=True, exist_ok=True)
             if origem.is_dir():
@@ -338,12 +362,13 @@ def executar(a: argparse.Namespace, scripts: Path, env_proc=None) -> int:
         aviso("Não achei o java no PATH nem JAVA_HOME; o Structurizr CLI precisa do Java 17 ou mais novo.",
               "Java is on neither PATH nor JAVA_HOME; the Structurizr CLI needs Java 17 or newer.")
 
-    if a.incremental:
+    tpl_ok = _copiar_fixos(raiz, template, a.atualizar_interface)
+
+    if a.incremental and not a.atualizar_interface:
         if _rodar([py, str(diff), "--relevante", "--arq", str(raiz)]).returncode != 0:
             info("Nada mudou desde a última geração; nada a fazer.", "Nothing changed since the last run; nothing to do.")
             return 0
 
-    tpl_ok = _copiar_fixos(raiz, template)
     dot = achar_dot(a.ferramentas)
     env = _env_filho(dot)
 
@@ -440,6 +465,19 @@ def executar(a: argparse.Namespace, scripts: Path, env_proc=None) -> int:
         elif rc != 0:
             aviso(f"A linha do tempo falhou (código {rc}); o resto está pronto.",
                   f"The timeline failed (code {rc}); everything else is ready.")
+
+    evidencias = (template / ".." / ".." / "scripts" / "evidencias.py").resolve()
+    if tpl_ok and evidencias.is_file():
+        info("evidências locais dos componentes", "local component evidence")
+        try:
+            rc = _rodar([py, str(evidencias), "--repositorio", str(repo), "--mapa", str(raiz)],
+                        env=env, capturar=True).returncode
+        except OSError as e:
+            aviso(f"As evidências não rodaram: {e}", f"Evidence collection did not run: {e}")
+        else:
+            if rc != 0:
+                aviso(f"As evidências falharam (código {rc}); o resto está pronto.",
+                      f"Evidence collection failed (code {rc}); everything else is ready.")
 
     info("Pronto. Leitor em leitor/index.html; registre a mudança em docs/99-registro-de-atualizacoes.md.",
          "Done. Reader at leitor/index.html; log the change in docs/99-registro-de-atualizacoes.md.")

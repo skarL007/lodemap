@@ -4,7 +4,7 @@
   reverter --manifesto <arquivo>          (sem --manifesto: o último)
   status
   plano [--repo .]                        (permissão: 0 tokens, módulos, custo e tempo, arquivos)
-  consentir --escopos gerar,gancho,modelo,synapse [--orcamento-mensal X] [--repo .]
+  consentir --escopos gerar,gancho,modelo [--orcamento-mensal X] [--repo .]
   revogar [--escopos ...] [--repo .]
   verificar --escopo modelo [--custo X] [--repo .]
   doctor [--repo .] [--json]              (diagnóstico do ambiente: 0 tokens, sem rede; apelido: diagnostico)

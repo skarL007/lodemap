@@ -188,12 +188,12 @@ Nada é gerado sem o ok do dono. Antes do passo 1 (e antes de qualquer passo com
    `~/.claude/skills/lodemap`). Ele conta os módulos, estima custo e tempo pelo modelo de custo medido
    (`references/custo-equivalente.json`, valores-piso) e lista os arquivos que seriam escritos.
 2. Mostre o plano ao dono e **peça o ok**. Com o ok, grave o consentimento:
-   `python -m lodemap consentir --repo <raiz> --escopos gerar[,gancho,modelo,synapse] [--orcamento-mensal X]`
+   `python -m lodemap consentir --repo <raiz> --escopos gerar[,gancho,modelo] [--orcamento-mensal X]`
    (vai para `<pasta da arquitetura>/.lodemap/consentimento.json`; revoga com `python -m lodemap revogar --repo <raiz>`).
 3. Passo com modelo (inventário, modelagem, `descrever.py`, revisão com subagentes) exige o escopo `modelo` dentro do
    teto: `python -m lodemap verificar --repo <raiz> --escopo modelo --custo <estimativa>` (saída 0 = autorizado). Sem
    isso, peça confirmação explícita ao dono antes de cada passo com modelo. O gancho por commit só com o escopo
-   `gancho`; nota no Synapse só com `synapse`.
+   `gancho`.
 
 O hook opcional `hooks/aviso_lodemap.py` (perfil `padrao` do instalador) injeta uma linha única por repositório sem
 mapa sugerindo o plano; ele não gera nada. O instalador (`python -m lodemap instalar --perfil minimo|padrao`, plano por
@@ -364,6 +364,5 @@ Ele mede a dívida do mapa e devolve `acao`, `motivos`, `divida`, `lote` e `prox
 | `estado-json.md` | ao criar ou ler o `.lodemap/estado.json` |
 | `leitor-e-adr.md` | ao criar ou migrar ADRs, organizar documentos ou mexer na barra de topo |
 | `abrir-e-servir.md` | portas, opções do `ver_arquitetura.py` e o Structurizr Lite |
-| `synapse.md` | só se o projeto usa o Synapse e o escopo `synapse` foi consentido |
 | `armadilhas.md` | quando um passo falhar de um jeito estranho (PowerShell, Lite, Graphviz, ganchos, nome antigo do projeto) |
 | `rota-enxuta.md`, `digital-semantica.md`, `benchmark-e-custo.md`, `precisao-ast.md` | medições: de onde vêm os números de custo, qualidade e precisão |

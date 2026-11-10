@@ -68,7 +68,7 @@ def test_consentir_verificar_revogar(tmp_path, capsys):
     assert permissao.verificar(r, "gerar")[0]
     assert permissao.verificar(r, "modelo", 1.2)[0]
     assert permissao.verificar(r, "modelo", 7.0)[0] is False
-    assert permissao.verificar(r, "synapse")[0] is False
+    assert permissao.verificar(r, "gancho")[0] is False
     assert cli.main(["verificar", "--repo", str(r), "--escopo", "gancho"]) == 3
     assert cli.main(["revogar", "--repo", str(r), "--escopos", "modelo"]) == 0
     assert permissao.ler_consentimento(r)["escopos"] == ["gerar"]

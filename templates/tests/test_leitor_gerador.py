@@ -28,7 +28,7 @@ EXPORT = ARQ / ".structurizr" / "export" / "workspace.json"
 
 
 def _ctx(elementos=None):
-    return gl.Contexto({"01-visao-e-como-usar", "30-janela"}, {"0003-synapse.md": "0003"},
+    return gl.Contexto({"01-visao-e-como-usar", "30-janela"}, {"0003-fila.md": "0003"},
                        elementos or {"orqEscala": {"nome": "Política de modelos", "tipo": "Componente"}}, "doc-x")
 
 
@@ -55,7 +55,7 @@ def test_markdown_escapa_html_cru():
 
 def test_links_entre_documentos_e_mapa():
     ctx = _ctx()
-    h = gl.markdown("[visão](01-visao-e-como-usar.md), [seção](30-janela.md#por-que), [adr](../adrs/0003-synapse.md), "
+    h = gl.markdown("[visão](01-visao-e-como-usar.md), [seção](30-janela.md#por-que), [adr](../adrs/0003-fila.md), "
                     "[mapa](../explorador/index.html#orqEscala), [site](https://exemplo.org) e `orqEscala`.", ctx)
     assert 'href="#doc-01-visao-e-como-usar"' in h
     assert 'href="#doc-30-janela--por-que"' in h
@@ -164,11 +164,6 @@ def test_index_traz_os_tokens_do_design():
     t = INDEX.read_text(encoding="utf-8")
     m = re.search(r"/\* sds:tokens:start \*/\s*(.*?)\s*/\* sds:tokens:end \*/", t, re.S)
     assert m and "--brand" in m.group(1), "faltam os tokens do design entre sds:tokens:start e sds:tokens:end"
-    fonte = next((p / "design" / "synapse-ds" / "tokens.css" for p in [ROOT, *ROOT.parents]
-                  if (p / "design" / "synapse-ds" / "tokens.css").is_file()), None)
-    if fonte:
-        norm = lambda s: re.sub(r"\s+", " ", s).strip()  # noqa: E731
-        assert norm(m.group(1)) == norm(fonte.read_text(encoding="utf-8")), "tokens do leitor divergiram do design"
 
 
 def test_adr_resumo_vem_da_decisao_e_aliases_entram_na_busca(tmp_path):

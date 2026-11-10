@@ -86,7 +86,7 @@ def test_dados_versionados_nao_levam_o_caminho_absoluto_da_maquina(projeto):
 
 def test_sem_arquivos_opcionais_os_blocos_saem_nulos(projeto):
     d = _modulo().montar(_ws(projeto), projeto / "explorador")
-    assert d["mudancas"] is None and d["qualidade"] is None and d["prova"] is None and d["memoria"] is None
+    assert d["mudancas"] is None and d["qualidade"] is None and d["prova"] is None and "memoria" not in d
     assert "lite" not in d and d["leitor"] == "../leitor/index.html"
 
 
@@ -143,18 +143,6 @@ def test_adrs_e_documentos_citam_pelo_identificador(projeto):
     assert adr["ancora"] == "adr-0002" and adr["elementos"] == ["2"]
     doc = d["documentos"][0]
     assert doc["ancora"] == "doc-10-guia" and doc["elementos"] == ["1"], "compAx não pode contar como compA"
-
-
-def test_memoria_por_componente_pelo_caminho_do_codigo(projeto):
-    (projeto / ".lodemap").mkdir()
-    (projeto / ".lodemap" / "synapse-contexto.json").write_text(json.dumps({"disponivel": True, "licoes": [
-        {"titulo": "Não reabrir src/a.py sem teste", "solucao": "rode o teste antes", "invariante": True},
-        {"titulo": "Outra coisa", "solucao": "nada a ver"},
-    ]}))
-    mem = _modulo().montar(_ws(projeto), projeto / "explorador")["memoria"]
-    assert mem["licoes"] == 2
-    assert list(mem["porElemento"]) == ["1"]
-    assert mem["porElemento"]["1"][0]["invariante"] is True
 
 
 def test_main_grava_dados_js(projeto, monkeypatch):

@@ -9,7 +9,6 @@ Referência completa. O `SKILL.md` cita só os comandos de cada passo.
 | `scripts/novo_mapa.py` | copia os templates para o repositório e preenche os marcadores; sem `--raiz-codigo` detecta a raiz do código (pasta convencional com código, senão a raiz do repositório) e escreve os globs de `modulos` e de `ignorar` da linguagem dominante |
 | `scripts/inventario.py` | cada módulo dos globs, quem o cobre (ou FORA), resumo e importadores; `--json` grava a base do `inventario.json` |
 | `scripts/verificar.py` | checagem final: `node --check`, explorador abrindo sem erro de JS e, com `--qualidade`, o gate do `qualidade.py` |
-| `scripts/synapse_ponte.py` | ponte com o Synapse: `contexto` (lições do projeto com `projeto` explícito e notas, gravadas em `.lodemap/synapse-contexto.json`) e `observar` (nota do gate como observação; grava só com `--aplicar`) |
 | `scripts/qualidade.py` | rubrica objetiva do modelo (nota 0 a 100 por critério e total) contra `references/baseline-qualidade.json`; `--listar-reprovados` |
 | `scripts/codegraph_ponte.py` | arestas código → código (CodeGraph em leitura, ou `ast`): `--inventario`, `--relacoes`, `--impacto`; zero token |
 | `references/baseline-qualidade.json` | notas por critério da linha de base (o primeiro mapa que a skill gerou); o gate compara com ela |

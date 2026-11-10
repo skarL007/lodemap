@@ -240,8 +240,8 @@ the map language.
 ## Privacy and security
 
 - Scripts run locally and make no network call. The model-driven steps send the files they read to Anthropic through
-  your own Claude Code. The only network code is the optional `scripts/synapse_ponte.py`, a bridge to
-  a separate engine that is not public; with no engine configured it writes down the reason and exits.
+  your own Claude Code. The viewer (`ver_arquitetura.py`) serves the pages on `127.0.0.1`
+  only.
 - Generated pages load nothing from a CDN; the embedded libraries are listed in
   [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
 - The optional git hook runs the scripts of the repository only while their hash matches the one approved at install

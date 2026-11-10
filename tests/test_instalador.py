@@ -11,8 +11,8 @@ from lodemap import RAIZ, cli, instalador
 
 PY = "python"
 SETTINGS_ORIGINAL = {
-    "hooks": {"Stop": [{"hooks": [{"type": "command", "command": "synapse hook review-nudge"}]}],
-              "SessionStart": [{"matcher": "", "hooks": [{"type": "command", "command": "synapse hook session-start"}]}]},
+    "hooks": {"Stop": [{"hooks": [{"type": "command", "command": "outra-ferramenta hook review-nudge"}]}],
+              "SessionStart": [{"matcher": "", "hooks": [{"type": "command", "command": "outra-ferramenta hook session-start"}]}]},
     "env": {"OUTRA": "1"},
     "theme": "dark",
 }
@@ -189,8 +189,8 @@ def test_status_diz_qual_home_esta_olhando(home, capsys):
     assert f"HOME alvo: {home}" in capsys.readouterr().out
 
 
-def test_o_pacote_nao_traz_o_workflow_do_synapse(home):
-    """O Lodemap é o mapa e a documentação; os agentes padrão, os hooks de segurança e a telemetria são do Synapse."""
+def test_o_pacote_nao_traz_workflow_de_agentes(home):
+    """O Lodemap é o mapa e a documentação; os agentes padrão, os hooks de segurança e a telemetria ficam de fora."""
     rastreados = subprocess.run(
         ["git", "-C", str(RAIZ), "ls-files", "harness", "lodemap/agentes.py", "templates/structurizr/agentes",
          "templates/structurizr/scripts/gerar_agentes.py"], capture_output=True, text=True, encoding="utf-8")

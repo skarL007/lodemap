@@ -8,8 +8,7 @@ curadas (metricas/metricas.json), no formato que explorador/index.html lê. Tamb
   mudancas   o que mudou no código desde .lodemap/estado.json:ultimoCommit (lógica do lodemap_diff.py);
   qualidade  a saúde do mapa gravada em .lodemap/estado.json (total, aprovado, pendências);
   prova      para cada relação componente -> componente, se o código confirma (relacoes-codigo.json, gerado por
-             codegraph_ponte.py --relacoes) ou se ela existe só no modelo;
-  memoria    lições do Synapse (.lodemap/synapse-contexto.json) que citam o código de cada componente.
+             codegraph_ponte.py --relacoes) ou se ela existe só no modelo.
 
 Cada bloco é opcional: sem o arquivo de origem, sai null e a interface esconde o recurso. Só usa a biblioteca
 padrão. Não edite dados.js à mão: mude o DSL e rode scripts/atualizar.ps1.
@@ -126,29 +125,6 @@ def dados_documentos(pasta: Path, elementos: dict) -> list[dict]:
     return docs
 
 
-def dados_memoria(base: Path, elementos: dict) -> dict | None:
-    ctx = _ler_json(base / ".lodemap" / "synapse-contexto.json")
-    if not isinstance(ctx, dict):
-        return None
-    import lodemap_diff
-    licoes = [x for x in ctx.get("licoes") or [] if isinstance(x, dict)]
-    por_elemento = {}
-    for e in elementos.values():
-        cods = [c for c in lodemap_diff.caminhos_codigo(e["props"].get("codigo", "")) if len(c.strip("/")) >= 4]
-        if not cods:
-            continue
-        achadas = []
-        for x in licoes:
-            texto = " ".join(str(x.get(k) or "") for k in ("titulo", "solucao", "texto"))
-            if any(c in texto or c.rstrip("/") in texto for c in cods):
-                achadas.append({"titulo": x.get("titulo") or "", "texto": x.get("solucao") or x.get("texto") or "",
-                                "invariante": bool(x.get("invariante"))})
-        if achadas:
-            por_elemento[e["id"]] = achadas
-    return {"disponivel": bool(ctx.get("disponivel")), "geradoEm": ctx.get("gerado_em"), "licoes": len(licoes),
-            "porElemento": por_elemento}
-
-
 def _arq_rel(base: Path, raiz_repo: str) -> str | None:
     if not raiz_repo:
         return None
@@ -202,7 +178,6 @@ def montar(workspace: Path, destino: Path, raiz_repo: str = "") -> dict:
         "mudancas": dados_mudancas(base, Path(workspace)),
         "qualidade": dados_qualidade(base),
         "prova": dados_prova(base, elementos, relacoes),
-        "memoria": dados_memoria(base, elementos),
     }
 
 
@@ -218,9 +193,9 @@ def main():
           + json.dumps(dados, ensure_ascii=False) + ";\n")
     (destino / "dados.js").write_text(js, encoding="utf-8", newline="\n")
     gravar_local(destino.parent, sys.argv[3] if len(sys.argv) > 3 else "")
-    extras = [k for k in ("mudancas", "qualidade", "prova", "memoria") if dados[k]]
+    extras = [k for k in ("mudancas", "qualidade", "prova") if dados[k]]
     if dados.get("idioma") == "en":
-        nomes = {"mudancas": "changes", "qualidade": "quality", "prova": "code proof", "memoria": "memory"}
+        nomes = {"mudancas": "changes", "qualidade": "quality", "prova": "code proof"}
         print(f"{len(dados['elementos'])} elements, {len(dados['relacoes'])} relationships, {len(dados['visoes'])} "
               f"views, {len(dados['adrs'])} ADRs, {len(dados['metricas'])} metrics in {destino / 'dados.js'}"
               + (f" (with {', '.join(nomes[k] for k in extras)})" if extras else ""))

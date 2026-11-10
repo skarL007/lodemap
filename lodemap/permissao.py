@@ -24,7 +24,6 @@ ESCOPOS = {
     "gerar": "criar e atualizar o mapa só com scripts (0 tokens)",
     "gancho": "gancho de commit que atualiza o mapa sem tokens",
     "modelo": "passos com modelo (inventário, modelagem, revisão) dentro do teto",
-    "synapse": "nota de arquitetura no Synapse",
 }
 ARQ_PADRAO = "docs/architecture/structurizr"
 CUSTO = RAIZ / "references" / "custo-equivalente.json"

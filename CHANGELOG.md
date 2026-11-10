@@ -43,7 +43,9 @@ All notable changes to Lodemap. Dates are when the change landed on `main`.
   subagent, about half the tokens; on axios (JavaScript): area 0.90 agreement with a Sonnet reference, 70k vs 99k
   tokens. Falls back to the modeler on any failure.
 - **Scope:** Lodemap is the architecture map and the project documentation only. The default agents, safety hooks,
-  telemetry and the Agents view moved to Synapse (2026-11-06).
+  telemetry and the Agents view are not part of it (2026-11-06). The optional bridge to an external memory engine
+  and its consent scope were removed before the first public version; the scopes are `gerar`, `gancho`
+  and `modelo`.
 - **Installer:** two profiles (`minimo`: skill + six `lodemap-*` agents; `padrao`: + one-time hint), dry run by
   default, byte-exact `reverter`, refuses to touch files owned by someone else without `--forcar`.
 - **Permission:** `plano` (0 tokens), `consentir` per scope with a finite monthly ceiling, `revogar`; `plano` now warns
@@ -109,7 +111,7 @@ All notable changes to Lodemap. Dates are when the change landed on `main`.
 - **Quality gate baseline:** `references/baseline-qualidade.json`, described as what it is (the first map the
   skill produced), with the report key `totalBaselineComparavel`. Record your own with `qualidade.py --gravar-baseline`.
 - **Docs:** `SKILL.md` cut from 49 KB to 26 KB; the detail moved to `references/` (scripts, quality gate, code edges,
-  state file, reader and ADRs, serving, Synapse, pitfalls) and is read only when a step needs it. README rewritten.
+  state file, reader and ADRs, serving, pitfalls) and is read only when a step needs it. README rewritten.
 - **CI:** CircleCI (Linux on Python 3.11 and 3.12, Windows), running `tests/` and the two template tests that run
   standalone. The config compiles; the pipeline has not run yet (the repository is not published).
 - **Tests:** 284 in `tests/`, plus 14 in the two standalone template files (`python -m pytest`).

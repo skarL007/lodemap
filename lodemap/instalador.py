@@ -7,8 +7,8 @@ Perfis:
 Cada opção é desligável (--sem aviso) e as de fora do perfil entram com --com.
 
 Regras: nunca troca chave, arquivo ou link de outro dono sem --forcar; todo arquivo tocado ganha backup e sha; o
-reverter só restaura se o arquivo ainda estiver como o instalador deixou. Não mexe em hooks de outros donos
-(Synapse, CodeGraph, RTK): só acrescenta o seu.
+reverter só restaura se o arquivo ainda estiver como o instalador deixou. Não mexe em hooks de outras
+ferramentas: só acrescenta o seu.
 """
 from __future__ import annotations
 

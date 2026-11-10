@@ -85,9 +85,8 @@ window.LODEMAP_I18N = {
     tipoFluxo: "fluxo", tipoVisao: "visão", esteElemento: "este elemento", voltarPercurso: "Voltar ao percurso",
     metricasTitulo: n => `Métricas (${n})`, impactoTitulo: "Fecho transitivo pelas relações declaradas", impactoCab: "Impacto de mudar este elemento",
     dependemDele: "Dependem dele, direta ou indiretamente:", eleDepende: "Ele depende de:", explorarViz: "Explorar a vizinhança no modelo",
-    decisoes: n => `Decisões (${n})`, documentos: n => `Documentos (${n})`, memoria: n => `Memória (${n})`,
-    nenhumaAdr: id => `Nenhuma ADR cita ${id}.`, nenhumDoc: id => `Nenhum documento cita ${id}.`, licao: "Lição", invariante: " · invariante",
-    nenhumaLicao: "Nenhuma lição do Synapse cita o código deste elemento.",
+    decisoes: n => `Decisões (${n})`, documentos: n => `Documentos (${n})`,
+    nenhumaAdr: id => `Nenhuma ADR cita ${id}.`, nenhumDoc: id => `Nenhum documento cita ${id}.`,
     semSaida: "Nenhuma relação de saída declarada.", semEntrada: "Nenhuma relação de entrada declarada.",
     apareceEm: "Aparece em", semVisao: "Não aparece em nenhuma visão.", foraDoFoco: " · fora do foco",
     provaConfirmada: (arestas, conf) => `confirmada no código · ${arestas}, confiança ${conf}`, provaSoModelo: "só no modelo",
@@ -185,9 +184,8 @@ window.LODEMAP_I18N = {
     tipoFluxo: "flow", tipoVisao: "view", esteElemento: "this element", voltarPercurso: "Back to the walkthrough",
     metricasTitulo: n => `Metrics (${n})`, impactoTitulo: "Transitive closure over the declared relations", impactoCab: "Impact of changing this element",
     dependemDele: "Depend on it, directly or indirectly:", eleDepende: "It depends on:", explorarViz: "Explore the neighborhood in the model",
-    decisoes: n => `Decisions (${n})`, documentos: n => `Documents (${n})`, memoria: n => `Memory (${n})`,
-    nenhumaAdr: id => `No ADR mentions ${id}.`, nenhumDoc: id => `No document mentions ${id}.`, licao: "Lesson", invariante: " · invariant",
-    nenhumaLicao: "No Synapse lesson mentions the code of this element.",
+    decisoes: n => `Decisions (${n})`, documentos: n => `Documents (${n})`,
+    nenhumaAdr: id => `No ADR mentions ${id}.`, nenhumDoc: id => `No document mentions ${id}.`,
     semSaida: "No outgoing relation declared.", semEntrada: "No incoming relation declared.",
     apareceEm: "Appears in", semVisao: "Does not appear in any view.", foraDoFoco: " · out of focus",
     provaConfirmada: (arestas, conf) => `confirmed in the code · ${arestas}, confidence ${conf}`, provaSoModelo: "model only",
@@ -582,9 +580,6 @@ footer.visivel { display: flex; }
 .ligacoes { margin: 0; padding: 0; list-style: none; }
 .ligacoes li { padding: var(--space-2) 0; border-top: var(--hairline) solid var(--separator); font-size: var(--text-sm); }
 .ligacoes li span { display: block; color: var(--label-3); font-size: var(--text-xs); }
-.licao { margin: 0; padding: var(--space-2) 0; border-top: var(--hairline) solid var(--separator); font-size: var(--text-sm); }
-.licao b { display: block; font-weight: var(--weight-medium); }
-.licao span { color: var(--label-2); font-size: var(--text-xs); }
 .saude-total { display: flex; align-items: baseline; gap: var(--space-2); margin: var(--space-1) 0 var(--space-3); }
 .saude-total b { font-size: var(--text-3xl); font-weight: var(--weight-bold); letter-spacing: var(--tracking-display); line-height: 1; font-variant-numeric: tabular-nums; }
 
@@ -1721,7 +1716,6 @@ footer.visivel { display: flex; }
     const vs = (visoesDo.get(id) || []).map(v => `<button class="item" data-visao-ir="${esc(v.chave)}"><span>${esc(v.titulo)}</span><small>${v.tipo === "dinamica" ? t("tipoFluxo") : t("tipoVisao")}</small></button>`);
     const adrs = (adrsDo.get(id) || []).map(a => `<li><a href="${esc(linkLeitor(a.ancora))}">${esc(a.titulo)}</a></li>`);
     const docs = (docsDo.get(id) || []).map(d => `<li><a href="${esc(linkLeitor(d.ancora))}">${esc(d.titulo)}</a><span>${esc(d.arquivo)}</span></li>`);
-    const mem = D.memoria ? ((D.memoria.porElemento || {})[id] || []) : null;
     const mudou = modulosMudados.get(id);
     const ident = e.ident ? `<code>${esc(e.ident)}</code>` : t("esteElemento");
     const voltar = fluxo ? `<button type="button" class="voltar" id="voltarPercurso"><svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3.5 5.5 8l4.5 4.5"/></svg>${t("voltarPercurso")}</button>` : "";
@@ -1746,7 +1740,6 @@ footer.visivel { display: flex; }
       <div class="det-acoes"><button class="botao" id="btnViz">${t("explorarViz")}</button></div>
       <h2>${t("decisoes", adrs.length)}</h2>${adrs.length ? `<ul class="ligacoes">${adrs.join("")}</ul>` : `<div class="vazio">${t("nenhumaAdr", ident)}</div>`}
       <h2>${t("documentos", docs.length)}</h2>${docs.length ? `<ul class="ligacoes">${docs.join("")}</ul>` : `<div class="vazio">${t("nenhumDoc", ident)}</div>`}
-      ${mem ? `<h2>${t("memoria", mem.length)}</h2>${mem.length ? mem.map(l => `<p class="licao"><b>${esc(l.titulo || t("licao"))}${l.invariante ? t("invariante") : ""}</b><span>${esc(l.texto)}</span></p>`).join("") : `<div class="vazio">${t("nenhumaLicao")}</div>`}` : ""}
       <h2>${t("usa", sai.length)}</h2>${sai.join("") || `<div class="vazio">${t("semSaida")}</div>`}
       <h2>${t("usadoPor", entra.length)}</h2>${entra.join("") || `<div class="vazio">${t("semEntrada")}</div>`}
       <h2>${t("apareceEm")}</h2><div class="lista">${vs.join("") || `<div class="vazio">${t("semVisao")}</div>`}</div>`;

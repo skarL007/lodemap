@@ -259,11 +259,11 @@ def test_rust_use_crate_super_self_e_mod(tmp_path):
 def test_rust_workspace_liga_crate_irmao_e_ignora_target(tmp_path):
     r = _escrever(tmp_path, {
         "Cargo.toml": '[workspace]\nmembers = ["nucleo", "app"]\n',
-        "nucleo/Cargo.toml": '[package]\nname = "synapse-nucleo"\nversion = "0.1.0"\n',
+        "nucleo/Cargo.toml": '[package]\nname = "exemplo-nucleo"\nversion = "0.1.0"\n',
         "nucleo/src/lib.rs": "pub mod regras;\n",
         "nucleo/src/regras.rs": "pub fn r() {}\n",
         "app/Cargo.toml": '[package]\nname = "app"\nversion = "0.1.0"\n',
-        "app/src/main.rs": "use synapse_nucleo::regras::r;\nfn main() { r() }\n",
+        "app/src/main.rs": "use exemplo_nucleo::regras::r;\nfn main() { r() }\n",
         "app/target/debug/build/x/out.rs": "use crate::nada;\n",
     })
     assert _arestas(r) == {("nucleo/src/lib.rs", "nucleo/src/regras.rs"): 1,

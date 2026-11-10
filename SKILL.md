@@ -1,13 +1,15 @@
 ---
 name: lodemap
-description: Lodemap. Use quando o dono pedir "lodemap", "mapa de arquitetura", "arquitetura C4", "Structurizr", "Structurizr DSL", "explorador da arquitetura", "documentar a arquitetura", "diagrama C4 do projeto", "modelo de componentes" ("architecture map", "C4 model", "document the architecture"), ou quiser criar, completar, atualizar ou conferir a arquitetura de um repositório (módulos fora do modelo, status dos componentes, fluxos animados, métricas ligadas aos componentes, atualização a cada commit ou merge). Gera um modelo C4 em Structurizr DSL versionado no repositório, com teste de cobertura que falha se um módulo ficar fora, explorador interativo, leitor de documentação e decisões e métricas com origem em commit (pt por padrão, ou en), regenerados por scripts sem chamar modelo, com a stack fixa de agentes lodemap-*.
+description: Lodemap. Use quando o dono pedir "lodemap", "mapa de arquitetura", "arquitetura C4", "Structurizr", "Structurizr DSL", "explorador da arquitetura", "documentar a arquitetura", "diagrama C4 do projeto", "modelo de componentes" ("architecture map", "C4 model", "document the architecture"), ou quiser criar, completar, atualizar ou conferir a arquitetura de um repositório (módulos fora do modelo, status dos componentes, fluxos animados, métricas ligadas aos componentes, atualização a cada commit ou merge). Oferece observabilidade da arquitetura para pessoas: fluxos, linha do tempo do Git, comparações entre versões e evidências locais por componente. Gera modelo C4 em Structurizr DSL versionado, explorador, leitor de documentação e decisões e métricas com origem em commit (pt por padrão, ou en). Scripts regeneram as saídas sem modelo; o gate verifica estrutura, não verdade semântica. A integração empacotada usa agentes lodemap-* do Claude Code; no Codex, agentes nativos podem preencher as decisões JSON sem o helper Claude CLI.
 ---
 
 # Lodemap
 
-Mapa de arquitetura vivo de um repositório, com uma fonte só (o Structurizr DSL no repositório) e saídas geradas: o
-explorador interativo (o único visualizador), o leitor de documentação e decisões (`leitor/`), os documentos derivados
-e as métricas por componente. O Structurizr Lite e o site estático são opcionais (`--com-lite`, `--com-site`). As
+Observabilidade da arquitetura de um repositório para quem precisa entender o sistema e acompanhar suas mudanças.
+Os fluxos mostram os passos modelados; a linha do tempo compara snapshots versionados no Git; as evidências locais
+ajudam a revisar os componentes. A fonte do mapa é o Structurizr DSL no repositório; o explorador interativo, o leitor
+de documentação e decisões (`leitor/`), os documentos derivados e as métricas por componente são saídas geradas.
+O Structurizr Lite e o site estático são opcionais (`--com-lite`, `--com-site`). As
 saídas saem em português por padrão; `"idioma": "en"` no `lodemap.json` (ou `novo_mapa.py --idioma en`) as gera em
 inglês, e o explorador e o leitor trocam PT | EN na barra de topo.
 
@@ -22,7 +24,23 @@ gerado), o nome do projeto e as URLs, todos vindos do `lodemap.json`. Correção
 aparência precisa do OK do dono, com captura antes e depois, e passa pelo `lodemap-revisor-visual`. O mesmo vale para
 `views/estilos.dsl` (cores e formas por tag).
 
-## Stack de agentes e roteamento
+## Execução com modelos nativos no Codex
+
+Os scripts de inventário, esqueleto, renderização e validação podem rodar diretamente do checkout do Lodemap.
+Use o caminho desse checkout no lugar de `~/.claude/skills/lodemap` nos comandos abaixo. Um agente nativo da sessão
+preenche `.lodemap/decisoes-modelo.json`, confere descrições e relações no código e entrega as decisões aos scripts.
+Mantenha as fases e a passagem por arquivo; escolha modelo e esforço conforme a autorização da sessão.
+
+O instalador e os agentes empacotados abaixo continuam sendo uma integração com Claude Code. `descrever.py` é um
+helper opcional que ainda chama `claude -p`; não há port completo desse helper ou do instalador para o Codex.
+Em uma sessão restrita a modelos nativos, não execute `descrever.py` nem CLI de modelo externa: preencha os campos de
+descrição no JSON pelo agente nativo. Preserve plano, consentimento, validações e limites; não invente uma medição de
+custo para essa rota a partir dos preços históricos de Haiku/Sonnet.
+
+## Integração empacotada: agentes e roteamento do Claude Code
+
+As regras desta seção e as referências a Haiku/Sonnet/Opus nos passos seguintes pertencem ao perfil Claude Code.
+Na execução nativa do Codex, use os papéis como responsabilidades, sem despachar esses modelos ou chamar sua CLI.
 
 A stack é fixa e fica em `~/.claude/agents/` (não recrie; se faltar, `python -m lodemap instalar --perfil minimo --aplicar`).
 
@@ -268,7 +286,7 @@ do dono.
 
 ## Gate de qualidade
 
-O modelador roda em Sonnet; a qualidade não pode depender do modelo. O `scripts/qualidade.py` mede o `workspace.json`
+A qualidade não pode depender do modelo escolhido para a modelagem. O `scripts/qualidade.py` mede o `workspace.json`
 com uma rubrica objetiva de 14 critérios (sem LLM) e compara com a linha de base
 (`references/baseline-qualidade.json`, medido no mapa público de exemplo do axios).
 
@@ -288,6 +306,9 @@ Critérios, pesos e as notas da linha de base: `references/gate-qualidade.md`. R
 do dono (`--gravar-baseline`).
 
 ## Limites das medições
+
+O ganho de entendimento humano ainda não foi medido. O replay ampliado do axios está em revisão; não anuncie cinco
+releases concluídas. Os custos publicados são históricos e não medem uma stack nativa do Codex.
 
 O gate mede propriedades estruturais, não garante que descrições e relações sejam verdadeiras. A cobertura depende
 dos globs e das exceções escolhidas. A campanha de custo tem três rodadas por célula, quatro registros internos
@@ -331,6 +352,38 @@ Ele mede a dívida do mapa e devolve `acao`, `motivos`, `divida`, `lote` e `prox
 
 ## Abrir e atualizar
 
+- **Linha do tempo:** execute no checkout da skill
+  `python scripts/linha_do_tempo.py --mapa <arq> --resumo`. O script lê snapshots de `explorador/dados.js` no Git e
+  grava `explorador/linha-do-tempo.js` e `.json`. `--rev <ramo|tag|sha>` consulta outra revisão sem trocar de ramo;
+  `--max-versoes 0` inclui todas; `--omitir-sem-mudanca` filtra versões sem mudança arquitetural nem registro novo.
+  A visão do explorador mostra o snapshot, as entradas, saídas e alterações em relação à base, permite tocar a
+  evolução e inspecionar o histórico dos componentes. Não aplica evidências atuais aos snapshots históricos.
+- **Evidências locais:** execute no checkout da skill
+  `python scripts/evidencias.py --repositorio <repo> --mapa <arq> --json`. Acrescente
+  `--cobertura coverage.xml` (ou `lcov.info`), `--junit junit.xml` e `--data-referencia AAAA-MM-DD` quando houver
+  fontes locais; relatórios relativos partem de `<repo>`. Grava `explorador/evidencias.js` e, com `--json`, `.json`.
+  São referências estáticas de teste, cobertura por arquivo, commits em 30/90 dias e falhas JUnit associadas pelo
+  atributo `file`. Referência estática não prova execução; a data inclui o dia inteiro em UTC, o commit identifica
+  a base Git e a árvore de trabalho fica `nao_verificada`. Ausência de relatório não é aprovação.
+- **Saúde:** cores distinguem componentes com referência de teste, sem referência encontrada ou desconhecidos.
+  O inspetor mostra as fontes e avisa quando `Pronto` não tem referências estáticas encontradas. Não infira defeito,
+  prontidão ou execução a partir disso; confira o commit e a data antes de usar a evidência.
+- **Migração da interface:** primeiro atualize a instalação da skill ou o checkout do Lodemap. Preserve
+  `<arq>/scripts/atualizar.py` em backup exclusivo (`atualizar.py.lodemap-bak`, depois `.1`, `.2`, etc., sem
+  sobrescrever backups). Compare-o com `templates/structurizr/scripts/atualizar.py` dessa fonte confiável atual:
+  copie o atual para `<arq>/scripts/atualizar.py` se não houver personalizações; se houver, incorpore a atualização
+  manualmente preservando-as. `--template` não atualiza o próprio script; `novo_mapa.py` preserva scripts existentes
+  por padrão.
+  Confirme `--atualizar-interface` na ajuda do script do mapa (`python scripts/atualizar.py --help`). Só então, na
+  pasta da arquitetura, rode
+  `python scripts/atualizar.py --atualizar-interface --template <checkout-lodemap>/templates/structurizr`.
+  Execute o script do mapa, cuja própria localização determina a raiz. Siga o
+  [procedimento completo](references/scripts.md#migrar-a-interface-de-mapas-existentes).
+  Atualiza apenas o HTML e JS fixos previstos no pipeline, preservando cada arquivo alterado em backup exclusivo
+  `.lodemap-bak`, `.lodemap-bak.1`, etc. Revise personalizações; arquivos existentes ficam preservados sem a opção.
+  Com `--atualizar-interface`, a execução não é pulada pelo atalho incremental. O pipeline tenta gerar linha do tempo
+  e evidências quando encontra os coletores na skill; falhas só avisam. A coleta automática não recebe cobertura nem
+  JUnit; rode o coletor diretamente para incluí-los. Mais opções em `references/scripts.md`.
 - **Abrir:** `python scripts/ver_arquitetura.py` serve a pasta da arquitetura em `127.0.0.1` e abre o explorador
   (`--abrir leitor` abre a documentação; `--com-lite` sobe também o Lite; `--sem-navegador` só sobe os servidores).
   Portas e detalhes: `references/abrir-e-servir.md`. Quem subiu um servidor para conferir algo encerra o processo dele

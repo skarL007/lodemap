@@ -1,12 +1,16 @@
 # Lodemap
 
-**Um mapa de arquitetura C4 que vive no seu repositório e quebra o build quando o código passa dele. Uma skill para o
-[Claude Code](https://code.claude.com).**
+**Veja como seu sistema funciona e como sua arquitetura vem mudando. Fluxos, linha do tempo do Git e evidências
+locais, em um mapa que vive no seu repositório.**
 
-O Lodemap monta um modelo C4 de uma base de código em [Structurizr DSL](https://docs.structurizr.com/dsl), mantém
-esse modelo versionado ao lado do código e gera todo o resto a partir dele: um explorador interativo, um leitor de
-documentação e decisões (ADRs), métricas por componente e um teste de cobertura que falha quando um módulo fica fora
-do modelo.
+O Lodemap oferece observabilidade da arquitetura para pessoas: quem conversa com quem, por onde passa cada fluxo,
+o que mudou entre versões do mapa e quais evidências locais estão ligadas a cada componente. O modelo C4 em
+[Structurizr DSL](https://docs.structurizr.com/dsl) fica ao lado do código; scripts geram o explorador interativo,
+o leitor de documentação e decisões (ADRs), as métricas e as comparações históricas.
+
+O teste de cobertura é a garantia estrutural por trás do acompanhamento: detecta módulos fora do modelo e caminhos
+que sumiram, conforme os globs e as exceções do projeto. Ele não garante a verdade de descrições, relações ou status.
+O Lodemap não coleta telemetria de execução.
 
 [![O explorador do Lodemap no mapa do axios, rodando o fluxo do ciclo de vida de uma requisição](assets/explorer-axios.webp)](https://skarl007.github.io/lodemap/demo/)
 
@@ -25,6 +29,37 @@ em Linux e macOS. Para regenerar você mesmo:
 bash .circleci/preparar_pipeline.sh   # Structurizr CLI (sha256 checked) and axios v1.21.1 into ~/axios
 LODEMAP_EXEMPLO_AXIOS=~/axios python -m pytest -q tests/test_exemplo_axios.py
 ```
+
+## Acompanhar a arquitetura
+
+- **Fluxos:** percorra os passos modelados e veja os componentes e relações envolvidos. São fluxos descritos no
+  modelo, não rastros de requisições em produção.
+- **Linha do tempo:** abra a visão no explorador, escolha uma versão e compare as entradas, saídas e alterações com
+  a versão-base registrada. O grafo histórico, as visões e o histórico de cada componente vêm dos snapshots do Git.
+  “Tocar evolução” percorre as versões disponíveis; o histórico só existe onde o mapa foi versionado.
+- **Saúde:** a cor mostra se testes encontrados referenciam o código, se nenhuma referência foi encontrada ou se
+  faltam dados. O inspetor apresenta cobertura por arquivo, atividade no Git e falhas de JUnit quando fornecidas.
+  “Pronto” sem referência estática de teste gera um alerta para revisão, não um diagnóstico de defeito.
+- **Proveniência:** confira a data e o commit da evidência. A árvore de trabalho não é verificada; um commit igual
+  ao do mapa não prova que testes ou relatórios vieram daquela revisão. A linha do tempo não aplica evidências atuais
+  aos snapshots históricos.
+
+Os dois coletores rodam localmente sem chamar modelo. A partir da raiz do checkout do Lodemap, use os caminhos do
+seu projeto:
+
+```bash
+python scripts/linha_do_tempo.py --mapa /caminho/projeto/docs/architecture/structurizr --resumo
+python scripts/evidencias.py --repositorio /caminho/projeto --mapa /caminho/projeto/docs/architecture/structurizr --json
+```
+
+O primeiro grava `explorador/linha-do-tempo.js` e `.json`; o segundo grava `explorador/evidencias.js` e, com
+`--json`, `.json`. Relatórios opcionais entram com `--cobertura coverage.xml` (ou `lcov.info`) e
+`--junit junit.xml`, relativos à raiz do projeto. Uma referência de teste é estática, não prova execução; o JUnit só
+associa casos com atributo `file`. Os comandos, a atualização da interface e os backups estão em
+[references/scripts.md](references/scripts.md).
+
+A demo pública acima documenta a atualização v1.20.0 → v1.21.1. Um replay ampliado está em revisão; não há anúncio de
+cinco releases concluídas. O ganho de entendimento humano ainda não foi medido.
 
 ### O gate, numa release real
 
@@ -85,7 +120,7 @@ economiza ainda não foi medido.
 
 ## O que muda
 
-- **Um gate, não uma figura.** O `tests/test_arquitetura_cobertura.py` é instalado no seu projeto e falha quando um
+- **Cobertura estrutural verificável.** O `tests/test_arquitetura_cobertura.py` é instalado no seu projeto e falha quando um
   módulo que casa com seus globs não tem componente, quando um componente aponta para um caminho que não existe mais,
   ou quando uma exceção não tem motivo. Coloque-o no CI e o mapa não fica para trás em silêncio.
 - **Atualizar não custa chamada de modelo.** O `atualizar.py --incremental` regenera todas as saídas com scripts. Um
@@ -102,6 +137,10 @@ gastou os mesmos tokens que o agente sem ele (razão mediana 0,99). As respostas
 [experimentos/com-sem-mapa](experimentos/com-sem-mapa/RESULTADOS.md).
 
 ## Instalação
+
+O instalador abaixo empacota a integração com [Claude Code](https://code.claude.com): skill, agentes e aviso opcional
+em `~/.claude/`. Os scripts também podem ser executados de um checkout no Codex; isso não instala uma integração
+nativa completa nem altera os hooks do Codex. Para decisões com modelos nativos, veja a seção de uso abaixo.
 
 Exige Python 3.11+ e git. No Debian/Ubuntu o interpretador é `python3`.
 
@@ -129,6 +168,13 @@ diz qual deles está faltando e onde procurou.
 
 ## Uso
 
+**No Codex, com modelos nativos:** execute inventário e esqueleto por script, preencha as decisões em
+`.lodemap/decisoes-modelo.json` no agente da sessão e rode `esqueleto.py renderizar` e o pipeline. Confira cada
+descrição e relação no código. A seleção de modelo e esforço pertence à sessão; a tabela de Claude Code no
+[SKILL.md](SKILL.md) descreve a integração empacotada. O helper opcional `descrever.py` ainda chama `claude -p`;
+não é uma rota nativa do Codex. Uma execução restrita a modelos nativos deve preencher as descrições no JSON e
+pular esse helper, sem chamar CLI de modelo externa.
+
 No Claude Code, dentro do seu repositório, peça o mapa ("lodemap", "mapa de arquitetura", "modelo C4 deste
 projeto"). A skill sempre começa com um plano que não gasta tokens e espera o seu OK:
 
@@ -151,7 +197,31 @@ python scripts/ver_arquitetura.py           # serve on 127.0.0.1 and open the ex
 python scripts/instalar_gancho.py           # optional: update on every commit and merge
 ```
 
+A partir de um mapa existente, os comandos acima rodam na pasta da arquitetura. Para migrar a interface, primeiro
+atualize a instalação da skill ou o checkout do Lodemap. Preserve `<arq>/scripts/atualizar.py` em backup exclusivo
+(`atualizar.py.lodemap-bak`, depois `.1`, `.2`, etc., sem sobrescrever backups) e compare-o com
+`templates/structurizr/scripts/atualizar.py` dessa fonte confiável atual. Se o script local não tiver personalizações,
+copie o atual para `<arq>/scripts/atualizar.py`; se tiver, incorpore a atualização manualmente preservando-as.
+`--template` não atualiza o próprio script, e `novo_mapa.py` preserva scripts existentes por padrão. Confirme que o
+script do mapa já mostra `--atualizar-interface` em `python scripts/atualizar.py --help`. Só então, na pasta da arquitetura:
+
+```bash
+python scripts/atualizar.py --atualizar-interface --template /caminho/lodemap/templates/structurizr
+```
+
+Execute o script copiado no mapa: ele determina a raiz pela própria localização. O procedimento completo está em
+[Migrar a interface de mapas existentes](references/scripts.md#migrar-a-interface-de-mapas-existentes).
+A opção migra o HTML e os JS fixos para o template indicado, com backups exclusivos `.lodemap-bak`,
+`.lodemap-bak.1`, etc. Revise também as personalizações desses arquivos. Sem a opção, arquivos fixos existentes são
+preservados. O pipeline também regenera linha do tempo e evidências quando encontra os coletores no checkout da
+skill; falhas nessas etapas geram
+avisos, portanto confira as saídas. A coleta automática não recebe relatórios opcionais de cobertura ou JUnit;
+rode `evidencias.py` diretamente para incluí-los.
+
 ## Como funciona
+
+O fluxo abaixo descreve a integração empacotada com Claude Code. No Codex, a edição das decisões em JSON substitui
+as chamadas de modelo externas; os scripts de inventário, renderização e validação continuam os mesmos.
 
 1. **Inventário e esqueleto, por script.** `inventario.py` e `codegraph_ponte.py` listam os módulos e as arestas de
    import entre eles. `esqueleto.py rascunho` escreve um JSON com um componente sugerido por módulo e uma relação
@@ -178,6 +248,10 @@ Seis agentes, uma tarefa cada: `lodemap-inventario`, `lodemap-modelador` (o úni
 ordem e gravação estão no [SKILL.md](SKILL.md).
 
 ## Medições
+
+As medições desta seção são históricas, com os modelos e as condições declarados em cada fonte. Não medem o custo
+da execução atual com modelos nativos do Codex. Reduzir revisões de arquivos não demonstra economia de tokens;
+o experimento com e sem mapa abaixo não encontrou essa economia.
 
 ### Custo de um mapa completo
 
@@ -239,6 +313,11 @@ teste de cobertura e o pipeline de atualização (`draft`/`rascunho`, `render`/`
 
 ## Limites
 
+- **Observabilidade da arquitetura, sem telemetria de execução.** Fluxos e status são decisões do modelo. Testes
+  referenciados, cobertura, Git e JUnit ajudam a revisão, mas não certificam prontidão ou comportamento em produção.
+  Falta de relatório aparece como ausência ou dado desconhecido. A árvore de trabalho da coleta não é verificada.
+- **Entendimento humano ainda não medido.** Não há resultado de estudo com pessoas que sustente ganho de compreensão
+  ou de velocidade. O replay ampliado do axios continua em revisão.
 - **O mapa não deixa um agente mais barato.**
   - **O que foi medido:** Sonnet com Read, Grep e Glob, respondendo 16 perguntas de navegação de código em dois
     repositórios de 35 e 69 módulos. Com o mapa e um ponteiro para ele, o agente gastou os mesmos tokens que sem o
@@ -250,7 +329,7 @@ teste de cobertura e o pipeline de atualização (`draft`/`rascunho`, `render`/`
   - **O que o Lodemap oferece:** documentação que se mantém atual e um gate que falha quando o modelo se afasta
     do código.
 - **Rodado de ponta a ponta no Windows e no Linux; no macOS, não.** No Linux (WSL Ubuntu 24.04, Python 3.12, Java 21,
-  o Structurizr CLI de verdade) a suíte de testes passa (414 testes, 1 ignorado), a regeneração completa levou 9 s no
+  o Structurizr CLI de verdade) a suíte de testes passou naquela rodada histórica, a regeneração completa levou 9 s no
   mapa do axios e 5 s no do chi, os docs e inventários gerados do axios saíram byte a byte iguais aos do Windows
   (só os carimbos de data diferem), o gate de qualidade deu as mesmas notas, e o git hook real regenerou num commit
   de arquitetura e ficou quieto num commit só de código. As fases do modelo (agentes) rodaram só no Windows. O macOS
@@ -285,8 +364,10 @@ teste de cobertura e o pipeline de atualização (`draft`/`rascunho`, `render`/`
 
 ## Privacidade e segurança
 
-- Os scripts rodam localmente e não fazem chamada de rede. As etapas guiadas por modelo enviam os arquivos que leem à
-  Anthropic, pelo seu próprio Claude Code. O visualizador (`ver_arquitetura.py`) serve as páginas só em `127.0.0.1`.
+- Os coletores de linha do tempo e evidências e os geradores rodam localmente, sem chamada de modelo. Na integração
+  Claude Code, o helper `descrever.py` envia contexto pelo seu próprio Claude Code à Anthropic. No Codex, os arquivos
+  lidos pelo agente seguem a sessão e o provedor configurados. O visualizador (`ver_arquitetura.py`) serve as páginas
+  só em `127.0.0.1`.
 - As páginas geradas não carregam nada de uma CDN; as bibliotecas embutidas estão listadas em
   [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
 - O git hook opcional só roda os scripts do repositório enquanto o hash deles bate com o aprovado na instalação.
@@ -297,7 +378,7 @@ teste de cobertura e o pipeline de atualização (`draft`/`rascunho`, `render`/`
 ## Estrutura do repositório
 
 ```
-SKILL.md       what Claude Code reads on every run (the operational core)
+SKILL.md       instruções operacionais e limites das integrações
 references/    read on demand: modeling guide, gate criteria, pitfalls, measurements
 agents/        the six lodemap-* agents
 lodemap/       CLI: python -m lodemap (install, revert, status, doctor, plan, consent, revoke, check)

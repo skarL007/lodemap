@@ -4,6 +4,21 @@ Todas as mudanças relevantes do Lodemap. As datas são de quando a mudança ent
 
 ## Unreleased
 
+- **Observabilidade da arquitetura para pessoas:** apresentação centrada em fluxos, evolução do mapa no Git e
+  evidências locais por componente; o gate aparece como verificação estrutural, sem promessa de verdade semântica.
+- **Linha do tempo:** snapshots históricos no explorador, comparação com a versão-base, entradas, saídas e
+  alterações de componentes e relações, visões históricas, reprodução da evolução e histórico do componente.
+  O coletor lê o Git sem trocar de ramo e grava `linha-do-tempo.js` e `.json`; o replay ampliado do axios segue em
+  revisão, sem anúncio de cinco releases concluídas.
+- **Evidências locais e Saúde:** referências estáticas de testes, cobertura por arquivo, atividade no Git e JUnit
+  opcional. Fontes carregam data e commit da base, com árvore de trabalho não verificada. JUnit exige atributo
+  `file`; referência estática não comprova execução nem prontidão. Evidências atuais não são aplicadas ao histórico.
+- **Migração de interface:** `atualizar.py --atualizar-interface` atualiza HTML e JS fixos a partir do template,
+  preservando backups exclusivos `.lodemap-bak` e sufixos numerados. Pipeline tenta gerar linha do tempo e evidências;
+  falhas dessas etapas apenas avisam. Relatórios opcionais são fornecidos diretamente ao coletor de evidências.
+- **Uso no Codex documentado:** agentes nativos podem preencher decisões JSON e executar os scripts. Instalador,
+  agentes empacotados e helper opcional `descrever.py` continuam ligados ao Claude Code; não há port completo.
+  Custos históricos não medem essa rota; ganho de entendimento humano continua não medido.
 - **Linha de base pública:** gate calibrado no exemplo do axios; método e resultados em `references/gate-qualidade.md`.
 - **Campanha de custo:** 18 rodadas em três repositórios públicos, com limites e fontes em `experimentos/campanha-custo/RESULTADOS.md`.
 - **Lançamento em português:** landing, explorador, leitor, mapa de exemplo e README em português; o inglês fica

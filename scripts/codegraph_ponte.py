@@ -45,6 +45,9 @@ from collections import Counter, defaultdict
 from datetime import datetime
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from lodemap.idioma import opcao, t, usar_mapa  # noqa: E402
+
 IGNORAR = {"__pycache__", "node_modules", ".git", ".venv", "venv", "dist", "build", ".codegraph", ".structurizr"}
 EXT_PY = {".py"}
 EXT_JS = {".js", ".jsx", ".ts", ".tsx", ".mjs", ".cjs", ".mts", ".cts"}
@@ -1159,8 +1162,10 @@ def escolher_fonte(repo: Path, fonte: str = "auto", db: Path | None = None) -> s
     if fonte == "auto":
         return "codegraph" if caminho_db(repo, db).is_file() else "ast"
     if fonte == "codegraph" and not caminho_db(repo, db).is_file():
-        raise SystemExit(f"codegraph_ponte: sem índice em {caminho_db(repo, db)} (use --fonte ast; "
-                         "indexar com `codegraph init` é decisão do dono)")
+        raise SystemExit(t(f"codegraph_ponte: sem índice em {caminho_db(repo, db)} (use --fonte ast; "
+                           "indexar com `codegraph init` é decisão do dono)",
+                           f"codegraph_ponte: no index at {caminho_db(repo, db)} (use --fonte ast; "
+                           "running `codegraph init` is the owner's decision)"))
     return fonte
 
 
@@ -1225,7 +1230,8 @@ def analisar(arq: Path, repo: Path | None = None, fonte: str = "auto", db: Path 
     repo = (repo or raiz_repo(arq)).resolve()
     ws_arq = achar_workspace(arq)
     if not ws_arq:
-        raise SystemExit("codegraph_ponte: sem workspace.json (rode o atualizar.ps1 antes)")
+        raise SystemExit(t("codegraph_ponte: sem workspace.json (rode o atualizar.ps1 antes)",
+                           "codegraph_ponte: no workspace.json (run atualizar.ps1 first)"))
     ws = json.loads(ws_arq.read_text(encoding="utf-8-sig"))
     cfg_arq = arq / "lodemap.json"
     cfg = json.loads(cfg_arq.read_text(encoding="utf-8-sig")) if cfg_arq.is_file() else {}
@@ -1267,8 +1273,10 @@ def relatorio_relacoes(info: dict, minimo: int = 1) -> dict:
         })
     return {
         "fonte": info["fonte"], "geradoEm": datetime.now().astimezone().isoformat(timespec="seconds"),
-        "aviso": ("Sugestões, não verdade: o modelador confirma e dá o verbo. Confiança: alta = calls com 3 arestas "
-                  "ou mais; media = imports (ou 2 arestas; no modo ast, qualquer import); baixa = 1 aresta."),
+        "aviso": t("Sugestões, não verdade: o modelador confirma e dá o verbo. Confiança: alta = calls com 3 arestas "
+                   "ou mais; media = imports (ou 2 arestas; no modo ast, qualquer import); baixa = 1 aresta.",
+                   "Suggestions, not truth: the modeler confirms and gives the verb. Confidence: alta = calls with 3 "
+                   "edges or more; media = imports (or 2 edges; in ast mode, any import); baixa = 1 edge."),
         "arquivosAmbiguos": len(info["ambiguos"]), "arquivosSemComponente": len(info["sem"]),
         "pares": pares,
         "resumo": {"pares": len(pares), "noModelo": sum(p["noModelo"] for p in pares),
@@ -1492,7 +1500,9 @@ def rascunho_inventario(repo: Path, arq: Path | None, fonte: str = "auto", db: P
             it["modulo"] = _modulo_de(it["caminho"], globs, ignorar)
         itens = [i for i in itens if i["modulo"]]
     return {"fonte": usada, "geradoEm": datetime.now().astimezone().isoformat(timespec="seconds"),
-            "observacao": "Rascunho sem leitura de arquivos; o lodemap-inventario completa pontos de entrada, rotas e serviços.",
+            "observacao": t("Rascunho sem leitura de arquivos; o lodemap-inventario completa pontos de entrada, rotas e "
+                            "serviços.",
+                            "Draft without reading files; lodemap-inventario fills in entry points, routes and services."),
             "arquivos": itens}
 
 
@@ -1503,21 +1513,36 @@ def main(argv=None) -> int:
         sys.stdout.reconfigure(encoding="utf-8")
     except (AttributeError, ValueError):
         pass
-    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    ap = argparse.ArgumentParser(description=t("Ponte entre o código e o modelo C4: arestas arquivo -> arquivo, sem "
+                                               "LLM e sem gastar token.",
+                                               "Bridge between the code and the C4 model: file -> file edges, no LLM "
+                                               "and no tokens spent."))
     modo = ap.add_mutually_exclusive_group(required=True)
-    modo.add_argument("--inventario", action="store_true")
-    modo.add_argument("--relacoes", action="store_true")
-    modo.add_argument("--impacto", metavar="ARQUIVO")
-    ap.add_argument("--arq", help="pasta structurizr do projeto")
-    ap.add_argument("--repo", help="raiz do repositório (padrão: raiz do git de --arq ou do diretório atual)")
-    ap.add_argument("--db", help="índice do CodeGraph em outro lugar (padrão: <repo>/.codegraph/codegraph.db)")
-    ap.add_argument("--fonte", choices=["auto", "codegraph", "ast"], default="auto")
-    ap.add_argument("--json", help="inventário: onde gravar (padrão: stdout)")
-    ap.add_argument("--saida", help="relações: onde gravar (padrão: <arq>/relacoes-codigo.json)")
-    ap.add_argument("--minimo", type=int, default=1, help="relações: mínimo de arestas por par")
-    ap.add_argument("--profundidade", type=int, default=1)
+    modo.add_argument(*opcao("--inventory", "--inventario"), dest="inventario", action="store_true",
+                      help=t("rascunho do inventário de arquivos", "draft of the file inventory"))
+    modo.add_argument(*opcao("--relations", "--relacoes"), dest="relacoes", action="store_true",
+                      help=t("relações componente -> componente vistas no código",
+                             "component -> component relationships seen in the code"))
+    modo.add_argument(*opcao("--impact", "--impacto"), dest="impacto", metavar=t("ARQUIVO", "FILE"),
+                      help=t("o que um arquivo toca", "what a file touches"))
+    ap.add_argument("--arq", "--arch", help=t("pasta structurizr do projeto", "the project's structurizr folder"))
+    ap.add_argument("--repo", help=t("raiz do repositório (padrão: raiz do git de --arq ou do diretório atual)",
+                                     "repository root (default: the git root of --arq or the current directory)"))
+    ap.add_argument("--db", help=t("índice do CodeGraph em outro lugar (padrão: <repo>/.codegraph/codegraph.db)",
+                                   "CodeGraph index somewhere else (default: <repo>/.codegraph/codegraph.db)"))
+    ap.add_argument(*opcao("--source", "--fonte"), dest="fonte", choices=["auto", "codegraph", "ast"], default="auto",
+                    help=t("de onde vêm as arestas (padrão: %(default)s)", "where the edges come from (default: %(default)s)"))
+    ap.add_argument("--json", help=t("inventário: onde gravar (padrão: stdout)", "inventory: where to write (default: stdout)"))
+    ap.add_argument(*opcao("--output", "--saida"), dest="saida",
+                    help=t("relações: onde gravar (padrão: <arq>/relacoes-codigo.json)",
+                           "relationships: where to write (default: <arq>/relacoes-codigo.json)"))
+    ap.add_argument(*opcao("--minimum", "--minimo"), dest="minimo", type=int, default=1,
+                    help=t("relações: mínimo de arestas por par", "relationships: minimum edges per pair"))
+    ap.add_argument(*opcao("--depth", "--profundidade"), dest="profundidade", type=int, default=1,
+                    help=t("impacto: profundidade da busca (padrão: %(default)s)", "impact: search depth (default: %(default)s)"))
     a = ap.parse_args(argv)
     arq = Path(a.arq).resolve() if a.arq else None
+    usar_mapa(arq)
     repo = Path(a.repo).resolve() if a.repo else raiz_repo(arq or Path.cwd())
 
     if a.inventario:
@@ -1525,18 +1550,20 @@ def main(argv=None) -> int:
         texto = json.dumps(dados, ensure_ascii=False, indent=1)
         if a.json:
             Path(a.json).write_text(texto + "\n", encoding="utf-8")
-            print(f"inventário ({dados['fonte']}): {len(dados['arquivos'])} arquivos -> {a.json}")
+            print(t(f"inventário ({dados['fonte']}): {len(dados['arquivos'])} arquivos -> {a.json}",
+                    f"inventory ({dados['fonte']}): {len(dados['arquivos'])} files -> {a.json}"))
         else:
             print(texto)
         return 0
     if not arq:
-        ap.error("--arq é obrigatório em --relacoes e --impacto")
+        ap.error(t("--arq é obrigatório em --relacoes e --impacto", "--arq is required with --relations and --impact"))
     info = analisar(arq, repo, a.fonte, Path(a.db) if a.db else None)
     if a.relacoes:
         rel = relatorio_relacoes(info, a.minimo)
         destino = Path(a.saida) if a.saida else arq / "relacoes-codigo.json"
         destino.write_text(json.dumps(rel, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
-        print(f"relações ({rel['fonte']}): {rel['resumo']} -> {destino}")
+        print(t(f"relações ({rel['fonte']}): {rel['resumo']} -> {destino}",
+                f"relationships ({rel['fonte']}): {rel['resumo']} -> {destino}"))
         return 0
     rel_path = a.impacto.replace("\\", "/")
     print(json.dumps(impacto(info, rel_path, a.profundidade), ensure_ascii=False, indent=1))

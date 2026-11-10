@@ -24,6 +24,12 @@ SCRIPTS = _scripts()
 pytestmark = pytest.mark.skipif(SCRIPTS is None, reason="scripts/codegraph_ponte.py da skill não encontrado")
 
 
+@pytest.fixture(autouse=True)
+def _idioma_pt(monkeypatch):
+    """Estes testes conferem as mensagens em português; não dependem do idioma da máquina."""
+    monkeypatch.setenv("LODEMAP_IDIOMA", "pt")
+
+
 @pytest.fixture(scope="module")
 def p():
     sys.path.insert(0, str(SCRIPTS))

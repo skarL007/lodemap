@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import html
 import json
+import os
 import re
 import sys
 import unicodedata
@@ -666,7 +667,8 @@ def montar(ws: dict, base: Path, cfg: dict) -> dict:
 
 def main(argv: list[str]) -> int:
     if len(argv) < 3:
-        print(__doc__)
+        print("Usage: python scripts/gerar_leitor.py <workspace.json> <output folder>"
+              if os.environ.get("LODEMAP_IDIOMA", "").strip().lower() == "en" else __doc__)
         return 2
     ws = json.loads(Path(argv[1]).read_text(encoding="utf-8-sig"))
     destino = Path(argv[2])
@@ -678,7 +680,7 @@ def main(argv: list[str]) -> int:
           "window.LEITOR_DADOS = " + json.dumps(dados, ensure_ascii=False, separators=(",", ":")) + ";\n")
     (destino / "dados.js").write_text(js, encoding="utf-8", newline="\n")
     for e in dados["avisos"]:
-        print(f"aviso: {e}", file=sys.stderr)
+        print(("warning: " if idioma_de(cfg) == "en" else "aviso: ") + str(e), file=sys.stderr)
     if idioma_de(cfg) == "en":
         print(f"{len(dados['docs'])} documents and {len(dados['adrs'])} ADRs in {destino / 'dados.js'}"
               + (f"; {len(dados['avisos'])} ADR warnings" if dados["avisos"] else ""))

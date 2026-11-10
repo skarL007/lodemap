@@ -60,6 +60,19 @@ MSG = {
     "lite_nao_subiu": "Não consegui iniciar o Lite ({motivo}).",
     "tudo": "Arquitetura em {exp}/explorador/ (explorador), {exp}/leitor/ (documentação) e {url} (Lite)",
 }
+MSG_EN = {
+    "atualizar_falhou": "Could not refresh the generated data ({motivo}). Opening the previous version.",
+    "porta_ocupada": "Port {porta} is in use by another program; opening as a local file.",
+    "servidor_mudo": "The server did not answer; opening the local file.",
+    "servidor_nao_subiu": "Could not start the server ({motivo}); opening the local file.",
+    "so_explorador": "Explorer at {exp}/explorador/ and documentation at {exp}/leitor/",
+    "sem_war": "I did not find {war}. Download structurizr-lite.war into {ferramentas}.",
+    "sem_java": "Java is on neither PATH nor JAVA_HOME; Structurizr Lite needs Java 17 or newer.",
+    "sem_graphviz": "Graphviz not found: autolayout will not work.",
+    "lite_falhou": "Lite did not load the workspace at {url}. See {log} and {log}.err.",
+    "lite_nao_subiu": "Could not start Lite ({motivo}).",
+    "tudo": "Architecture at {exp}/explorador/ (explorer), {exp}/leitor/ (documentation) and {url} (Lite)",
+}
 PORTA_LITE = 8790
 PORTA_EXPLORADOR = 8791
 IGNORADAS = {"site", "explorador", "leitor", ".structurizr", ".lodemap", "__pycache__"}
@@ -72,8 +85,20 @@ def _windows() -> bool:
     return os.name == "nt"
 
 
+def _en(raiz: Path | None = None) -> bool:
+    """Mapa em inglês? LODEMAP_IDIOMA vence o "idioma" do lodemap.json (padrão: o mapa deste script)."""
+    i = (os.environ.get("LODEMAP_IDIOMA") or "").strip().lower()
+    if not i:
+        try:
+            base = raiz or Path(__file__).resolve().parent.parent
+            i = str(json.loads((base / "lodemap.json").read_text(encoding="utf-8")).get("idioma") or "")
+        except (OSError, ValueError, AttributeError):
+            i = ""
+    return i == "en"
+
+
 def _dizer(chave: str, **kw) -> str:
-    return MSG[chave].format(**kw)
+    return (MSG_EN if _en() else MSG)[chave].format(**kw)
 
 
 def info(chave: str, **kw) -> None:
@@ -81,11 +106,11 @@ def info(chave: str, **kw) -> None:
 
 
 def aviso(chave: str, **kw) -> None:
-    print("AVISO: " + _dizer(chave, **kw), file=sys.stderr, flush=True)
+    print(("WARNING: " if _en() else "AVISO: ") + _dizer(chave, **kw), file=sys.stderr, flush=True)
 
 
 def erro(chave: str, **kw) -> None:
-    print("ERRO: " + _dizer(chave, **kw), file=sys.stderr, flush=True)
+    print(("ERROR: " if _en() else "ERRO: ") + _dizer(chave, **kw), file=sys.stderr, flush=True)
 
 
 # --------------------------------------------------------------------------------------------- argumentos
@@ -93,17 +118,33 @@ def erro(chave: str, **kw) -> None:
 def parse_args(argv=None, env=None) -> argparse.Namespace:
     env = os.environ if env is None else env
     ferr = env.get("STRUCTURIZR_FERRAMENTAS") or str(Path.home() / ".structurizr")
-    ap = argparse.ArgumentParser(prog="ver_arquitetura.py", description=__doc__.splitlines()[0])
-    ap.add_argument("--abrir", type=str.lower, choices=["explorador", "leitor", "lite", "ambos"], default="explorador",
-                    help="o que abrir (ambos = explorador e Lite; o mesmo que --com-lite)")
-    ap.add_argument("--com-lite", action="store_true", help="sobe e abre também o Structurizr Lite")
-    ap.add_argument("--porta", type=int, default=0, help="porta do Lite (padrão: a do lodemap.json, senão 8790)")
-    ap.add_argument("--porta-explorador", type=int, default=0,
-                    help="porta do servidor do explorador e do leitor (padrão: a do lodemap.json, senão 8791)")
-    ap.add_argument("--sem-navegador", action="store_true", help="sobe os servidores e não abre o navegador")
-    ap.add_argument("--ferramentas", default=ferr, help="pasta com structurizr-lite.war e graphviz/ (padrão: %(default)s)")
+    en = _en()
+    ap = argparse.ArgumentParser(prog="ver_arquitetura.py",
+                                 description=("Lodemap: opens the project's architecture (explorer and reader on localhost; "
+                                              "Structurizr Lite only with --with-lite)." if en
+                                              else __doc__.splitlines()[0]))
+    ap.add_argument("--abrir", "--open", type=str.lower, choices=["explorador", "leitor", "lite", "ambos"],
+                    default="explorador",
+                    help=("what to open (ambos = explorer and Lite; the same as --with-lite); values: explorador, "
+                          "leitor, lite, ambos" if en
+                          else "o que abrir (ambos = explorador e Lite; o mesmo que --com-lite)"))
+    ap.add_argument("--com-lite", "--with-lite", action="store_true",
+                    help=("also start and open Structurizr Lite" if en else "sobe e abre também o Structurizr Lite"))
+    ap.add_argument("--porta", "--port", type=int, default=0,
+                    help=("Lite port (default: the one in lodemap.json, else 8790)" if en
+                          else "porta do Lite (padrão: a do lodemap.json, senão 8790)"))
+    ap.add_argument("--porta-explorador", "--explorer-port", type=int, default=0,
+                    help=("port of the explorer and reader server (default: the one in lodemap.json, else 8791)" if en
+                          else "porta do servidor do explorador e do leitor (padrão: a do lodemap.json, senão 8791)"))
+    ap.add_argument("--sem-navegador", "--no-browser", action="store_true",
+                    help=("start the servers and do not open the browser" if en
+                          else "sobe os servidores e não abre o navegador"))
+    ap.add_argument("--ferramentas", "--tools", default=ferr,
+                    help=("folder with structurizr-lite.war and graphviz/ (default: %(default)s)" if en
+                          else "pasta com structurizr-lite.war e graphviz/ (padrão: %(default)s)"))
     ap.add_argument("--python", default=env.get("LODEMAP_PYTHON") or sys.executable,
-                    help="executável do Python do servidor e do atualizar.py (padrão: %(default)s)")
+                    help=("Python executable of the server and of atualizar.py (default: %(default)s)" if en
+                          else "executável do Python do servidor e do atualizar.py (padrão: %(default)s)"))
     return ap.parse_args(argv)
 
 
@@ -150,7 +191,7 @@ def atualizar_dados(raiz: Path, scripts: Path, python: str, ferramentas: str) ->
         r = subprocess.run([python, str(scripts / "atualizar.py"), "--ferramentas", ferramentas, "--python", python],
                            cwd=str(raiz))
         if r.returncode != 0:
-            aviso("atualizar_falhou", motivo=f"código {r.returncode}")
+            aviso("atualizar_falhou", motivo=(f"code {r.returncode}" if _en(raiz) else f"código {r.returncode}"))
     except OSError as e:
         aviso("atualizar_falhou", motivo=str(e))
 

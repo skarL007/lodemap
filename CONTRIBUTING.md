@@ -7,8 +7,8 @@ Thanks for helping. Keep changes small and verifiable.
    `python -m pytest tests -q -p no:cacheprovider`
    The installer tests run against a temporary HOME; never test against your real `~/.claude`.
 3. **Installer changes** must keep the contract: dry run by default, a manifest with sha256 before/after for every
-   touched file, byte-exact revert, and refusal (without `--forcar`) to change anything owned by someone else.
-   A second `instalar` right after `--aplicar` must report 0 operations.
+   touched file, byte-exact revert, and refusal (without `--force`, Portuguese alias `--forcar`) to change anything owned by someone else.
+   A second `install` right after `--apply` (aliases `instalar`, `--aplicar`) must report 0 operations.
 4. **Map agent changes**: edit `agents/lodemap-*.md`. The installer copies them verbatim to `~/.claude/agents/`, and
    `tests/test_instalador.py` checks that all six are installed by the `minimo` profile.
 5. **Claims need evidence**: a cost, a limit or a behavior of Claude Code in the docs or README needs a source (a

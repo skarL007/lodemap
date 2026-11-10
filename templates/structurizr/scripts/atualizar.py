@@ -85,6 +85,11 @@ def info(texto: str, en: str | None = None) -> None:
     print(en if _EN and en else texto, flush=True)
 
 
+def _t(pt: str, en: str) -> str:
+    """O texto no idioma do mapa (para mensagens que não passam por aviso/info, como as de Falha)."""
+    return en if _EN else pt
+
+
 # --------------------------------------------------------------------------------------------- argumentos
 
 def parse_args(argv=None, env=None) -> argparse.Namespace:
@@ -92,20 +97,38 @@ def parse_args(argv=None, env=None) -> argparse.Namespace:
     ferr = env.get("STRUCTURIZR_FERRAMENTAS") or str(Path.home() / ".structurizr")
     skill = Path(env["LODEMAP_SKILL"]).expanduser() if env.get("LODEMAP_SKILL") else Path.home() / ".claude" / "skills" / "lodemap"
     tpl = env.get("LODEMAP_TEMPLATE") or str(skill / "templates" / "structurizr")
-    ap = argparse.ArgumentParser(prog="atualizar.py", description=__doc__.splitlines()[0])
-    ap.add_argument("--ferramentas", default=ferr, help="pasta com cli/ e graphviz/ (padrão: %(default)s)")
+    en = _idioma_en(Path(__file__).resolve().parent.parent, env)  # a ajuda sai no idioma do mapa
+    ap = argparse.ArgumentParser(prog="atualizar.py",
+                                 description=("Regenerates the architecture map: validate, export, docs, reader, explorer."
+                                              if en else __doc__.splitlines()[0]))
+    ap.add_argument("--ferramentas", "--tools", default=ferr,
+                    help=("folder with cli/ and graphviz/ (default: %(default)s)" if en
+                          else "pasta com cli/ e graphviz/ (padrão: %(default)s)"))
     ap.add_argument("--python", default=env.get("LODEMAP_PYTHON") or sys.executable,
-                    help="executável do Python dos geradores (padrão: %(default)s)")
-    ap.add_argument("--template", default=tpl, help="pasta templates/structurizr da skill (padrão: %(default)s)")
-    ap.add_argument("--cli", default="", help="caminho do structurizr.bat / structurizr.sh (vence a busca)")
-    ap.add_argument("--checkpoint", default="", help="rótulo do checkpoint, para o estado.json e as extensões")
+                    help=("Python executable used by the generators (default: %(default)s)" if en
+                          else "executável do Python dos geradores (padrão: %(default)s)"))
+    ap.add_argument("--template", default=tpl,
+                    help=("the skill's templates/structurizr folder (default: %(default)s)" if en
+                          else "pasta templates/structurizr da skill (padrão: %(default)s)"))
+    ap.add_argument("--cli", default="",
+                    help=("path of structurizr.bat / structurizr.sh (wins over the search)" if en
+                          else "caminho do structurizr.bat / structurizr.sh (vence a busca)"))
+    ap.add_argument("--checkpoint", default="",
+                    help=("checkpoint label, for estado.json and the extensions" if en
+                          else "rótulo do checkpoint, para o estado.json e as extensões"))
     ap.add_argument("--checkpoint-env", action="store_true",
-                    help="lê o rótulo da variável LODEMAP_CHECKPOINT (acentos intactos, sem passar pela linha de comando)")
-    ap.add_argument("--com-site", action="store_true", help="exporta também o site estático em ../site")
-    ap.add_argument("--sem-site", action="store_true", help="compatibilidade (o gancho do git o passa)")
-    ap.add_argument("--sem-extensoes", action="store_true", help="não roda as extensões locais")
+                    help=("read the label from the LODEMAP_CHECKPOINT variable (accents intact, not through the "
+                          "command line)" if en
+                          else "lê o rótulo da variável LODEMAP_CHECKPOINT (acentos intactos, sem passar pela linha de comando)"))
+    ap.add_argument("--com-site", "--with-site", action="store_true",
+                    help=("also export the static site to ../site" if en else "exporta também o site estático em ../site"))
+    ap.add_argument("--sem-site", "--without-site", action="store_true",
+                    help=("compatibility (the git hook passes it)" if en else "compatibilidade (o gancho do git o passa)"))
+    ap.add_argument("--sem-extensoes", "--without-extensions", action="store_true",
+                    help=("do not run the local extensions" if en else "não roda as extensões locais"))
     ap.add_argument("--incremental", action="store_true",
-                    help="sai sem regenerar se nada mudou desde a última geração")
+                    help=("exit without regenerating if nothing changed since the last run" if en
+                          else "sai sem regenerar se nada mudou desde a última geração"))
     a = ap.parse_args(argv)
     if a.checkpoint_env and not a.checkpoint:
         a.checkpoint = env.get("LODEMAP_CHECKPOINT", "")
@@ -135,8 +158,9 @@ def localizar_cli(ferramentas: str | Path, env=None, which=shutil.which, windows
         achado = p if p.is_file() else (_cli_em(p, windows) if p.is_dir() else None)
         if achado:
             return achado
-        tentados.append(f"{origem}={valor} (não existe)")
-        aviso(f"{origem} aponta para {valor}, que não é o Structurizr CLI; sigo procurando.")
+        tentados.append(f"{origem}={valor} ({_t('não existe', 'does not exist')})")
+        aviso(f"{origem} aponta para {valor}, que não é o Structurizr CLI; sigo procurando.",
+              f"{origem} points to {valor}, which is not the Structurizr CLI; I keep looking.")
     pasta = Path(ferramentas).expanduser() / "cli"
     achado = _cli_em(pasta, windows)
     if achado:
@@ -147,11 +171,20 @@ def localizar_cli(ferramentas: str | Path, env=None, which=shutil.which, windows
         if achado:
             return Path(achado)
     tentados.append("PATH")
+    nome_cli = "structurizr.bat" if windows else "structurizr.sh"
+    destino = str(Path(ferramentas).expanduser() / "cli")
+    if _EN:
+        raise Falha(
+            f"I could not find the Structurizr CLI ({nome_cli}).\n"
+            "  Looked in: " + "; ".join(tentados) + ".\n"
+            "  How to install: download structurizr-cli.zip from https://github.com/structurizr/cli/releases, extract it to "
+            + destino + " (needs Java 17+),\n"
+            f"  or point the STRUCTURIZR_CLI variable at {nome_cli}.")
     raise Falha(
-        "Não achei o Structurizr CLI (" + ("structurizr.bat" if windows else "structurizr.sh") + ").\n"
+        f"Não achei o Structurizr CLI ({nome_cli}).\n"
         "  Procurei em: " + "; ".join(tentados) + ".\n"
         "  Como instalar: baixe structurizr-cli.zip em https://github.com/structurizr/cli/releases, extraia em "
-        + str(Path(ferramentas).expanduser() / "cli") + " (precisa do Java 17+),\n"
+        + destino + " (precisa do Java 17+),\n"
         "  ou aponte a variável STRUCTURIZR_CLI para o structurizr.bat / structurizr.sh.")
 
 
@@ -209,7 +242,7 @@ def reunir_extensoes(raiz: Path, env=None, windows: bool | None = None) -> list[
         try:
             cfg = json.loads(cfg_arq.read_text(encoding="utf-8-sig"))
         except (OSError, ValueError) as e:
-            aviso(f"Não consegui ler {cfg_arq}: {e}")
+            aviso(f"Não consegui ler {cfg_arq}: {e}", f"Could not read {cfg_arq}: {e}")
             cfg = {}
         ext = cfg.get("extensoes") if isinstance(cfg, dict) else None
         if isinstance(ext, str):
@@ -232,18 +265,19 @@ def rodar_extensoes(extensoes: list[str], python: str, json_ws: Path, raiz: Path
     for ext in extensoes:
         caminho = Path(os.path.expandvars(os.path.expanduser(ext)))
         if not caminho.exists():
-            aviso(f"Extensão não encontrada: {caminho}")
+            aviso(f"Extensão não encontrada: {caminho}", f"Extension not found: {caminho}")
             falhas += 1
             continue
         try:
             r = _rodar([python, str(caminho), str(json_ws), "--arq", str(raiz), "--repo", str(repo)], env=env)
             rc = r.returncode
         except OSError as e:
-            aviso(f"Não consegui iniciar a extensão {caminho}: {e}")
+            aviso(f"Não consegui iniciar a extensão {caminho}: {e}", f"Could not start the extension {caminho}: {e}")
             falhas += 1
             continue
         if rc != 0:
-            aviso(f"A extensão {caminho} falhou (código {rc}); o resto está pronto.")
+            aviso(f"A extensão {caminho} falhou (código {rc}); o resto está pronto.",
+                  f"The extension {caminho} failed (code {rc}); everything else is ready.")
             falhas += 1
     return falhas
 
@@ -267,9 +301,11 @@ def _copiar_fixos(raiz: Path, template: Path) -> bool:
                 shutil.copytree(origem, destino)
             else:
                 shutil.copy2(origem, destino)
-            info(f"copiado do template: {rel.as_posix()}")
+            info(f"copiado do template: {rel.as_posix()}", f"copied from the template: {rel.as_posix()}")
         else:
-            aviso(f"Falta {rel.as_posix()} e não achei o template em {template} (use --template ou LODEMAP_TEMPLATE).")
+            aviso(f"Falta {rel.as_posix()} e não achei o template em {template} (use --template ou LODEMAP_TEMPLATE).",
+                  f"{rel.as_posix()} is missing and I did not find the template at {template} (use --template or "
+                  "LODEMAP_TEMPLATE).")
     return tpl_ok
 
 
@@ -298,7 +334,8 @@ def executar(a: argparse.Namespace, scripts: Path, env_proc=None) -> int:
     cli = localizar_cli(a.ferramentas, env=env_proc, explicito=a.cli)
     prefixo = comando_cli(cli)
     if shutil.which("java") is None and not os.environ.get("JAVA_HOME"):
-        aviso("Não achei o java no PATH nem JAVA_HOME; o Structurizr CLI precisa do Java 17 ou mais novo.")
+        aviso("Não achei o java no PATH nem JAVA_HOME; o Structurizr CLI precisa do Java 17 ou mais novo.",
+              "Java is on neither PATH nor JAVA_HOME; the Structurizr CLI needs Java 17 or newer.")
 
     if a.incremental:
         if _rodar([py, str(diff), "--relevante", "--arq", str(raiz)]).returncode != 0:
@@ -314,11 +351,12 @@ def executar(a: argparse.Namespace, scripts: Path, env_proc=None) -> int:
 
     info("1/7 validando", "1/7 validating the model")
     if _rodar([*prefixo, "validate", "-workspace", str(dsl)], env=env).returncode != 0:
-        raise Falha("O modelo não valida. Corrija os .dsl e rode de novo.")
+        raise Falha(_t("O modelo não valida. Corrija os .dsl e rode de novo.",
+                       "The model does not validate. Fix the .dsl files and run again."))
 
     info("2/7 exportando JSON", "2/7 exporting JSON")
     if _rodar([*prefixo, "export", "-workspace", str(dsl), "-format", "json", "-output", str(saida)], env=env).returncode != 0:
-        raise Falha("Falha ao exportar o JSON.")
+        raise Falha(_t("Falha ao exportar o JSON.", "Failed to export the JSON."))
     ws = saida / "workspace.json"
 
     if a.incremental:
@@ -336,11 +374,11 @@ def executar(a: argparse.Namespace, scripts: Path, env_proc=None) -> int:
     info("3/7 gerando os documentos derivados (02, 90, 91 e o índice de decisões 92)",
          "3/7 generating the derived docs (02, 90, 91 and the decision index 92)")
     if _rodar([py, str(scripts / "gerar_docs.py"), str(ws), str(raiz / "docs")], env=env).returncode != 0:
-        raise Falha("Falha ao gerar os documentos.")
+        raise Falha(_t("Falha ao gerar os documentos.", "Failed to generate the documents."))
 
     info("4/7 gerando o leitor de documentação (docs e ADRs)", "4/7 generating the docs reader (docs and ADRs)")
     if _rodar([py, str(scripts / "gerar_leitor.py"), str(ws), str(raiz / "leitor")], env=env).returncode != 0:
-        raise Falha("Falha ao gerar o leitor.")
+        raise Falha(_t("Falha ao gerar o leitor.", "Failed to generate the reader."))
 
     info("5/7 atualizando a prova das relacoes no codigo e gerando os dados do explorador interativo",
          "5/7 refreshing the code proof of each relationship and generating the explorer data")
@@ -355,7 +393,7 @@ def executar(a: argparse.Namespace, scripts: Path, env_proc=None) -> int:
     repo = _raiz_do_repo(raiz, env)
     if _rodar([py, str(scripts / "gerar_explorador.py"), str(ws), str(raiz / "explorador"), str(repo)],
               env=env).returncode != 0:
-        raise Falha("Falha ao gerar o explorador.")
+        raise Falha(_t("Falha ao gerar o explorador.", "Failed to generate the explorer."))
 
     extensoes = [] if a.sem_extensoes else reunir_extensoes(raiz, env=env_proc)
     if extensoes:
@@ -367,12 +405,13 @@ def executar(a: argparse.Namespace, scripts: Path, env_proc=None) -> int:
     if fazer_site:
         info("7/7 exportando o site estático", "7/7 exporting the static site")
         if not dot:
-            aviso("O Graphviz (dot) não está no PATH nem em <ferramentas>/graphviz; o site estático pode sair incompleto.")
+            aviso("O Graphviz (dot) não está no PATH nem em <ferramentas>/graphviz; o site estático pode sair incompleto.",
+                  "Graphviz (dot) is on neither PATH nor <ferramentas>/graphviz; the static site may come out incomplete.")
         try:
             rc = _rodar([*prefixo, "export", "-workspace", str(dsl), "-format", "static", "-output", str(raiz / "site")],
                         env=env).returncode
         except OSError as e:
-            aviso(f"O site estático não rodou: {e}")
+            aviso(f"O site estático não rodou: {e}", f"The static site did not run: {e}")
             rc = 0
         if rc != 0:
             aviso("O site estático falhou; o resto está pronto.", "The static site failed; everything else is ready.")
@@ -382,7 +421,8 @@ def executar(a: argparse.Namespace, scripts: Path, env_proc=None) -> int:
     # Geração verde: marca o commit e o checkpoint para o modo incremental (rótulo por env: acentos intactos).
     marca = _rodar([py, str(diff), "--arq", str(raiz), "--marcar", "--checkpoint-env"], env=_env_filho(dot, a.checkpoint))
     if marca.returncode != 0:
-        aviso(r"Não consegui gravar .lodemap/estado.json (o próximo diff será completo).")
+        aviso(r"Não consegui gravar .lodemap/estado.json (o próximo diff será completo).",
+              r"Could not write .lodemap/estado.json (the next diff will be a full one).")
 
     info("Pronto. Leitor em leitor/index.html; registre a mudança em docs/99-registro-de-atualizacoes.md.",
          "Done. Reader at leitor/index.html; log the change in docs/99-registro-de-atualizacoes.md.")
@@ -398,10 +438,11 @@ def main(argv=None, scripts: Path | None = None) -> int:
     try:
         return executar(a, scripts)
     except Falha as e:
-        print(f"ERRO: {e}", file=sys.stderr, flush=True)
+        print(f"{_t('ERRO', 'ERROR')}: {e}", file=sys.stderr, flush=True)
         return e.codigo
     except OSError as e:
-        print(f"ERRO: não consegui rodar um programa: {e}", file=sys.stderr, flush=True)
+        print(f"{_t('ERRO', 'ERROR')}: " + _t(f"não consegui rodar um programa: {e}", f"could not run a program: {e}"),
+              file=sys.stderr, flush=True)
         return 1
 
 

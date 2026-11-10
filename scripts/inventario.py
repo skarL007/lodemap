@@ -21,6 +21,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import codegraph_ponte as ponte  # noqa: E402  (só para o filtro "ignorar", o mesmo do esqueleto e da qualidade)
+from lodemap.idioma import opcao, t, usar_mapa  # noqa: E402  (codegraph_ponte já pôs a raiz da skill no sys.path)
 
 _DECL = re.compile(r'^\s*(\w+)\s*=\s*(component|container|softwareSystem|person)\s+"([^"]*)"')
 _COD = re.compile(r'^\s*"codigo"\s+"([^"]*)"')
@@ -74,7 +75,7 @@ def resumo(p: Path) -> str:
         if init.is_file():
             return resumo(init)
         arqs = [x.name for x in sorted(p.iterdir())][:6]
-        return "pasta: " + ", ".join(arqs)
+        return t("pasta: ", "folder: ") + ", ".join(arqs)
     try:
         texto = p.read_text(encoding="utf-8-sig", errors="replace")
     except OSError:
@@ -94,12 +95,19 @@ def resumo(p: Path) -> str:
 
 
 def main(argv=None) -> int:
-    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--repo", required=True)
-    ap.add_argument("--arq", default="docs/architecture/structurizr")
-    ap.add_argument("--so-fora", action="store_true")
-    ap.add_argument("--importadores", action="store_true")
-    ap.add_argument("--json", help="grava o inventário em JSON neste caminho")
+    ap = argparse.ArgumentParser(description=t("Inventário do código para modelar: cada módulo dos globs, quem o cobre "
+                                               "no modelo e o resumo dele.",
+                                               "Code inventory for modeling: each module of the globs, what covers it "
+                                               "in the model and its summary."))
+    ap.add_argument("--repo", required=True, help=t("raiz do repositório", "repository root"))
+    ap.add_argument("--arq", "--arch", default="docs/architecture/structurizr",
+                    help=t("pasta do mapa dentro do repositório (padrão: %(default)s)",
+                           "map folder inside the repository (default: %(default)s)"))
+    ap.add_argument(*opcao("--only-outside", "--so-fora"), dest="so_fora", action="store_true",
+                    help=t("lista só os módulos fora do modelo", "list only the modules outside the model"))
+    ap.add_argument(*opcao("--importers", "--importadores"), dest="importadores", action="store_true",
+                    help=t("mostra quem importa cada módulo (Python)", "show which modules import each one (Python)"))
+    ap.add_argument("--json", help=t("grava o inventário em JSON neste caminho", "also write the inventory as JSON to this path"))
     a = ap.parse_args(argv)
     try:
         sys.stdout.reconfigure(encoding="utf-8")
@@ -107,6 +115,7 @@ def main(argv=None) -> int:
         pass
     repo = Path(a.repo).resolve()
     arq = repo / a.arq
+    usar_mapa(arq)
     cfg = json.loads((arq / "lodemap.json").read_text(encoding="utf-8-sig"))
     raiz = cfg.get("raiz_codigo", "").strip("/")
     pares = componentes(arq / "model")
@@ -146,23 +155,24 @@ def main(argv=None) -> int:
             with p.open(encoding="utf-8", errors="replace") as fh:
                 tam = f"{sum(1 for _ in fh)} l"
         else:
-            tam = "pasta"
+            tam = "pasta"  # valor gravado no JSON (chave "tamanho"): não muda
         res = resumo(p)
-        linha = f"{quem or 'FORA':<22} {alvo:<48} {tam:>7}  {res}"
+        linha = f"{quem or t('FORA', 'OUTSIDE'):<22} {alvo:<48} {tam:>7}  {res}"
         usos = []
         if a.importadores:
             chave = p.stem if p.is_file() else p.name
             usos = sorted(set(importadores.get(chave, [])) - {alvo})
             if usos:
-                linha += f"\n{'':<22} importado por: {', '.join(usos[:4])}"
+                linha += f"\n{'':<22} {t('importado por', 'imported by')}: {', '.join(usos[:4])}"
         registros.append({"caminho": alvo, "tipo": "arquivo" if p.is_file() else "pasta", "tamanho": tam,
                           "proposito": res, "coberto_por": quem or None, "importado_por": usos})
         print(linha)
-    print(f"\n{len(alvos) - fora} de {len(alvos)} cobertos; {fora} fora do modelo.")
+    print(t(f"\n{len(alvos) - fora} de {len(alvos)} cobertos; {fora} fora do modelo.",
+            f"\n{len(alvos) - fora} of {len(alvos)} covered; {fora} outside the model."))
     if a.json:
         Path(a.json).write_text(json.dumps({"modulos": registros, "cobertos": len(alvos) - fora, "fora": fora},
                                            ensure_ascii=False, indent=2), encoding="utf-8")
-        print(f"inventário em {a.json}")
+        print(t(f"inventário em {a.json}", f"inventory written to {a.json}"))
     return 0
 
 

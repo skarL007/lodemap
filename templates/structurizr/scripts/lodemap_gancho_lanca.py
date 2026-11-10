@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import subprocess
 import sys
 from datetime import datetime
@@ -48,7 +49,8 @@ def main(argv: list[str] | None = None) -> int:
     argv = list(sys.argv[1:] if argv is None else argv)
     if argv[:1] == ["--aprovar"] and len(argv) == 2:
         aprovar(Path(argv[1]))
-        print("aprovado:", PIN)
+        en = (os.environ.get("LODEMAP_IDIOMA") or "").strip().lower() == "en"
+        print("approved:" if en else "aprovado:", PIN)
         return 0
     try:
         pin = json.loads(PIN.read_text(encoding="utf-8"))

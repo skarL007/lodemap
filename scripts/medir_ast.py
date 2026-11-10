@@ -30,6 +30,8 @@ from datetime import date
 from pathlib import Path
 
 AQUI = Path(__file__).resolve().parent
+sys.path.insert(0, str(AQUI.parent))
+from lodemap.idioma import opcao, t  # noqa: E402
 FIXTURES = AQUI.parent / "tests" / "fixtures" / "ast_precisao"
 # Tipos de aresta do CodeGraph que corroboram dependência entre arquivos sem serem o import em si.
 TIPOS_CORROBORAM = ("calls", "instantiates", "references", "extends", "implements", "decorates")
@@ -164,12 +166,16 @@ def medir_repo(repo: Path, ponte, db: Path | None = None) -> dict:
 def imprimir(resultado: dict, erros_max: int = 12) -> None:
     a = resultado.get("camadaA")
     if a:
-        print(f"== Camada A: gabarito rotulado à mão ({resultado['fixtures']}) ==")
-        print(f"{'linguagem':<11}{'arq':>4}{'gab':>5}{'TP':>5}{'FP':>4}{'FN':>4}{'precisão':>10}{'recall':>8}  limites conhecidos")
+        print(t(f"== Camada A: gabarito rotulado à mão ({resultado['fixtures']}) ==",
+                f"== Layer A: hand-labeled ground truth ({resultado['fixtures']}) =="))
+        print(f"{t('linguagem', 'language'):<11}{t('arq', 'files'):>4}{t('gab', 'gt'):>5}{'TP':>5}{'FP':>4}{'FN':>4}"
+              f"{t('precisão', 'precision'):>10}{'recall':>8}  {t('limites conhecidos', 'known limits')}")
         for nome, d in a.items():
             lim = d["limitesConhecidos"]
-            info = (f"{len(lim['fpConhecidos'])} FP e {len(lim['fnConhecidos'])} FN conhecidos fora da conta, "
-                    f"{len(lim['superados'])} superado(s), de {lim['total']}")
+            info = t(f"{len(lim['fpConhecidos'])} FP e {len(lim['fnConhecidos'])} FN conhecidos fora da conta, "
+                     f"{len(lim['superados'])} superado(s), de {lim['total']}",
+                     f"{len(lim['fpConhecidos'])} known FP and {len(lim['fnConhecidos'])} known FN left out of the count, "
+                     f"{len(lim['superados'])} overcome, of {lim['total']}")
             print(f"{nome:<11}{d['arquivos']:>4}{d['arestasGabarito']:>5}{d['tp']:>5}{d['fp']:>4}{d['fn']:>4}"
                   f"{_fmt(d['precisao']):>10}{_fmt(d['recall']):>8}  {info}")
         for nome, d in a.items():
@@ -177,12 +183,14 @@ def imprimir(resultado: dict, erros_max: int = 12) -> None:
                 for par in d["erros"][tipo][:erros_max]:
                     print(f"  [{nome}] {tipo.upper()}: {par[0]} -> {par[1]}")
     for r in resultado.get("camadaB", []):
-        print(f"\n== Camada B: {r['repo']} ==")
+        print(t(f"\n== Camada B: {r['repo']} ==", f"\n== Layer B: {r['repo']} =="))
         if "erro" in r:
             print(f"  {r['erro']}")
             continue
-        print(f"  arquivos: ast {r['arquivosAst']}, índice {r['arquivosIndice']}, comuns {r['arquivosComuns']}")
-        print(f"  {'linguagem':<11}{'arq':>5}{'TP':>6}{'FP duro':>9}{'FP corr.':>9}{'FN':>6}{'P imports':>11}{'P ampla':>9}{'recall':>8}")
+        print(t(f"  arquivos: ast {r['arquivosAst']}, índice {r['arquivosIndice']}, comuns {r['arquivosComuns']}",
+                f"  files: ast {r['arquivosAst']}, index {r['arquivosIndice']}, common {r['arquivosComuns']}"))
+        print(f"  {t('linguagem', 'language'):<11}{t('arq', 'files'):>5}{'TP':>6}{t('FP duro', 'hard FP'):>9}"
+              f"{t('FP corr.', 'corr. FP'):>9}{'FN':>6}{t('P imports', 'P imports'):>11}{t('P ampla', 'P broad'):>9}{'recall':>8}")
         for nome, d in r["linguagens"].items():
             print(f"  {nome:<11}{d['arquivos']:>5}{d['tp']:>6}{d['fpDuro']:>9}{d['fpCorroborado']:>9}{d['fn']:>6}"
                   f"{_fmt(d['precisaoImports']):>11}{_fmt(d['precisaoAmpla']):>9}{_fmt(d['recall']):>8}")
@@ -193,15 +201,28 @@ def imprimir(resultado: dict, erros_max: int = 12) -> None:
 
 
 def main(argv: list[str] | None = None) -> int:
-    ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-    ap.add_argument("--fixtures", type=Path, default=FIXTURES, help="pasta com uma subpasta por linguagem (camada A)")
-    ap.add_argument("--linguagem", help="mede só essa subpasta da camada A")
-    ap.add_argument("--repo", type=Path, action="append", default=[], help="repositório real com .codegraph/ (camada B); repetível")
-    ap.add_argument("--db", type=Path, help="índice do CodeGraph, se não for <repo>/.codegraph/codegraph.db")
-    ap.add_argument("--ponte", type=Path, help="codegraph_ponte.py alternativo (medir a versão de antes)")
-    ap.add_argument("--saida", type=Path, help="grava o resultado completo em JSON")
-    ap.add_argument("--erros-max", type=int, default=12, help="erros listados por linguagem na tela")
-    ap.add_argument("--silencioso", action="store_true", help="não imprime a tabela")
+    ap = argparse.ArgumentParser(description=t("Mede a precisão e o recall da prova de relação por imports do modo ast "
+                                               "(codegraph_ponte.py), por linguagem.",
+                                               "Measure the precision and recall of the ast mode's import-based relation "
+                                               "proof (codegraph_ponte.py), per language."))
+    ap.add_argument("--fixtures", type=Path, default=FIXTURES,
+                    help=t("pasta com uma subpasta por linguagem (camada A)", "folder with one subfolder per language (layer A)"))
+    ap.add_argument(*opcao("--language", "--linguagem"), dest="linguagem",
+                    help=t("mede só essa subpasta da camada A", "measure only this layer A subfolder"))
+    ap.add_argument("--repo", type=Path, action="append", default=[],
+                    help=t("repositório real com .codegraph/ (camada B); repetível",
+                           "real repository with .codegraph/ (layer B); repeatable"))
+    ap.add_argument("--db", type=Path, help=t("índice do CodeGraph, se não for <repo>/.codegraph/codegraph.db",
+                                              "CodeGraph index, if not <repo>/.codegraph/codegraph.db"))
+    ap.add_argument(*opcao("--bridge", "--ponte"), dest="ponte", type=Path,
+                    help=t("codegraph_ponte.py alternativo (medir a versão de antes)",
+                           "alternative codegraph_ponte.py (to measure the version from before)"))
+    ap.add_argument(*opcao("--output", "--saida"), dest="saida", type=Path,
+                    help=t("grava o resultado completo em JSON", "write the full result as JSON"))
+    ap.add_argument(*opcao("--max-errors", "--erros-max"), dest="erros_max", type=int, default=12,
+                    help=t("erros listados por linguagem na tela", "errors listed per language on screen"))
+    ap.add_argument(*opcao("--quiet", "--silencioso"), dest="silencioso", action="store_true",
+                    help=t("não imprime a tabela", "do not print the table"))
     args = ap.parse_args(argv)
     if hasattr(sys.stdout, "reconfigure"):  # console do Windows em cp1252 estraga os acentos
         sys.stdout.reconfigure(encoding="utf-8")

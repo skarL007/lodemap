@@ -20,3 +20,14 @@ def home(tmp_path, monkeypatch):
     monkeypatch.setenv("USERPROFILE", str(h))
     monkeypatch.setenv("LODEMAP_CONFIG_DIR", str(h / ".config" / "lodemap"))
     return h
+
+
+@pytest.fixture(autouse=True)
+def _idioma_pt(monkeypatch):
+    """Os testes não dependem do idioma da máquina: o padrão é pt (os textos esperados são em português).
+
+    Testes de inglês fazem monkeypatch.setenv("LODEMAP_IDIOMA", "en") por conta própria.
+    """
+    monkeypatch.setenv("LODEMAP_IDIOMA", "pt")
+    from lodemap import idioma
+    idioma.usar_mapa(None)

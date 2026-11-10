@@ -19,6 +19,7 @@ from datetime import datetime
 from pathlib import Path
 
 from lodemap import RAIZ
+from lodemap.idioma import t
 
 ESCOPOS = {
     "gerar": "criar e atualizar o mapa só com scripts (0 tokens)",
@@ -65,7 +66,8 @@ def contar_modulos(repo: Path, arq: str = ARQ_PADRAO) -> dict:
                 continue
             if pasta == p.is_dir():
                 alvos.add(p.relative_to(repo).as_posix())
-    out = {"fonte": "globs padrão do novo_mapa.py (mapa ainda não existe)", "modulos": len(alvos),
+    out = {"fonte": t("globs padrão do novo_mapa.py (mapa ainda não existe)",
+                      "default globs of novo_mapa.py (the map does not exist yet)"), "modulos": len(alvos),
            "fora": len(alvos), "globs": globs}
     if ignorar:
         out["ignorar"] = ignorar
@@ -84,10 +86,13 @@ def estimar(modulos: int, custo: dict | None = None) -> dict:
     proj = custo["projecao_haiku_mapa_projeto_b"]
     fora = ref.get("nao_registrado", []) + ref.get("nao_incluido", [])
     return {
-        "metodo": f"linear sobre a rodada medida '{ref['rotulo']}' ({base} módulos, {ref['chamadas']} chamadas, "
-                  f"{ref['minutos']} min, US$ {ref['custo_usd']} em {ref['modelo']}); fonte: {custo['fonte_tokens']}",
-        "tipo": "estimativa linear de uma única rodada medida (não validada em outros tamanhos)"
-                + (" ; fica de fora: " + ", ".join(fora) if fora else ""),
+        "metodo": t(f"linear sobre a rodada medida '{ref['rotulo']}' ({base} módulos, {ref['chamadas']} chamadas, "
+                    f"{ref['minutos']} min, US$ {ref['custo_usd']} em {ref['modelo']}); fonte: {custo['fonte_tokens']}",
+                    f"linear over the measured run '{ref['rotulo']}' ({base} modules, {ref['chamadas']} calls, "
+                    f"{ref['minutos']} min, US$ {ref['custo_usd']} on {ref['modelo']}); source: {custo['fonte_tokens']}"),
+        "tipo": t("estimativa linear de uma única rodada medida (não validada em outros tamanhos)",
+                  "linear estimate from a single measured run (not validated at other sizes)")
+                + (t(" ; fica de fora: ", " ; left out: ") + ", ".join(fora) if fora else ""),
         "sonnet_usd": round(sonnet, 2),
         "opus_usd_estimado": round(opus, 2),
         "haiku_usd_projecao_nao_medida": round(proj["por_chamada"] * fator, 2),
@@ -121,7 +126,7 @@ def ler_consentimento(repo: Path, arq: str = ARQ_PADRAO) -> dict | None:
 def _exigir_repositorio(repo: Path) -> Path:
     repo = Path(repo).resolve()
     if not repo.is_dir():
-        raise ValueError(f"repositório não encontrado: {repo}")
+        raise ValueError(t(f"repositório não encontrado: {repo}", f"repository not found: {repo}"))
     return repo
 
 
@@ -131,8 +136,11 @@ def plano(repo: Path, arq: str = ARQ_PADRAO) -> dict:
     arqs = arquivos_a_escrever(repo, arq)
     aviso = None
     if mods["modulos"] == 0:
-        aviso = (f"nenhum módulo encontrado pelos globs {mods['globs']}; a estimativa não vale para este repositório. "
-                 f"Ajuste 'raiz_codigo' e 'modulos' no lodemap.json (ou crie o mapa e edite os globs) antes de consentir.")
+        aviso = t(f"nenhum módulo encontrado pelos globs {mods['globs']}; a estimativa não vale para este repositório. "
+                  f"Ajuste 'raiz_codigo' e 'modulos' no lodemap.json (ou crie o mapa e edite os globs) antes de consentir.",
+                  f"no module found by the globs {mods['globs']}; the estimate does not apply to this repository. "
+                  f"Adjust 'raiz_codigo' and 'modulos' in lodemap.json (or create the map and edit the globs) before "
+                  f"consenting.")
     return {"repo": str(repo), "arquitetura": arq, "mapa_existe": (repo / arq / "lodemap.json").is_file(),
             "modulos": mods, "estimativa": estimar(mods["modulos"]), "tokens_deste_plano": 0,
             "arquivos": arqs, "a_criar": sum(a["acao"] == "cria" for a in arqs),
@@ -142,14 +150,17 @@ def plano(repo: Path, arq: str = ARQ_PADRAO) -> dict:
 def consentir(repo: Path, escopos: list[str], orcamento_mensal: float | None = None, arq: str = ARQ_PADRAO) -> Path:
     desconhecidos = set(escopos) - set(ESCOPOS)
     if desconhecidos or not escopos:
-        raise ValueError(f"escopos inválidos: {sorted(desconhecidos) or 'nenhum'} (use {', '.join(ESCOPOS)})")
+        raise ValueError(t(f"escopos inválidos: {sorted(desconhecidos) or 'nenhum'} (use {', '.join(ESCOPOS)})",
+                           f"invalid scopes: {sorted(desconhecidos) or 'none'} (use {', '.join(ESCOPOS)})"))
     if orcamento_mensal is not None and not (math.isfinite(orcamento_mensal) and orcamento_mensal >= 0):
-        raise ValueError(f"orçamento mensal inválido ({orcamento_mensal}): use um número finito, zero ou maior")
+        raise ValueError(t(f"orçamento mensal inválido ({orcamento_mensal}): use um número finito, zero ou maior",
+                           f"invalid monthly budget ({orcamento_mensal}): use a finite number, zero or greater"))
     p = _arq_consent(_exigir_repositorio(repo), arq)
     p.parent.mkdir(parents=True, exist_ok=True)
     dado = {"versao": 1, "data": datetime.now().astimezone().isoformat(timespec="seconds"),
             "escopos": sorted(set(escopos)), "orcamento_mensal_usd": orcamento_mensal,
-            "nota": "Revogue com: python -m lodemap revogar --repo <repo>"}
+            "nota": t("Revogue com: python -m lodemap revogar --repo <repo>",
+                      "Revoke with: python -m lodemap revoke --repo <repo>")}
     p.write_text(json.dumps(dado, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
     return p
 
@@ -172,9 +183,14 @@ def revogar(repo: Path, escopos: list[str] | None = None, arq: str = ARQ_PADRAO)
 def verificar(repo: Path, escopo: str, custo_usd: float = 0.0, arq: str = ARQ_PADRAO) -> tuple[bool, str]:
     c = ler_consentimento(Path(repo).resolve(), arq)
     if not c or escopo not in c.get("escopos", []):
-        return False, f"sem consentimento para '{escopo}': peça o ok do dono"
+        return False, t(f"sem consentimento para '{escopo}': peça o ok do dono",
+                        f"no consent for '{escopo}': ask the owner for an ok")
     teto = c.get("orcamento_mensal_usd")
     if escopo == "modelo" and (teto is None or custo_usd > teto):
-        return False, (f"custo estimado US$ {custo_usd:.2f} acima do teto mensal ({teto}); confirme com o dono"
-                       if teto is not None else "passo com modelo sem orçamento mensal: confirme com o dono")
-    return True, f"autorizado ({escopo}, consentido em {c['data']})"
+        return False, (t(f"custo estimado US$ {custo_usd:.2f} acima do teto mensal ({teto}); confirme com o dono",
+                         f"estimated cost US$ {custo_usd:.2f} above the monthly cap ({teto}); confirm with the owner")
+                       if teto is not None else
+                       t("passo com modelo sem orçamento mensal: confirme com o dono",
+                         "model step with no monthly budget: confirm with the owner"))
+    return True, t(f"autorizado ({escopo}, consentido em {c['data']})",
+                   f"authorized ({escopo}, consented on {c['data']})")

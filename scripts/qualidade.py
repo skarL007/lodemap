@@ -40,6 +40,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import codegraph_ponte as ponte  # noqa: E402
+from lodemap.idioma import opcao, t, usar_mapa  # noqa: E402  (codegraph_ponte já pôs a raiz da skill no sys.path)
 
 SKILL = Path(__file__).resolve().parent.parent
 BASELINE_PADRAO = SKILL / "references" / "baseline-qualidade.json"
@@ -123,7 +124,8 @@ def avaliar(arq: Path, repo: Path | None = None, fonte: str = "auto", db: Path |
     repo = (repo or ponte.raiz_repo(arq)).resolve()
     ws_arq = ponte.achar_workspace(arq)
     if not ws_arq:
-        raise SystemExit("qualidade: sem workspace.json (rode o atualizar.ps1 antes)")
+        raise SystemExit(t("qualidade: sem workspace.json (rode o atualizar.ps1 antes)",
+                           "qualidade: no workspace.json (run atualizar.ps1 first)"))
     ws = json.loads(ws_arq.read_text(encoding="utf-8-sig"))
     cfg_arq = arq / "lodemap.json"
     cfg = json.loads(cfg_arq.read_text(encoding="utf-8-sig")) if cfg_arq.is_file() else {}
@@ -144,7 +146,9 @@ def avaliar(arq: Path, repo: Path | None = None, fonte: str = "auto", db: Path |
     # descrição
     ruins = [c["ident"] for c in comps
              if len(c["desc"].strip()) < MIN_DESCRICAO or _norm(c["desc"]) == _norm(c["nome"])]
-    registrar("descricao", razao(n - len(ruins), n), None, f"{n - len(ruins)} de {n} com {MIN_DESCRICAO}+ caracteres", ruins)
+    registrar("descricao", razao(n - len(ruins), n), None,
+              t(f"{n - len(ruins)} de {n} com {MIN_DESCRICAO}+ caracteres",
+                f"{n - len(ruins)} of {n} with {MIN_DESCRICAO}+ characters"), ruins)
 
     # código
     exempt, ruins, avaliados = 0, [], 0
@@ -158,11 +162,14 @@ def avaliar(arq: Path, repo: Path | None = None, fonte: str = "auto", db: Path |
         if not caminhos or not all(_existe(repo, x) for x in caminhos):
             ruins.append(c["ident"])
     registrar("codigo", razao(avaliados - len(ruins), avaliados), None,
-              f"{avaliados - len(ruins)} de {avaliados} com caminho existente ({exempt} Planejado/ramo fora)", ruins)
+              t(f"{avaliados - len(ruins)} de {avaliados} com caminho existente ({exempt} Planejado/ramo fora)",
+                f"{avaliados - len(ruins)} of {avaliados} with an existing path ({exempt} Planejado/ramo left out)"),
+              ruins)
 
     # observabilidade
     ruins = [c["ident"] for c in comps if not c["props"].get("observabilidade", "").strip()]
-    registrar("observabilidade", razao(n - len(ruins), n), None, f"{n - len(ruins)} de {n}", ruins)
+    registrar("observabilidade", razao(n - len(ruins), n), None, t(f"{n - len(ruins)} de {n}", f"{n - len(ruins)} of {n}"),
+              ruins)
 
     # O que o código mostra (pares de componentes com aresta): mede as relações e também diz o que NÃO é omissão
     # do modelo. Uma biblioteca de módulos independentes tem poucos pares; cobrar dela 3 relações por componente e
@@ -203,9 +210,11 @@ def avaliar(arq: Path, repo: Path | None = None, fonte: str = "auto", db: Path |
         no_codigo = 2 * len(info["pares"]) / n
         if no_codigo < ALVO_RELACOES_POR_COMPONENTE:
             alvo = max(1.0, round(no_codigo, 2))
-            origem = f"; o código mostra {no_codigo:.2f}, teto {ALVO_RELACOES_POR_COMPONENTE}"
+            origem = t(f"; o código mostra {no_codigo:.2f}, teto {ALVO_RELACOES_POR_COMPONENTE}",
+                       f"; the code shows {no_codigo:.2f}, cap {ALVO_RELACOES_POR_COMPONENTE}")
     registrar("relacoes_media", min(1.0, media / alvo) if n else None, round(media, 2),
-              f"{media:.2f} relações por componente (alvo {alvo:g}{origem})",
+              t(f"{media:.2f} relações por componente (alvo {alvo:g}{origem})",
+                f"{media:.2f} relationships per component (target {alvo:g}{origem})"),
               [c["ident"] for c in comps if por_comp[c["id"]] < min(2, alvo)])
     sem_relacao = [c["ident"] for c in comps if por_comp[c["id"]] == 0]
     if com_aresta is None:
@@ -215,15 +224,19 @@ def avaliar(arq: Path, repo: Path | None = None, fonte: str = "auto", db: Path |
         # (um middleware que só fala com a biblioteca padrão) é independente de verdade, não uma omissão.
         orfaos = [i for i in sem_relacao if i in com_aresta]
         soltos = len(sem_relacao) - len(orfaos)
-        nota_extra = f"; {soltos} sem relação também no código (fonte {info['fonte']}), não contam" if soltos else ""
-    registrar("orfaos", razao(n - len(orfaos), n), None, f"{len(orfaos)} órfãos de {n}{nota_extra}", orfaos)
+        nota_extra = (t(f"; {soltos} sem relação também no código (fonte {info['fonte']}), não contam",
+                        f"; {soltos} also have no relationship in the code (source {info['fonte']}), they do not count")
+                      if soltos else "")
+    registrar("orfaos", razao(n - len(orfaos), n), None,
+              t(f"{len(orfaos)} órfãos de {n}{nota_extra}", f"{len(orfaos)} orphans of {n}{nota_extra}"), orfaos)
     ident_de = {c["id"]: c["ident"] for c in comps}
     nome_de = {el["id"]: el.get("properties", {}).get("structurizr.dsl.identifier", el.get("name", el["id"]))
                for el in elementos}
     sem_qual = [f"{nome_de.get(r['sourceId'])} -> {nome_de.get(r['destinationId'])}" for r in todas
                 if not r.get("description", "").strip() or not r.get("technology", "").strip()]
     registrar("relacoes_qualificadas", razao(len(todas) - len(sem_qual), len(todas)), None,
-              f"{len(todas) - len(sem_qual)} de {len(todas)} com verbo e tecnologia", sem_qual)
+              t(f"{len(todas) - len(sem_qual)} de {len(todas)} com verbo e tecnologia",
+                f"{len(todas) - len(sem_qual)} of {len(todas)} with a verb and a technology"), sem_qual)
 
     # status
     ruins = []
@@ -233,7 +246,7 @@ def avaliar(arq: Path, repo: Path | None = None, fonte: str = "auto", db: Path |
         prop = STATUS_EN.get(prop.strip().lower(), prop)
         if len(tags) != 1 or (prop and _norm(prop) != _norm(tags[0])):
             ruins.append(c["ident"])
-    registrar("status", razao(n - len(ruins), n), None, f"{n - len(ruins)} de {n}", ruins)
+    registrar("status", razao(n - len(ruins), n), None, t(f"{n - len(ruins)} de {n}", f"{n - len(ruins)} of {n}"), ruins)
 
     # visões
     v = ws.get("views", {})
@@ -242,19 +255,25 @@ def avaliar(arq: Path, repo: Path | None = None, fonte: str = "auto", db: Path |
     com_visao = {x.get("containerId") for x in v.get("componentViews", [])}
     sem_visao = [nm for cid, nm in com_comp.items() if cid not in com_visao]
     registrar("visoes_container", razao(len(com_comp) - len(sem_visao), len(com_comp)), None,
-              f"{len(com_comp) - len(sem_visao)} de {len(com_comp)} containers com visão de componentes", sem_visao)
+              t(f"{len(com_comp) - len(sem_visao)} de {len(com_comp)} containers com visão de componentes",
+                f"{len(com_comp) - len(sem_visao)} of {len(com_comp)} containers with a component view"), sem_visao)
     dinamicas = v.get("dynamicViews", [])
     registrar("fluxos", min(1.0, len(dinamicas) / ALVO_FLUXOS), len(dinamicas),
-              f"{len(dinamicas)} visões dinâmicas (alvo {ALVO_FLUXOS})",
-              [] if len(dinamicas) >= ALVO_FLUXOS else [f"faltam {ALVO_FLUXOS - len(dinamicas)} fluxos (inicialização, pedido típico, falha)"])
+              t(f"{len(dinamicas)} visões dinâmicas (alvo {ALVO_FLUXOS})",
+                f"{len(dinamicas)} dynamic views (target {ALVO_FLUXOS})"),
+              [] if len(dinamicas) >= ALVO_FLUXOS
+              else [t(f"faltam {ALVO_FLUXOS - len(dinamicas)} fluxos (inicialização, pedido típico, falha)",
+                      f"{ALVO_FLUXOS - len(dinamicas)} flows missing (startup, typical request, failure)")])
     passos = [len(x.get("relationships", [])) for x in dinamicas]
     mp = sum(passos) / len(passos) if passos else 0
-    registrar("passos_fluxo", min(1.0, mp / ALVO_PASSOS), round(mp, 2), f"{mp:.1f} passos por fluxo (alvo {ALVO_PASSOS})",
+    registrar("passos_fluxo", min(1.0, mp / ALVO_PASSOS), round(mp, 2),
+              t(f"{mp:.1f} passos por fluxo (alvo {ALVO_PASSOS})", f"{mp:.1f} steps per flow (target {ALVO_PASSOS})"),
               [x.get("key", "") for x in dinamicas if len(x.get("relationships", [])) < ALVO_PASSOS])
 
     # agrupamento
     ruins = [c["ident"] for c in comps if not c["grupo"] and not c["props"].get("area")]
-    registrar("agrupamento", razao(n - len(ruins), n), None, f"{n - len(ruins)} de {n}", ruins)
+    registrar("agrupamento", razao(n - len(ruins), n), None, t(f"{n - len(ruins)} de {n}", f"{n - len(ruins)} of {n}"),
+              ruins)
 
     # cobertura
     globs = cfg.get("modulos", [])
@@ -264,9 +283,10 @@ def avaliar(arq: Path, repo: Path | None = None, fonte: str = "auto", db: Path |
         alvos = _alvos(repo, globs, ponte._ignorar_da_config(cfg))
         fora = [a for a in alvos if _quem_cobre(a, pares_cod, raiz) is None]
         registrar("cobertura", razao(len(alvos) - len(fora), len(alvos)), None,
-                  f"{len(alvos) - len(fora)} de {len(alvos)} módulos cobertos", fora)
+                  t(f"{len(alvos) - len(fora)} de {len(alvos)} módulos cobertos",
+                    f"{len(alvos) - len(fora)} of {len(alvos)} modules covered"), fora)
     else:
-        registrar("cobertura", None, None, "n/d: lodemap.json sem 'modulos'")
+        registrar("cobertura", None, None, t("n/d: lodemap.json sem 'modulos'", "n/d: lodemap.json has no 'modulos'"))
 
     # relações x código
     if info:
@@ -274,19 +294,25 @@ def avaliar(arq: Path, repo: Path | None = None, fonte: str = "auto", db: Path |
         sugeridos = [p for p in rel["pares"] if p["confianca"] in ("alta", "media")]
         faltam = [p for p in sugeridos if not p["noModelo"]]
         registrar("recall_relacoes", razao(len(sugeridos) - len(faltam), len(sugeridos)), None,
-                  f"{len(sugeridos) - len(faltam)} de {len(sugeridos)} pares do código (confiança alta/média; ast: todo import) "
-                  f"no modelo; fonte {info['fonte']}",
-                  [f"{p['de']} -> {p['para']} ({p['arestas']} arestas, {p['tipo']}, confiança {p['confianca']})" for p in faltam])
+                  t(f"{len(sugeridos) - len(faltam)} de {len(sugeridos)} pares do código (confiança alta/média; ast: todo "
+                    f"import) no modelo; fonte {info['fonte']}",
+                    f"{len(sugeridos) - len(faltam)} of {len(sugeridos)} code pairs (confidence alta/media; ast: every "
+                    f"import) in the model; source {info['fonte']}"),
+                  [t(f"{p['de']} -> {p['para']} ({p['arestas']} arestas, {p['tipo']}, confiança {p['confianca']})",
+                     f"{p['de']} -> {p['para']} ({p['arestas']} edges, {p['tipo']}, confidence {p['confianca']})")
+                   for p in faltam])
         avaliaveis = set(info["mapa"].values())
         existentes = set(info["pares"]) | {(b, a) for a, b in info["pares"]}
         rel_modelo = [(k, d) for k, d in info["modelo"].items() if k[0] in avaliaveis and k[1] in avaliaveis]
         sem_aresta = [f"{a} -> {b}" for (a, b), _ in rel_modelo if (a, b) not in existentes]
         registrar("precisao_relacoes", razao(len(rel_modelo) - len(sem_aresta), len(rel_modelo)), None,
-                  f"{len(rel_modelo) - len(sem_aresta)} de {len(rel_modelo)} relações componente->componente com aresta "
-                  f"no código; fonte {info['fonte']}", sem_aresta)
+                  t(f"{len(rel_modelo) - len(sem_aresta)} de {len(rel_modelo)} relações componente->componente com "
+                    f"aresta no código; fonte {info['fonte']}",
+                    f"{len(rel_modelo) - len(sem_aresta)} of {len(rel_modelo)} component->component relationships with "
+                    f"an edge in the code; source {info['fonte']}"), sem_aresta)
     else:
         for k in ("recall_relacoes", "precisao_relacoes"):
-            registrar(k, None, None, f"n/d: {motivo}")
+            registrar(k, None, None, f"n/d: {motivo}")  # o motivo vem do SystemExit da ponte, já no idioma ativo
 
     saida = {"projeto": cfg.get("projeto", ""), "componentes": n, "total": total(crit), "criterios": crit,
              "pesos": PESOS}
@@ -314,11 +340,13 @@ def gate(resultado: dict, baseline: dict, minimo_total: float | None = None) -> 
     fracao = baseline.get("fracaoMinimaPorCriterio", FRACAO_MINIMA)
     falhas = []
     if total_proj < minimo:
-        falhas.append(f"total {total_proj} < mínimo {minimo} (linha de base {total_base})")
+        falhas.append(t(f"total {total_proj} < mínimo {minimo} (linha de base {total_base})",
+                        f"total {total_proj} < minimum {minimo} (baseline {total_base})"))
     for k in sorted(comuns - SEM_PISO):
         piso = round(notas_base[k] * fracao, 1)
         if resultado["criterios"][k]["nota"] < piso:
-            falhas.append(f"{k} {resultado['criterios'][k]['nota']} < piso {piso} (linha de base {notas_base[k]})")
+            falhas.append(t(f"{k} {resultado['criterios'][k]['nota']} < piso {piso} (linha de base {notas_base[k]})",
+                            f"{k} {resultado['criterios'][k]['nota']} < floor {piso} (baseline {notas_base[k]})"))
     return {"aprovado": not falhas, "totalComparavel": total_proj, "totalBaselineComparavel": total_base, "minimoTotal": minimo,
             "criteriosComparados": sorted(comuns), "semPiso": sorted(comuns & SEM_PISO), "falhas": falhas}
 
@@ -328,17 +356,29 @@ def main(argv=None) -> int:
         sys.stdout.reconfigure(encoding="utf-8")
     except (AttributeError, ValueError):
         pass
-    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--arq", required=True)
-    ap.add_argument("--repo")
-    ap.add_argument("--fonte", choices=["auto", "codegraph", "ast"], default="auto")
-    ap.add_argument("--db")
-    ap.add_argument("--baseline", default=str(BASELINE_PADRAO))
-    ap.add_argument("--min", default="baseline", help="total mínimo, ou 'baseline' (linha de base menos 10 pontos)")
-    ap.add_argument("--listar-reprovados", action="store_true")
-    ap.add_argument("--gravar-baseline", metavar="JSON")
-    ap.add_argument("--sem-gate", action="store_true")
+    ap = argparse.ArgumentParser(description=t("Rubrica objetiva e determinística da qualidade de um modelo C4 (lodemap).",
+                                               "Objective, deterministic quality rubric for a C4 model (lodemap)."))
+    ap.add_argument("--arq", "--arch", required=True, help=t("pasta structurizr do projeto", "the project's structurizr folder"))
+    ap.add_argument("--repo", help=t("raiz do repositório (padrão: raiz do git de --arq)",
+                                     "repository root (default: the git root of --arq)"))
+    ap.add_argument(*opcao("--source", "--fonte"), dest="fonte", choices=["auto", "codegraph", "ast"], default="auto",
+                    help=t("de onde vêm as arestas do código (padrão: %(default)s)",
+                           "where the code edges come from (default: %(default)s)"))
+    ap.add_argument("--db", help=t("índice do CodeGraph em outro lugar", "CodeGraph index somewhere else"))
+    ap.add_argument("--baseline", default=str(BASELINE_PADRAO),
+                    help=t("JSON da linha de base (padrão: %(default)s)", "baseline JSON (default: %(default)s)"))
+    ap.add_argument("--min", default="baseline",
+                    help=t("total mínimo, ou 'baseline' (linha de base menos 10 pontos)",
+                           "minimum total, or 'baseline' (the baseline minus 10 points)"))
+    ap.add_argument(*opcao("--list-failed", "--listar-reprovados"), dest="listar_reprovados", action="store_true",
+                    help=t("lista os componentes e relações que reprovam em cada critério",
+                           "list the components and relationships that fail each criterion"))
+    ap.add_argument(*opcao("--write-baseline", "--gravar-baseline"), dest="gravar_baseline", metavar="JSON",
+                    help=t("grava o resultado como nova linha de base", "write the result as the new baseline"))
+    ap.add_argument(*opcao("--no-gate", "--sem-gate"), dest="sem_gate", action="store_true",
+                    help=t("só mede, sem comparar com a linha de base", "only measure, do not compare with the baseline"))
     a = ap.parse_args(argv)
+    usar_mapa(Path(a.arq))
     res = avaliar(Path(a.arq), Path(a.repo) if a.repo else None, a.fonte, Path(a.db) if a.db else None,
                   a.listar_reprovados)
     if a.gravar_baseline:

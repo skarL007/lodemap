@@ -686,3 +686,76 @@ def test_atualizar_sem_o_script_da_skill_segue_sem_a_etapa(projeto, monkeypatch,
     assert _rodar_atualizar(projeto, monkeypatch, grav) == 0
     assert grav.lt() == []
     assert "Pronto." in capsys.readouterr().out
+
+# Regressoes: bases validas, direcao, ordem e snapshots para o explorador.
+def test_maximo_busca_base_antes_de_versao_corrompida(tmp_path):
+    repo = tmp_path / 'r'
+    repo.mkdir()
+    git(repo, 'init', '-q')
+    mapa = escrever_mapa(repo, *modelo_v1(), [R1])
+    sha1 = commit(repo, 'mapa valido', '2026-01-11T10:00:00-03:00')
+    (mapa / 'explorador' / 'dados.js').write_text('window.ARQ = {};', encoding='utf-8')
+    commit(repo, 'mapa incompleto', '2026-01-12T10:00:00-03:00')
+    escrever_mapa(repo, *modelo_v2(), [R2, R1])
+    commit(repo, 'mapa reparado', '2026-01-13T10:00:00-03:00')
+    completo = lt().construir(mapa)['versoes']
+    assert completo[1]['dados'] is False and completo[1]['erro'] and completo[1]['snapshot'] is None
+    v = lt().construir(mapa, max_versoes=1)['versoes'][0]
+    assert v['base'] == sha1[:7] and not v['inicial']
+    assert v['componentes'] == completo[2]['componentes']
+    assert v['resumo']['componentes_adicionados'] == 1
+
+
+def test_snapshot_fluxo_ordem_hierarquica_e_resposta(historico):
+    caminho = historico.mapa / 'explorador' / 'dados.js'
+    texto = caminho.read_text(encoding='utf-8')
+    obj = lt().ler_dados(texto.encode())
+    fluxo = next(v for v in obj['visoes'] if v['chave'] == 'FlowRequest')['fluxo']
+    fluxo[0]['ordem'] = '1.1'
+    fluxo[1]['ordem'] = '1.2'
+    fluxo.append(dict(fluxo[0], ordem='2', desc='Resposta', resposta=True))
+    caminho.write_text('window.ARQ = ' + json.dumps(obj) + ';', encoding='utf-8')
+    commit(historico.repo, 'fluxo com resposta', '2026-03-03T10:00:00-03:00')
+    v = lt().construir(historico.mapa)['versoes'][-1]
+    passos = v['snapshot']['fluxos']['FlowRequest']['passos']
+    assert [p['desc'] for p in passos] == ['Chama o núcleo', 'Consulta o cache', 'Resposta']
+    assert (passos[-1]['de'], passos[-1]['para'], passos[-1]['resposta']) == ('core', 'api', True)
+    assert v['fluxos']['alterados'][0]['passos']['adicionados'][-1]['de'] == 'core'
+    assert v['snapshot']['elementos']['api']['codigo'] == 'lib/api.js'
+    assert v['snapshot']['relacoes'][0]['de'] == 'api'
+    assert all(isinstance(x, str) and not x.isdigit() for view in v['snapshot']['visoes'] for x in view['elementos'])
+
+
+def test_alterar_apenas_resposta_altera_diff(historico):
+    caminho = historico.mapa / 'explorador' / 'dados.js'
+    obj = lt().ler_dados(caminho.read_bytes())
+    fluxo = next(v for v in obj['visoes'] if v['chave'] == 'FlowRequest')['fluxo']
+    fluxo[0]['resposta'] = True
+    caminho.write_text('window.ARQ = ' + json.dumps(obj) + ';', encoding='utf-8')
+    commit(historico.repo, 'resposta', '2026-03-03T10:00:00-03:00')
+    alt = lt().construir(historico.mapa)['versoes'][-1]['fluxos']['alterados'][0]
+    assert alt['passos']['removidos'][0]['de'] == 'api'
+    assert alt['passos']['adicionados'][0]['de'] == 'core'
+
+
+@pytest.mark.parametrize('arq', [{}, {'elementos': [], 'relacoes': []},
+    {'elementos': None, 'relacoes': [], 'visoes': []},
+    {'elementos': [{}], 'relacoes': [], 'visoes': []},
+    {'elementos': [], 'relacoes': [None], 'visoes': []}])
+def test_dados_incompletos_nao_constituem_mapa(arq):
+    with pytest.raises(ValueError):
+        lt().ler_dados(('window.ARQ = ' + json.dumps(arq)).encode())
+
+
+def test_mapa_vazio_explicitamente_valido():
+    mod = lt()
+    arq = mod.ler_dados(b'window.ARQ = {"elementos": [], "relacoes": [], "visoes": []};')
+    assert mod.modelo(arq)['elementos'] == {}
+
+
+def test_resposta_em_autorrelacao_tambem_altera_o_fluxo():
+    mod = lt()
+    antes = [{"de": "api", "para": "api", "desc": "retorna", "resposta": False}]
+    depois = [dict(antes[0], resposta=True)]
+    diff = mod._passos(antes, depois)
+    assert diff["adicionados"] == depois and diff["removidos"] == antes

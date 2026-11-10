@@ -255,9 +255,9 @@ teste de cobertura e o pipeline de atualização (`draft`/`rascunho`, `render`/`
   (só os carimbos de data diferem), o gate de qualidade deu as mesmas notas, e o git hook real regenerou num commit
   de arquitetura e ficou quieto num commit só de código. As fases do modelo (agentes) rodaram só no Windows. O macOS
   tem ramos cobertos por testes que simulam a plataforma e nada além disso.
-- **O custo foi medido em poucos repositórios**, de 22 a 98 módulos. Dois são públicos (axios e chi). Só a
-  atualização do axios foi repetida (três execuções); todo outro número é de uma execução. Monorepos e repositórios
-  muito grandes não foram medidos.
+- **Custo:** a campanha mediu 18 gerações em três repositórios públicos, com três rodadas por modelo e repositório.
+  Valores em dinheiro são equivalentes de API, não fatura, e não medem modelos novos. Monorepos e repositórios
+  muito grandes não foram medidos. Veja [a campanha](experimentos/campanha-custo/RESULTADOS.md).
 - **Descrições escritas pela rota enxuta ainda podem estar erradas.**
   - **Antes da conferência de veracidade:** um juiz Sonnet lendo o código achou 15 frases falsas em 108 (13,9%) no
     chi e no axios.
@@ -268,7 +268,7 @@ teste de cobertura e o pipeline de atualização (`draft`/`rascunho`, `render`/`
   - Os detalhes estão em [`experimentos/descricoes/RESULTADOS.md`](experimentos/descricoes/RESULTADOS.md).
 - **A impressão digital não pega comportamento que muda sem mudar a superfície**: 3 de 178 arquivos alterados nos
   dois repositórios auditados. Veja [references/digital-semantica.md](references/digital-semantica.md).
-- O gate de qualidade compara com o `references/baseline-qualidade.json`, o primeiro mapa que a skill produziu. No
+- O gate de qualidade compara com o `references/baseline-qualidade.json`, o mapa público de exemplo do axios. No
   seu projeto, leia a nota absoluta e as notas por critério, ou grave seu próprio baseline com `--gravar-baseline`.
 - O consentimento é um registro que a skill e seus agentes leem e seguem. Nenhum hook o impõe, e o teto mensal é
   conferido por execução, não somado entre execuções.

@@ -270,7 +270,7 @@ do dono.
 
 O modelador roda em Sonnet; a qualidade não pode depender do modelo. O `scripts/qualidade.py` mede o `workspace.json`
 com uma rubrica objetiva de 14 critérios (sem LLM) e compara com a linha de base
-(`references/baseline-qualidade.json`, o primeiro mapa que a skill gerou).
+(`references/baseline-qualidade.json`, medido no mapa público de exemplo do axios).
 
 1. Depois do `lodemap-modelador`, exporte (`python scripts/atualizar.py`) e rode
    `python ~/.claude/skills/lodemap/scripts/qualidade.py --arq <arq> --listar-reprovados`
@@ -286,6 +286,14 @@ do valor dela (comparados só os critérios disponíveis nos dois lados; "n/d" f
 `observabilidade` conta no total, mas não tem piso próprio: uma biblioteca sem log tira 0 com o modelo certo).
 Critérios, pesos e as notas da linha de base: `references/gate-qualidade.md`. Recalibrar a linha de base só com o OK
 do dono (`--gravar-baseline`).
+
+## Limites das medições
+
+O gate mede propriedades estruturais, não garante que descrições e relações sejam verdadeiras. A cobertura depende
+dos globs e das exceções escolhidas. A campanha de custo tem três rodadas por célula, quatro registros internos
+ausentes e preços equivalentes de API, não fatura; seus resultados históricos não medem modelos novos. Ela não prova
+ganho de entendimento humano nem economia de tokens com o mapa. Fontes e limites: `references/benchmark-e-custo.md`
+e `experimentos/campanha-custo/RESULTADOS.md`.
 
 ## Quando atualizar
 

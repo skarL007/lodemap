@@ -31,9 +31,38 @@ linguagem que ela não lê), valem as regras antigas. Com a mudança o mapa do c
 94,5 para 94,6; a nota de um mapa antigo pode subir sem o mapa ter mudado, e por isso a comparação entre datas
 pede a mesma versão da rubrica.
 
-Notas da linha de base (`baseline-qualidade.json`: o primeiro mapa que a skill gerou, 188 componentes; total 82,2 com 14 critérios, CodeGraph como fonte): descrição 79,8; código 100;
-observabilidade 14,9; relações por componente 98,2; órfãos 100; qualificadas 100; status 100; visão por container 100;
-fluxos 100; passos 100; agrupamento 100; cobertura 100; recall de relações 27,1; precisão de relações 44,6.
-Os valores baixos da linha de base (observabilidade, recall, precisão) viram pisos baixos de propósito: o gate cobra o que
-aquele mapa de fato entregou, não um ideal. No seu projeto, leia a nota absoluta e as notas por critério; para usar
-o seu próprio mapa como régua, grave outra linha de base com `--gravar-baseline <json>` e passe `--baseline <json>`.
+A linha de base é o exemplo público do axios v1.21.1 em `exemplos/axios`, com 72 componentes. A medição usa
+o mapa da demo em `34d46331bae4a0c5018448f75389cb223002f320`, cujas fontes estão no exemplo, e `--fonte ast`:
+total **94,6**, precisão de relações **94,1**, observabilidade **0** e os demais critérios **100**. Os valores e
+os detalhes estão em `baseline-qualidade.json`. O mínimo total comparável é 84,6; cada critério disponível, exceto
+observabilidade, exige 70% da referência. O gate e seus parâmetros não foram relaxados.
+
+Para reproduzir, obtenha o axios na tag v1.21.1, aplique o exemplo e exporte o mapa seguindo
+`tests/test_exemplo_axios.py`; execute `python scripts/qualidade.py --arq <pasta-structurizr> --repo <axios>
+--fonte ast --gravar-baseline <arquivo> --sem-gate`. É necessário o Structurizr CLI para gerar `workspace.json`.
+O mapa e o código devem corresponder à mesma versão. A demo e os mapas da campanha são cópias locais; os JSONs
+da campanha são os registros dos resultados, não uma distribuição dos mapas gerados.
+
+Na mesma rubrica e fonte, com a linha de base acima, os resultados foram:
+
+| Mapa | Total | Gate |
+|---|---:|---|
+| Demo axios v1.21.1 | 94,6 | passou |
+| Demo chi v5.5.0 | 94,3 | passou |
+| Campanha axios Sonnet 1–3 | 94,9; 95,0; 94,9 | 3/3 passaram |
+| Campanha chi Sonnet 1–3 | 94,5; 94,7; 95,8 | 3/3 passaram |
+| Campanha click Sonnet 1–3 | 95,0; 95,8; 96,2 | 3/3 passaram |
+| Campanha axios Haiku 1–3 | 94,5; 95,0; 94,9 | 3/3 passaram |
+| Campanha chi Haiku 1–3 | 94,0; 94,6; 94,7 | 3/3 passaram |
+| Campanha click Haiku 1–3 | 95,0; 94,2; 94,2 | 3/3 passaram |
+
+Para cada cópia, o comando foi `python scripts/qualidade.py --arq <repo>/docs/architecture/structurizr
+--repo <repo> --fonte ast --baseline references/baseline-qualidade.json`. As 18 cópias são saídas da campanha
+descrita em `../experimentos/campanha-custo/RESULTADOS.md`, que fixa os commits dos repositórios públicos; a
+regeração com modelo pode produzir mapas e notas diferentes. O commit da demo citado acima é local, não é uma
+fonte publicada; o exemplo versionado neste repositório permite reconstruir a medição sem depender dele. A execução integral de
+`tests/test_exemplo_axios.py` gerou uma baseline idêntica, incluindo notas e detalhes.
+
+A comparação com o próprio projeto pode
+revelar pisos inadequados à sua arquitetura. Leia as notas por critério ou grave uma régua própria com
+`--gravar-baseline <json>` e passe `--baseline <json>`. O gate mede estrutura, não veracidade semântica.

@@ -4,6 +4,8 @@ Todas as mudanças relevantes do Lodemap. As datas são de quando a mudança ent
 
 ## Unreleased
 
+- **Linha de base pública:** gate calibrado no exemplo do axios; método e resultados em `references/gate-qualidade.md`.
+- **Campanha de custo:** 18 rodadas em três repositórios públicos, com limites e fontes em `experimentos/campanha-custo/RESULTADOS.md`.
 - **Lançamento em português:** landing, explorador, leitor, mapa de exemplo e README em português; o inglês fica
   desligado por padrão.
 - **Conferência de veracidade das descrições:** o `descrever.py` agora confere cada frase antes de escrevê-la.
@@ -153,8 +155,7 @@ Todas as mudanças relevantes do Lodemap. As datas são de quando a mudança ent
   checagem só para leitura de Python, git, `claude`, Structurizr CLI, Graphviz, Java, Node, da skill e dos agentes
   instalados e, com `--repo`, do mapa e do consentimento desse repositório. Sai com 1 só quando falta algo
   obrigatório.
-- **Baseline do gate de qualidade:** `references/baseline-qualidade.json`, descrito pelo que é (o primeiro mapa que
-  a skill produziu), com a chave de relatório `totalBaselineComparavel`. Grave o seu com
+- **Baseline do gate de qualidade:** `references/baseline-qualidade.json`, com a chave de relatório `totalBaselineComparavel`. Grave o seu com
   `qualidade.py --gravar-baseline`.
 - **Docs:** o `SKILL.md` caiu de 49 KB para 26 KB; o detalhe foi para `references/` (scripts, gate de qualidade,
   arestas de código, arquivo de estado, leitor e ADRs, servir, armadilhas) e só é lido quando um passo precisa. README

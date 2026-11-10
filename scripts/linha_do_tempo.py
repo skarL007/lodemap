@@ -115,6 +115,14 @@ def ler_dados(blob: bytes) -> dict:
                            f"invalid JSON in dados.js ({e.msg}, line {e.lineno})")) from e
     if not isinstance(obj, dict):
         raise ValueError(t("o dados.js não traz um objeto", "dados.js does not hold an object"))
+    if any(not isinstance(obj.get(k), list) for k in ("elementos", "relacoes", "visoes")):
+        raise ValueError(t("dados.js exige listas de elementos, relações e visões", "dados.js requires element, relationship and view lists"))
+    if (any(not isinstance(e, dict) or any(e.get(k) is None for k in ("id", "nome", "tipo"))
+            for e in obj["elementos"])
+            or any(not isinstance(r, dict) or any(r.get(k) is None for k in ("id", "de", "para"))
+                   for r in obj["relacoes"])
+            or any(not isinstance(v, dict) for v in obj["visoes"])):
+        raise ValueError(t("dados.js contém registros incompletos", "dados.js contains incomplete records"))
     return obj
 
 
@@ -213,20 +221,28 @@ def modelo(arq: dict) -> dict:
         def ordem(par):
             i, p = par
             try:
-                return (int(str(p.get("ordem"))), i)
+                return (0, tuple(int(n) for n in str(p.get("ordem")).split(".")), i)
             except ValueError:
-                return (10 ** 9, i)
+                return (1, (), i)
 
         passos = []
         for n, (_, p) in enumerate(sorted(enumerate(brutos), key=ordem), 1):
             r = por_rel.get(str(p.get("rel")))
-            passos.append({"ordem": n, "de": r["de"] if r else None, "para": r["para"] if r else None,
-                           "de_nome": r["de_nome"] if r else None, "para_nome": r["para_nome"] if r else None,
-                           "desc": _vazio(p.get("desc"))})
+            resposta = bool(p.get("resposta"))
+            de, para = ("para", "de") if resposta else ("de", "para")
+            passos.append({"ordem": n, "de": r[de] if r else None, "para": r[para] if r else None,
+                           "de_nome": r[de + "_nome"] if r else None, "para_nome": r[para + "_nome"] if r else None,
+                           "desc": _vazio(p.get("desc")), "resposta": resposta})
         fluxos[str(v.get("chave"))] = {"chave": str(v.get("chave")), "titulo": _vazio(v.get("titulo")),
                                        "desc": _vazio(v.get("desc")), "passos": passos}
-    return {"elementos": elementos, "relacoes": relacoes, "fluxos": fluxos, "idioma": arq.get("idioma"),
-            "nome": arq.get("nome")}
+    visoes = []
+    for v in arq.get("visoes") or []:
+        visoes.append({"chave": str(v.get("chave")), "tipo": v.get("tipo"), "titulo": _vazio(v.get("titulo")),
+                       "desc": _vazio(v.get("desc")),
+                       "elementos": [chaves[str(i)] for i in (v.get("elementos") or []) if str(i) in chaves],
+                       "relacoes": [por_rel[str(i)] for i in (v.get("relacoes") or []) if str(i) in por_rel]})
+    return {"elementos": elementos, "relacoes": relacoes, "fluxos": fluxos, "visoes": visoes,
+            "idioma": arq.get("idioma"), "nome": arq.get("nome")}
 
 
 # ------------------------------------------------------------------------------------------------------------ diff
@@ -245,7 +261,7 @@ def _so_no_primeiro(a: list, b: list, chave) -> list:
 
 
 def _passo(p):
-    return (p["de"], p["para"], p["desc"])
+    return (p["de"], p["para"], p["desc"], p.get("resposta", False))
 
 
 def _passos(ant: list, novo: list) -> dict:
@@ -359,8 +375,6 @@ def construir(mapa, max_versoes: int | None = None, rev: str | None = None, omit
     topo, prefixo = Path(topo_txt.strip()), prefixo.strip()
     commits = _commits(mapa, rev)
     total_commits = len(commits)
-    if max_versoes and not omitir_sem_mudanca:
-        commits = commits[-(max_versoes + 1):]  # +1: o anterior serve de base do diff da mais antiga mantida
 
     versoes: list[dict] = []
     ant_modelo: dict | None = None
@@ -416,7 +430,7 @@ def _versao(blob, reg, ant_registro, ant_modelo, ant_sha, base: dict):
     novas = linhas_novas(reg, ant_registro)
     v = dict(base)
     v.update({"dados": False, "erro": None, "inicial": False, "base": None, "idioma": None, "mudou_idioma": None,
-              **_sem_diff(), "resumo": None,
+              **_sem_diff(), "resumo": None, "snapshot": None,
               "registro": [{"data": d, "mudou": m, "motivo": mo} for d, m, mo in novas]})
     if blob is None:
         return v, ant_modelo, ant_sha
@@ -427,7 +441,8 @@ def _versao(blob, reg, ant_registro, ant_modelo, ant_sha, base: dict):
         return v, ant_modelo, ant_sha
     v.update(diferenca(ant_modelo, mod))
     v.update({"dados": True, "inicial": ant_modelo is None, "base": ant_sha, "idioma": mod["idioma"],
-              "resumo": contagem(v), "_nome": mod["nome"]})
+              "resumo": contagem(v), "_nome": mod["nome"],
+              "snapshot": {k: mod[k] for k in ("elementos", "relacoes", "fluxos", "visoes")}})
     if ant_modelo is not None and ant_modelo["idioma"] != mod["idioma"]:
         v["mudou_idioma"] = {"de": ant_modelo["idioma"], "para": mod["idioma"]}
     return v, mod, base["sha"]

@@ -22,8 +22,7 @@ repositórios públicos e dois modelos. Todos os números abaixo saem de `result
 - **O custo é preço equivalente de API, não fatura.** Todos os `modelUsage` trazem `costBasis: list` (preço de lista).
   A campanha rodou na assinatura, que não cobra por chamada; os valores em US$ servem para comparar rodadas entre si.
 - **Qualidade:** `qualidade.py --sem-gate` (nota total e nº de componentes) e o teste de cobertura entregue no projeto
-  (`test_arquitetura_cobertura.py`). Nas 18 rodadas o total ficou entre 94,0 e 96,2 (linha de base citada pelas
-  sessões: 82,2).
+  (`test_arquitetura_cobertura.py`). Nas 18 rodadas o total ficou entre 94,0 e 96,2 (medição histórica, anterior à linha de base pública atual).
 - **Remedição de cobertura:** o processo da campanha carregou um `medir()` sem `--noconftest`, e o `conftest.py` do
   click quebrava o teste (`No module named 'click'`). `remedir.py` refez a medição das 18 rodadas com `--noconftest`
   e guardou o valor antigo em `cobertura_original`. Mudaram de falha para ok as 6 rodadas do click; as outras já
@@ -121,7 +120,8 @@ prompt manda seguir a skill, e a skill diz para rodar o `descrever.py` antes dos
   `chi x sonnet` e `click x sonnet` misturam rodadas com e sem registro. Compare pela coluna "So sessao".
 - **Preço de lista**, não fatura; os preços de lista mudam e não refletem a assinatura.
 - **Tempo** medido com 3 rodadas em paralelo na mesma máquina e dependente de carga e limites da assinatura; não é
-  latência isolada.- **Cobertura:** o resultado vem da remedição com `--noconftest`; o valor da campanha original (falha nas 6 rodadas do
+  latência isolada.
+- **Cobertura:** o resultado vem da remedição com `--noconftest`; o valor da campanha original (falha nas 6 rodadas do
   click) fica em `cobertura_original` nos JSON. O teste passando mede o teste que a própria rodada gerou, não a
   fidelidade do mapa.
 - **Gate** mede forma (descrições, caminhos existentes, relações, órfãos, observabilidade), não se o mapa está certo.

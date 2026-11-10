@@ -287,12 +287,48 @@ def comando(modelo: str, esforco: str, sistema: Path, sch: dict) -> list[str]:
                    "--system-prompt-file", str(sistema), "--json-schema", json.dumps(sch, ensure_ascii=False)]
 
 
-def chamar(cmd: list[str], texto: str, cwd: Path, limite_s: int = 900) -> tuple[list[dict], dict]:
-    t0 = time.time()
-    r = subprocess.run(cmd, input=texto, capture_output=True, text=True, encoding="utf-8", cwd=str(cwd), timeout=limite_s)
-    if r.returncode != 0:
-        raise RuntimeError(f"claude -p saiu com {r.returncode}: {(r.stderr or r.stdout)[-300:]}")
-    dados = json.loads(r.stdout)
+def _encerrar(processo: subprocess.Popen) -> str:
+    """Encerra a árvore no Windows e limita a espera da limpeza a 5 + 5 segundos."""
+    falha = ""
+    if os.name == "nt":
+        try:
+            # O PID é exclusivamente o processo criado por esta chamada, nunca um nome de executável.
+            subprocess.run(["taskkill", "/PID", str(processo.pid), "/T", "/F"],
+                           stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                           timeout=5, check=True)
+        except (OSError, subprocess.SubprocessError) as e:
+            falha = f"não foi possível confirmar o encerramento dos descendentes ({type(e).__name__})"
+    try:
+        if processo.poll() is None:
+            processo.kill()
+        processo.wait(timeout=5)
+    except (OSError, subprocess.TimeoutExpired) as e:
+        falha = f"não foi possível confirmar o encerramento do processo ({type(e).__name__})"
+    return falha
+
+
+def chamar(cmd: list[str], texto: str, cwd: Path, limite_s: float = 900) -> tuple[list[dict], dict]:
+    """Limite por chamada, não por execução completa; a limpeza pode levar até mais 10 segundos."""
+    t0 = time.monotonic()
+    # No Windows, communicate escreve stdin de forma bloqueante e, após o timeout de run, espera
+    # indefinidamente pelo EOF dos pipes herdados. Arquivos evitam ambas as esperas fora do limite.
+    with tempfile.TemporaryFile() as entrada, tempfile.TemporaryFile() as saida, tempfile.TemporaryFile() as erro:
+        entrada.write(texto.encode("utf-8"))
+        entrada.seek(0)
+        processo = subprocess.Popen(cmd, stdin=entrada, stdout=saida, stderr=erro, cwd=str(cwd))
+        try:
+            processo.wait(timeout=limite_s)
+        except BaseException as e:
+            falha = _encerrar(processo)
+            if falha and isinstance(e, subprocess.TimeoutExpired):
+                raise RuntimeError(f"claude -p excedeu {limite_s:g} s; {falha}") from e
+            raise
+        saida.seek(0)
+        erro.seek(0)
+        stdout, stderr = saida.read().decode("utf-8"), erro.read().decode("utf-8")
+    if processo.returncode != 0:
+        raise RuntimeError(f"claude -p saiu com {processo.returncode}: {(stderr or stdout)[-300:]}")
+    dados = json.loads(stdout)
     if dados.get("is_error"):
         raise RuntimeError(f"claude -p devolveu erro: {str(dados.get('result'))[:300]}")
     est = dados.get("structured_output")
@@ -302,8 +338,15 @@ def chamar(cmd: list[str], texto: str, cwd: Path, limite_s: int = 900) -> tuple[
     u = dados.get("usage") or {}
     uso = {"input": u.get("input_tokens", 0), "cache_criado": u.get("cache_creation_input_tokens", 0),
            "cache_lido": u.get("cache_read_input_tokens", 0), "output": u.get("output_tokens", 0),
-           "turnos": dados.get("num_turns"), "seg": round(time.time() - t0, 1)}
+           "turnos": dados.get("num_turns"), "seg": round(time.monotonic() - t0, 1)}
     return list(est.get("itens") or []), uso
+
+
+def _erro_cli(erro: Exception) -> str:
+    # TimeoutExpired inclui o comando inteiro antes do prazo; o schema o fazia sumir no corte de 300 caracteres.
+    if isinstance(erro, subprocess.TimeoutExpired):
+        return f"claude -p excedeu o limite de {erro.timeout:g} s"
+    return str(erro)[:300]
 
 
 # Revisão conservadora: o módulo já tinha nome, descrição e área, e a superfície pública dele mudou. Medido no axios
@@ -404,10 +447,12 @@ def conferir(itens: list[tuple[int, str, str, str]], idioma: str, modelo: str, e
                 f"{'Frase' if idioma == 'pt' else 'Sentence'}: {frase}\n```\n"
                 + (cod[:TETO_CODIGO] + f"\n{cortado}" if len(cod) > TETO_CODIGO else cod) + "\n```"
                 for i, m, frase, cod in lote)
+            inicio = time.monotonic()
             try:
                 res, uso = chamar(cmd, pedido, Path(tmp))
             except (RuntimeError, ValueError, json.JSONDecodeError, subprocess.TimeoutExpired, OSError) as e:
-                chamadas.append({"itens": len(lote), "erro": str(e)[:300], "conferir": True})
+                chamadas.append({"itens": len(lote), "erro": _erro_cli(e), "conferir": True,
+                                 "seg": round(time.monotonic() - inicio, 1)})
                 continue
             chamadas.append({"itens": len(lote), "conferir": True, **uso})
             idx = {i for i, *_ in lote}
@@ -462,6 +507,7 @@ def descrever(arq: Path, repo: Path, todos: bool = False, lote: int = 76, modelo
         rel["pedido_car"] = len(_pedido(idioma, [(i, f, "") for i, f in enumerate(fichas)], anteriores))
         return rel
     saidas: dict[int, dict] = {}
+    timeouts: dict[int, str] = {}
     with tempfile.TemporaryDirectory(prefix="lodemap-descrever-") as tmp:
         sp = Path(tmp) / "sistema.txt"
         sp.write_text(sistema, encoding="utf-8")
@@ -470,11 +516,19 @@ def descrever(arq: Path, repo: Path, todos: bool = False, lote: int = 76, modelo
         def rodada(idx: list[int], erros: dict[int, str]) -> None:
             for k in range(0, len(idx), lote):
                 bloco = idx[k:k + lote]
+                inicio = time.monotonic()
                 try:
                     itens, uso = chamar(cmd, _pedido(idioma, [(i, fichas[i], erros.get(i, "")) for i in bloco],
                                                      anteriores), Path(tmp))
                 except (RuntimeError, ValueError, json.JSONDecodeError, subprocess.TimeoutExpired, OSError) as e:
-                    rel["chamadas"].append({"itens": len(bloco), "erro": str(e)[:300]})
+                    motivo = _erro_cli(e)
+                    # A falha de limpeza preserva TimeoutExpired como causa do RuntimeError.
+                    if isinstance(e, subprocess.TimeoutExpired) or (
+                        isinstance(e, RuntimeError) and isinstance(e.__cause__, subprocess.TimeoutExpired)
+                    ):
+                        timeouts.update({i: motivo for i in bloco})
+                    rel["chamadas"].append({"itens": len(bloco), "erro": motivo,
+                                            "seg": round(time.monotonic() - inicio, 1)})
                     continue
                 rel["chamadas"].append({"itens": len(bloco), **uso})
                 for o in itens:
@@ -484,6 +538,9 @@ def descrever(arq: Path, repo: Path, todos: bool = False, lote: int = 76, modelo
         def reprovados() -> dict[int, str]:
             erros, vistas = {}, {}
             for i, c in enumerate(lista):
+                if i in timeouts:
+                    erros[i] = timeouts[i]
+                    continue
                 o = saidas.get(i)
                 if not o:
                     erros[i] = "item ausente"
@@ -499,9 +556,10 @@ def descrever(arq: Path, repo: Path, todos: bool = False, lote: int = 76, modelo
 
         rodada(list(range(len(lista))), {})
         erros = reprovados()
-        if erros and any("erro" not in ch for ch in rel["chamadas"]):
-            rel["reenviados"] = len(erros)
-            rodada(sorted(erros), erros)
+        reenviar = {i: erro for i, erro in erros.items() if i not in timeouts}
+        if reenviar and any("erro" not in ch for ch in rel["chamadas"]):
+            rel["reenviados"] = len(reenviar)
+            rodada(sorted(reenviar), reenviar)
             erros = reprovados()
     if conferir_com:
         ok_idx = [i for i in range(len(lista)) if i not in erros and codigos[i]]

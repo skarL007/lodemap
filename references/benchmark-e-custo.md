@@ -1,5 +1,17 @@
 # Benchmark e custo medido da skill lodemap
 
+
+## Campanha pública de geração (10/11/2026)
+
+Foram 18 gerações: axios (`335e2f8`), chi (`3a33ba5`) e click (`1d038f2`), três rodadas por repositório e
+pilha, com Lodemap `e0e4d2b`. A média de custo equivalente de API da sessão foi US$ 0,2622 para Haiku e
+US$ 1,0116 para Sonnet (n=9 cada); faixas US$ 0,0562–0,6926 e US$ 0,6346–1,7885, respectivamente. São preços
+de lista, não fatura; não são medições dos modelos atuais ou futuros. Gate histórico 94,0–96,2 e cobertura
+aprovada após remedição com `--noconftest`. Quatro rodadas não registraram chamadas internas; compare somente a
+sessão entre todas. Três rodadas por célula, concorrência e três repositórios limitam a generalização; o gate
+mede forma e não valida a verdade das descrições. Método, custos internos, cada rodada e JSONs de origem em
+[`experimentos/campanha-custo/RESULTADOS.md`](../experimentos/campanha-custo/RESULTADOS.md).
+
 Medição de 02/11/2026, na primeira geração completa, feita num projeto privado, chamado aqui de projeto A (Python,
 Electron e web). Os números vêm do registro do agente (`usage` de cada turno) e dos testes e verificadores da
 própria skill.
@@ -149,24 +161,11 @@ O que foi gerado:
 | Métricas curadas com origem em commit | 4 (nós, arestas e arquivos de um grafo, e um custo de API), conferidas no teste |
 | Modo incremental | commit com um módulo novo: `semComponente = [<pasta>/novo_modulo.py]` e aviso no `atualizar.ps1`; o componente afetado por um arquivo alterado saiu certo |
 
-Nota de qualidade (`qualidade.py`, fonte `ast`), contra o baseline do projeto A (82,2; mínimo para passar 72,2):
-
-| Critério | Projeto B | Projeto A |
-|---|---|---|
-| Descrição (40+ caracteres, sem repetir o nome) | 100 | 79,8 |
-| Código (caminho existe) | 100 | 100 |
-| Cobertura | 100 | 100 |
-| Recall de relações (todo `import` do código) | 100 (67 de 67 pares) | 27,1 |
-| Relações com verbo e tecnologia | 100 | 100 |
-| Relações por componente | 100 (3,68) | 98,2 |
-| Órfãos, status, visão por container, fluxos, passos, agrupamento | 100 | 100 |
-| Precisão das relações (aresta real no código) | 93,1 (67 de 72) | 44,6 |
-| Observabilidade | 12,0 (6 de 50) | 14,9 |
-| **Total** | **95,2** | **82,2** |
-
-Leitura honesta: o total passa o gate com folga, mas o recall e a precisão do projeto A vêm do CodeGraph e os do projeto B do
-`ast`; as duas colunas não são comparáveis nesses dois critérios. As 5 relações que o `ast` não confirma são reais
-(`window.Fmt` no JavaScript, `sys.path.insert` com import tardio, fetch entre a página e o servidor).
+Nota histórica do projeto B (`qualidade.py`, fonte `ast`): total 95,2; descrição, código, cobertura, recall,
+relações qualificadas, densidade, órfãos, status, visões, fluxos e agrupamento 100; precisão de relações 93,1
+(67 de 72) e observabilidade 12,0 (6 de 50). As cinco relações que o `ast` não confirma são reais
+(`window.Fmt`, `sys.path.insert` com import tardio e fetch entre página e servidor). A rubrica e a linha de base
+atuais estão em `gate-qualidade.md`; a nota histórica não foi recalculada com elas.
 
 ### Problemas que a skill teve na prova (e o que foi corrigido)
 
@@ -222,7 +221,7 @@ Scripts (`novo_mapa`, `inventario`, `esqueleto rascunho`): 12,8 s, 0 token.
 Onde ficou o custo agora: escrita de cache 53%, saída 34%, leitura 13%. O próximo degrau é a escrita: com o TTL
 de 5 minutos ela custaria 1,25× a entrada em vez de 2× (US$ 0,56 a menos), mas o TTL é do Claude Code, não da skill.
 
-**Qualidade.** Gate 96,5 contra o mínimo de 72,2: descrição, código, cobertura, recall, status, visões, fluxos (5) e
+**Qualidade.** Gate histórico 96,5: descrição, código, cobertura, recall, status, visões, fluxos (5) e
 agrupamento em 100; observabilidade **77,8** (era 12,0); precisão das relações 89,0 (8 de 73 sem aresta no `ast`, todas
 subprocess, `window.X` ou `sys.path`); **órfãos 72,2** (15 de 54 componentes sem relação, era 100): o ponto fraco desta
 rodada. 54 componentes (9 módulos fundidos), 80 relações entre componentes e 29 com externos, 20 visões, 7 métricas
@@ -335,7 +334,7 @@ deduplicado por `message.id`; toda escrita de cache foi de 1 hora. Preços de `c
 
 (Entrada sem cache: 100 tokens.) A chamada de Haiku somou 54.116 tokens; a divisão por tipo não foi guardada, então o
 custo dela aparece como teto: todos os tokens cobrados como saída dariam US$ 0,027. Total do mapa: no máximo US$ 1,74.
-Gate de qualidade: 94,5 (linha de base 82,2). Ficam de fora o orquestrador e a conferência final (scripts e navegador
+Gate histórico de qualidade: 94,5. Ficam de fora o orquestrador e a conferência final (scripts e navegador
 sem cabeça, sem modelo).
 
 **Atualização para a v1.21.1** (99 commits no upstream; 27 arquivos alterados em `lib/`, 3 novos). Depois do merge, o

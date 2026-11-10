@@ -6,8 +6,7 @@ Uso:
                       [--gravar-baseline <json>] [--sem-gate]
 
 Lê o workspace.json (.structurizr/export/ ou ao lado do DSL) e dá uma nota de 0 a 100 por critério e uma total
-ponderada. Sem LLM. O gate compara com references/baseline-qualidade.json (a linha de base: o primeiro mapa que a
-skill gerou): o total pode ficar no máximo 10 pontos abaixo dela e nenhum critério abaixo de 70% do valor dela (critério "n/d" sai da conta nos dois
+ponderada. Sem LLM. O gate compara com references/baseline-qualidade.json (a linha de base: o mapa público de exemplo do axios): o total pode ficar no máximo 10 pontos abaixo dela e nenhum critério abaixo de 70% do valor dela (critério "n/d" sai da conta nos dois
 lados). Sai com 1 se reprovar. Com --listar-reprovados, devolve os componentes (e relações) que reprovam em
 cada critério, para o lodemap-modelador corrigir só eles. Só usa a biblioteca padrão.
 

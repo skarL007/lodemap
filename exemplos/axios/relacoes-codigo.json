@@ -1,0 +1,2669 @@
+{
+ "fonte": "ast",
+ "geradoEm": "2026-11-09T22:41:06-03:00",
+ "aviso": "Sugestões, não verdade: o modelador confirma e dá o verbo. Confiança: alta = calls com 3 arestas ou mais; media = imports (ou 2 arestas; no modo ast, qualquer import); baixa = 1 aresta.",
+ "arquivosAmbiguos": 0,
+ "arquivosSemComponente": 233,
+ "pares": [
+  {
+   "de": "adaptersAdapters",
+   "para": "libUtils",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Iterates the adapter registry and checks adapter types with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "adaptersAdapters",
+   "para": "adaptersHttp",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Registers it as the Node.js http adapter",
+    "tecnologia": "Adapter registry"
+   }
+  },
+  {
+   "de": "adaptersAdapters",
+   "para": "adaptersXhr",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Registers it as the browser xhr adapter",
+    "tecnologia": "Adapter registry"
+   }
+  },
+  {
+   "de": "adaptersAdapters",
+   "para": "adaptersFetch",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Registers the lazy fetch getter as the fetch adapter",
+    "tecnologia": "Adapter registry"
+   }
+  },
+  {
+   "de": "adaptersAdapters",
+   "para": "coreAxiosError",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Throws unknown or unsupported adapter errors with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "adaptersFetch",
+   "para": "platformIndex",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Reads runtime capability flags from",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "adaptersFetch",
+   "para": "libUtils",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Classifies body types and merges config values with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "adaptersFetch",
+   "para": "coreAxiosError",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Raises network, timeout and bad-response errors with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "adaptersFetch",
+   "para": "helpersComposeSignals",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Merges the abort signal, cancel token and timeout through",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "adaptersFetch",
+   "para": "helpersTrackStream",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Counts streamed request and response bytes through",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "adaptersFetch",
+   "para": "coreCreateMultipartBody",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Builds the multipart Blob for size-limited or streamed uploads with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "adaptersFetch",
+   "para": "coreAxiosHeaders",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Builds request headers and wraps response headers with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "adaptersFetch",
+   "para": "helpersProgressEventReducer",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Emits upload and download progress through",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "adaptersFetch",
+   "para": "helpersResolveConfig",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Resolves URL, headers, auth and body policy with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "adaptersFetch",
+   "para": "coreSettle",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Settles the promise from the response status through",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "adaptersFetch",
+   "para": "helpersEstimateDataURLDecodedBytes",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Checks the size of data: URLs before decoding with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "adaptersFetch",
+   "para": "envData",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Reads the package version for the User-Agent from",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "adaptersFetch",
+   "para": "helpersSanitizeHeaderValue",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Converts header values to byte strings with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "adaptersHttp",
+   "para": "libUtils",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Classifies body types, stream kinds and numeric limits with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "adaptersHttp",
+   "para": "coreSettle",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Settles the promise from the response status through",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "adaptersHttp",
+   "para": "coreBuildFullPath",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Joins baseURL and url into the request URL with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "adaptersHttp",
+   "para": "helpersBuildURL",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Appends serialized params to the URL with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "adaptersHttp",
+   "para": "envData",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Reads the package version for the User-Agent and boundary tag from",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "adaptersHttp",
+   "para": "defaultsTransitional",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Reads transitional behavior flags from",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "adaptersHttp",
+   "para": "coreAxiosError",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Raises network, timeout, size and redirect errors with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "adaptersHttp",
+   "para": "cancelCanceledError",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Aborts the request with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "adaptersHttp",
+   "para": "platformIndex",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Reads runtime capability flags from",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "adaptersHttp",
+   "para": "helpersFromDataURI",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Decodes data: URLs without a network call with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "adaptersHttp",
+   "para": "coreAxiosHeaders",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Builds request headers and wraps response headers with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "adaptersHttp",
+   "para": "coreSetFormDataHeaders",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Applies the multipart header policy through",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "adaptersHttp",
+   "para": "helpersAxiosTransformStream",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Throttles upload and download streams with",
+    "tecnologia": "Node.js streams"
+   }
+  },
+  {
+   "de": "adaptersHttp",
+   "para": "helpersFormDataToStream",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Streams multipart FormData bodies with",
+    "tecnologia": "Node.js streams"
+   }
+  },
+  {
+   "de": "adaptersHttp",
+   "para": "helpersReadBlob",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Reads Blob bodies as chunks with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "adaptersHttp",
+   "para": "helpersZlibHeaderTransformStream",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Repairs compressed response streams with",
+    "tecnologia": "Node.js streams"
+   }
+  },
+  {
+   "de": "adaptersHttp",
+   "para": "helpersHttp2Sessions",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Reuses pooled HTTP/2 sessions from",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "adaptersHttp",
+   "para": "helpersCallbackify",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Wraps the async DNS lookup as a callback with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "adaptersHttp",
+   "para": "helpersShouldBypassProxy",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Matches NO_PROXY rules with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "adaptersHttp",
+   "para": "helpersBind",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Rebinds the pooled agent hooks of the direct connection with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "adaptersHttp",
+   "para": "helpersSanitizeHeaderValue",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Converts header values to byte strings with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "adaptersHttp",
+   "para": "helpersProgressEventReducer",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Emits upload and download progress through",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "adaptersHttp",
+   "para": "helpersEstimateDataURLDecodedBytes",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Caps buffer allocation for data: URLs with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "adaptersXhr",
+   "para": "libUtils",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Iterates headers with forEach and checks for undefined with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "adaptersXhr",
+   "para": "coreSettle",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Settles the promise from the response status through",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "adaptersXhr",
+   "para": "defaultsTransitional",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Reads timeout-clarification flags from",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "adaptersXhr",
+   "para": "coreAxiosError",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Raises network, timeout and abort errors with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "adaptersXhr",
+   "para": "cancelCanceledError",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Aborts the request with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "adaptersXhr",
+   "para": "helpersNormalizeURLForProtocolCheck",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Normalizes the URL before the scheme check with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "adaptersXhr",
+   "para": "helpersParseProtocol",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Rejects unsupported URL schemes with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "adaptersXhr",
+   "para": "platformIndex",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Checks the browser environment through",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "adaptersXhr",
+   "para": "coreAxiosHeaders",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Wraps request and response headers with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "adaptersXhr",
+   "para": "helpersCookies",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Reads the XSRF cookie asynchronously through",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "adaptersXhr",
+   "para": "helpersProgressEventReducer",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Emits upload and download progress through",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "adaptersXhr",
+   "para": "helpersResolveConfig",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Resolves URL, headers, auth and body policy with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "adaptersXhr",
+   "para": "helpersSanitizeHeaderValue",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Converts header values to byte strings with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "libAxios",
+   "para": "libUtils",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Copies prototype members onto the instance and detects HTML forms with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "libAxios",
+   "para": "helpersBind",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Binds the request method to the instance with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "libAxios",
+   "para": "coreAxios",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Instantiates the client and binds request on it with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "libAxios",
+   "para": "coreMergeConfig",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Merges instance config in axios.create with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "libAxios",
+   "para": "defaultsIndex",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Seeds the default instance with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "libAxios",
+   "para": "helpersFormDataToJSON",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Exposes axios.formToJSON with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "libAxios",
+   "para": "cancelCanceledError",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Exposes the cancellation error from",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "libAxios",
+   "para": "cancelCancelToken",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Exposes the cancel token class from",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "libAxios",
+   "para": "cancelIsCancel",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Exposes the cancellation check from",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "libAxios",
+   "para": "envData",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Exposes the package version from",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "libAxios",
+   "para": "helpersToFormData",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Exposes axios.toFormData with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "libAxios",
+   "para": "coreAxiosError",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Exposes the error class from",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "libAxios",
+   "para": "helpersSpread",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Exposes axios.spread with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "libAxios",
+   "para": "helpersIsAxiosError",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Exposes axios.isAxiosError with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "libAxios",
+   "para": "coreAxiosHeaders",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Exposes the headers class from",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "libAxios",
+   "para": "adaptersAdapters",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Exposes getAdapter from",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "libAxios",
+   "para": "helpersHttpStatusCode",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Exposes the status code table from",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "cancelCancelToken",
+   "para": "cancelCanceledError",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Builds the cancellation reason with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "cancelCanceledError",
+   "para": "coreAxiosError",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Extends as a subclass of",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "coreAxios",
+   "para": "libUtils",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Merges config and iterates the method list with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "coreAxios",
+   "para": "helpersBuildURL",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Serializes params in getUri with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "coreAxios",
+   "para": "coreInterceptorManager",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Registers and runs request and response interceptors from",
+    "tecnologia": "Promise chain"
+   }
+  },
+  {
+   "de": "coreAxios",
+   "para": "coreDispatchRequest",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Hands the merged config over for dispatch to",
+    "tecnologia": "Promise chain"
+   }
+  },
+  {
+   "de": "coreAxios",
+   "para": "coreMergeConfig",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Merges instance defaults with each call config through",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "coreAxios",
+   "para": "coreBuildFullPath",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Builds the full URL in getUri with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "coreAxios",
+   "para": "coreMethodList",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Generates the get/post/put shortcut methods from",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "coreAxios",
+   "para": "helpersValidator",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Validates config options and transitional flags with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "coreAxios",
+   "para": "coreAxiosHeaders",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Merges common and per-method headers with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "coreAxios",
+   "para": "defaultsTransitional",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Falls back to the default transitional flags from",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "coreAxios",
+   "para": "coreAxiosError",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Finds the wrapped cause in the error stack with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "coreAxiosError",
+   "para": "libUtils",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Serializes the error to plain JSON and checks types with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "coreAxiosError",
+   "para": "coreAxiosHeaders",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Redacts and serializes headers of the failed config with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "coreAxiosHeaders",
+   "para": "libUtils",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Normalizes header names and checks value types with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "coreAxiosHeaders",
+   "para": "helpersParseHeaders",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Parses raw header strings with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "coreAxiosHeaders",
+   "para": "helpersSanitizeHeaderValue",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Strips unsafe characters from header values with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "coreInterceptorManager",
+   "para": "libUtils",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Iterates registered handlers with forEach from",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "coreAssertParamsAcyclic",
+   "para": "libUtils",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Checks plain objects and arrays and reads own properties with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "coreAssertParamsAcyclic",
+   "para": "coreAxiosError",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Throws ERR_BAD_OPTION_VALUE on a circular reference with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "coreBuildFullPath",
+   "para": "coreAxiosError",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Throws on unsafe URLs and redacts credentials with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "coreBuildFullPath",
+   "para": "helpersIsAbsoluteURL",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Skips joining for absolute URLs with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "coreBuildFullPath",
+   "para": "helpersCombineURLs",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Joins the base and relative URL with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "coreBuildFullPath",
+   "para": "helpersNormalizeURLForProtocolCheck",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Normalizes the URL before the scheme check with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "coreCreateMultipartBody",
+   "para": "libUtils",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Checks for functions and reads the global crypto with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "coreCreateMultipartBody",
+   "para": "platformIndex",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Reads the random string generator from",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "coreCreateMultipartBody",
+   "para": "coreAxiosError",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Raises unsupported-Blob, random-source and serialization errors with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "coreCreateMultipartBody",
+   "para": "helpersFormDataToBlob",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Serializes the FormData into a Blob with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "coreDispatchRequest",
+   "para": "coreTransformData",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Runs transformRequest and transformResponse through",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "coreDispatchRequest",
+   "para": "cancelIsCancel",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Tells cancellations from other rejections with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "coreDispatchRequest",
+   "para": "defaultsIndex",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Reads the default adapter from",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "coreDispatchRequest",
+   "para": "cancelCanceledError",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Throws when the abort signal has fired with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "coreDispatchRequest",
+   "para": "coreAxiosHeaders",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Wraps request and response headers with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "coreDispatchRequest",
+   "para": "adaptersAdapters",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Resolves config.adapter or the default list through",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "coreDispatchRequest",
+   "para": "libUtils",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Copies the config safely with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "coreMergeConfig",
+   "para": "libUtils",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Merges plain-object config values and checks types with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "coreMergeConfig",
+   "para": "coreAxiosHeaders",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Flattens header instances before merging with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "coreMergeConfig",
+   "para": "coreAssertParamsAcyclic",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Rejects circular params after merging them with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "coreSettle",
+   "para": "coreAxiosError",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Rejects out-of-range statuses with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "coreTransformData",
+   "para": "libUtils",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Iterates the transform functions with forEach from",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "coreTransformData",
+   "para": "defaultsIndex",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Falls back to the default transforms from",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "coreTransformData",
+   "para": "coreAxiosHeaders",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Hands normalized headers to each transform with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "defaultsIndex",
+   "para": "libUtils",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Classifies body types to pick the request serializer with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "defaultsIndex",
+   "para": "coreAxiosError",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Raises JSON parse errors with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "defaultsIndex",
+   "para": "defaultsTransitional",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Embeds the default transitional flags from",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "defaultsIndex",
+   "para": "helpersToFormData",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Serializes objects to multipart bodies with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "defaultsIndex",
+   "para": "helpersToURLEncodedForm",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Serializes objects to urlencoded bodies with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "defaultsIndex",
+   "para": "platformIndex",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Picks the platform FormData and Blob classes from",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "defaultsIndex",
+   "para": "helpersFormDataToJSON",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Converts FormData bodies to JSON with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "defaultsIndex",
+   "para": "coreMethodList",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Creates a header bucket per method from",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "helpersAxiosTransformStream",
+   "para": "libUtils",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Copies stream options with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "helpersAxiosURLSearchParams",
+   "para": "helpersToFormData",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Encodes key/value pairs with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "helpersBuildURL",
+   "para": "libUtils",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Reads params safely and checks types with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "helpersBuildURL",
+   "para": "helpersAxiosURLSearchParams",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Serializes params into the query string with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "helpersCallbackify",
+   "para": "libUtils",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Detects async functions with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "helpersComposeSignals",
+   "para": "cancelCanceledError",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Aborts with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "helpersComposeSignals",
+   "para": "coreAxiosError",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Aborts with a timeout error from",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "helpersComposeSignals",
+   "para": "libUtils",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Defers the abort callback with asap from",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "helpersCookies",
+   "para": "libUtils",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Type checks with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "helpersCookies",
+   "para": "platformIndex",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Enables itself only in standard browser environments via",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "helpersFormDataToBlob",
+   "para": "libUtils",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Checks string and function types with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "helpersFormDataToJSON",
+   "para": "libUtils",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Iterates FormData entries and checks types with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "helpersFormDataToJSON",
+   "para": "coreAxiosError",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Throws on excessive nesting with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "helpersFormDataToJSON",
+   "para": "helpersToFormData",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Shares the maximum nesting depth constant with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "helpersFormDataToStream",
+   "para": "libUtils",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Classifies parts and sizes multipart bodies with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "helpersFormDataToStream",
+   "para": "helpersReadBlob",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Reads blob parts with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "helpersFormDataToStream",
+   "para": "platformIndex",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Generates the multipart boundary with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "helpersFromDataURI",
+   "para": "coreAxiosError",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Throws on invalid or unsupported data URIs with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "helpersFromDataURI",
+   "para": "helpersParseProtocol",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Extracts the URI scheme with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "helpersFromDataURI",
+   "para": "platformIndex",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Gets the Blob class from",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "helpersIsAxiosError",
+   "para": "libUtils",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Type checks with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "helpersIsURLSameOrigin",
+   "para": "platformIndex",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Compares URLs against the current origin through",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "helpersParseHeaders",
+   "para": "libUtils",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Builds the set of repeatable headers with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "helpersProgressEventReducer",
+   "para": "helpersSpeedometer",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Computes the transfer rate with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "helpersProgressEventReducer",
+   "para": "helpersThrottle",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Limits how often events are emitted with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "helpersProgressEventReducer",
+   "para": "libUtils",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Defers progress callbacks with asap from",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "helpersResolveConfig",
+   "para": "platformIndex",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Reads browser and worker environment flags from",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "helpersResolveConfig",
+   "para": "libUtils",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Reads config values safely and classifies FormData bodies with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "helpersResolveConfig",
+   "para": "coreAxiosError",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Throws on invalid auth or option values with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "helpersResolveConfig",
+   "para": "helpersIsURLSameOrigin",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Sends the XSRF header only to the same origin via",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "helpersResolveConfig",
+   "para": "helpersCookies",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Reads the XSRF cookie with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "helpersResolveConfig",
+   "para": "coreBuildFullPath",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Resolves the full URL with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "helpersResolveConfig",
+   "para": "coreMergeConfig",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Merges the raw config with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "helpersResolveConfig",
+   "para": "coreAxiosHeaders",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Builds the merged request headers with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "helpersResolveConfig",
+   "para": "coreSetFormDataHeaders",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Applies the FormData header policy through",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "helpersResolveConfig",
+   "para": "helpersBuildURL",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Appends serialized params with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "helpersSanitizeHeaderValue",
+   "para": "libUtils",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Iterates header values with forEach from",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "helpersToFormData",
+   "para": "libUtils",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Walks and type-checks values to flatten them with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "helpersToFormData",
+   "para": "coreAxiosError",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Throws on invalid input and excess depth with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "helpersToFormData",
+   "para": "classesFormData3",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Creates the form-data instance in Node.js via",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "helpersToFormData",
+   "para": "classesBuffer",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Converts buffers when Node.js is available through",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "helpersToURLEncodedForm",
+   "para": "libUtils",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Type checks with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "helpersToURLEncodedForm",
+   "para": "helpersToFormData",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Visits entries with a custom visitor in",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "helpersToURLEncodedForm",
+   "para": "platformIndex",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Reads the URLSearchParams class from",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "helpersValidator",
+   "para": "envData",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Prints the version in deprecation warnings from",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "helpersValidator",
+   "para": "coreAxiosError",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Throws option errors with",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "classesURLSearchParams",
+   "para": "helpersAxiosURLSearchParams",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Falls back to when the native class is missing",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "browserIndex",
+   "para": "classesURLSearchParams",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Bundles the browser URLSearchParams from",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "browserIndex",
+   "para": "classesFormData2",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Bundles the browser FormData from",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "browserIndex",
+   "para": "classesBlob",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Bundles the browser Blob from",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "platformIndex",
+   "para": "nodeIndex",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Spreads the Node.js platform descriptor from",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "platformIndex",
+   "para": "commonUtils",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Spreads the environment detection flags from",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "nodeIndex",
+   "para": "classesURLSearchParams2",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Bundles the Node.js URLSearchParams from",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "nodeIndex",
+   "para": "classesFormData3",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Bundles the Node.js FormData from",
+    "tecnologia": "Function call"
+   }
+  },
+  {
+   "de": "libUtils",
+   "para": "helpersBind",
+   "tipo": "imports",
+   "tipos": {
+    "imports": 1
+   },
+   "arestas": 1,
+   "confianca": "media",
+   "noModelo": true,
+   "relacaoModelo": {
+    "descricao": "Wraps functions with the bound-call helper from",
+    "tecnologia": "Function call"
+   }
+  }
+ ],
+ "resumo": {
+  "pares": 177,
+  "noModelo": 177,
+  "faltandoNoModelo": 0
+ }
+}

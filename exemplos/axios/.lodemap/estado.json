@@ -1,0 +1,100 @@
+{
+  "versao": 1,
+  "projeto": "axios",
+  "ultimoCommit": "222c6831ced884c128b322320655192a3b047a45",
+  "geradoEm": "2026-11-09T22:41:08-03:00",
+  "passos": {
+    "inventario": {
+      "status": "pendente",
+      "arquivos": [],
+      "contagens": {},
+      "pendencias": []
+    },
+    "modelador": {
+      "status": "pendente",
+      "arquivos": [],
+      "contagens": {},
+      "pendencias": []
+    },
+    "metricas": {
+      "status": "pendente",
+      "arquivos": [],
+      "contagens": {},
+      "pendencias": []
+    },
+    "gerador": {
+      "status": "ok",
+      "arquivos": [
+        "explorador/dados.js",
+        "docs/02-mapa-de-status.md",
+        "docs/90-catalogo-de-observabilidade.md",
+        "docs/91-metricas-e-benchmarks.md"
+      ],
+      "contagens": {},
+      "pendencias": []
+    },
+    "verificador": {
+      "status": "pendente",
+      "arquivos": [],
+      "contagens": {},
+      "pendencias": []
+    },
+    "revisor-visual": {
+      "status": "pendente",
+      "arquivos": [],
+      "contagens": {},
+      "pendencias": []
+    }
+  },
+  "artefatos": {
+    "inventario": "inventario.json",
+    "modelo": "model/",
+    "metricas": "metricas/metricas.json",
+    "explorador": "explorador/dados.js",
+    "documentos": "docs/",
+    "site": "site/"
+  },
+  "checkpoint": null,
+  "historico": [
+    {
+      "commit": "222c6831ced884c128b322320655192a3b047a45",
+      "geradoEm": "2026-11-09T22:41:08-03:00",
+      "checkpoint": null
+    },
+    {
+      "commit": "8c492bd29202bdf38a1cb30aecd46a62437b1aad",
+      "geradoEm": "2026-11-09T19:45:56-03:00",
+      "checkpoint": "merge v1.21.1"
+    },
+    {
+      "commit": "27a586858112a71bca3d52f289437c99fbc10a74",
+      "geradoEm": "2026-11-09T19:42:36-03:00",
+      "checkpoint": "merge v1.21.1"
+    },
+    {
+      "commit": "f26dd923a47efa2ee3cdcdd796047f3009337ffa",
+      "geradoEm": "2026-11-09T19:38:46-03:00",
+      "checkpoint": "merge v1.21.1"
+    },
+    {
+      "commit": "f26dd923a47efa2ee3cdcdd796047f3009337ffa",
+      "geradoEm": "2026-11-09T19:38:04-03:00",
+      "checkpoint": "merge v1.21.1"
+    },
+    {
+      "commit": "f26dd923a47efa2ee3cdcdd796047f3009337ffa",
+      "geradoEm": "2026-11-09T19:36:38-03:00",
+      "checkpoint": "merge v1.21.1"
+    },
+    {
+      "commit": "84a9f3b9a4f3244b8c8e818f557d64c7b964fb25",
+      "geradoEm": "2026-11-09T19:21:37-03:00",
+      "checkpoint": "axios v1.20.0"
+    },
+    {
+      "commit": "84a9f3b9a4f3244b8c8e818f557d64c7b964fb25",
+      "geradoEm": "2026-11-09T19:18:43-03:00",
+      "checkpoint": null
+    }
+  ]
+}

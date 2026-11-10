@@ -1,0 +1,12 @@
+{
+  "projeto": "axios",
+  "descricao": "Configuração dos geradores da arquitetura (explorador, leitor, documentos derivados e métricas). Variáveis de ambiente e argumentos têm prioridade.",
+  "idioma": "en",
+  "repo_github": "https://github.com/axios/axios",
+  "raiz_codigo": "lib",
+  "modulos": ["lib/**/*.js"],
+  "metricas": "metricas/metricas.json",
+  "lite": "http://localhost:8790",
+  "explorador": "http://127.0.0.1:8791",
+  "extensoes": []
+}

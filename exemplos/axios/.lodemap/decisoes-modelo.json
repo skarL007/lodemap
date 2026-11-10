@@ -1,0 +1,3853 @@
+{
+ "versao": 1,
+ "geradoEm": "2026-11-09T22:40:52-03:00",
+ "fonte_arestas": "ast",
+ "como_preencher": "Componente: fundir_em=<id> para juntar o módulo a outro componente, ou nome, descricao (uma frase do que faz), container (id em 'containers'), area (chave em 'areas'), status (Pronto, EmAndamento, Aguardando, Planejado, ForaDoFoco). Relação: confirme no código; manter=true com verbo no presente, ou manter=false. Relação real que os imports não mostram (HTTP, escolha por configuração, import tardio): acrescente {de, para, verbo, manter: true, manual: true}, com de e para iguais ao 'modulo' dos componentes. Depois: esqueleto.py renderizar.",
+ "containers": [
+  {
+   "id": "axiosLib",
+   "nome": "axios package",
+   "descricao": "The single npm package that ships axios: the lib/ sources, bundled into Node (CJS), browser (CJS), ESM and UMD builds that run inside the host application's process.",
+   "tecnologia": "JavaScript (ESM, bundled to CJS and UMD)",
+   "status": "Pronto",
+   "codigo": "lib/"
+  }
+ ],
+ "areas": {
+  "AreaClient": "Client and configuration",
+  "AreaPipeline": "Request pipeline",
+  "AreaAdapters": "Transport adapters",
+  "AreaUrlHeaders": "URLs and headers",
+  "AreaPayload": "Payload encoding",
+  "AreaStreaming": "Streams and progress",
+  "AreaErrors": "Errors and cancellation",
+  "AreaPlatform": "Platform and utilities"
+ },
+ "componentes": [
+  {
+   "id": "adaptersAdapters",
+   "modulo": "lib/adapters/adapters.js",
+   "arquivos": 1,
+   "linhas": 133,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [
+    "getAdapter"
+   ],
+   "lido_pelo_inventario": true,
+   "digital": "2:f2bff591618b8011",
+   "nome": "Adapter selection registry",
+   "descricao": "Selects the first usable transport from a list of names or functions and rejects unknown ones, so Axios fails early with a clear reason when no adapter fits the runtime.",
+   "container": "axiosLib",
+   "area": "AreaAdapters",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "adaptersFetch",
+   "modulo": "lib/adapters/fetch.js",
+   "arquivos": 1,
+   "linhas": 750,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [],
+   "lido_pelo_inventario": true,
+   "digital": "2:073ac1d89a4b8541",
+   "nome": "Fetch transport adapter",
+   "descricao": "Sends requests through the Fetch API with streamed bodies and progress tracking, so runtimes without XMLHttpRequest, such as workers and edge hosts, can still use Axios.",
+   "container": "axiosLib",
+   "area": "AreaAdapters",
+   "status": "Pronto",
+   "tecnologia": "JavaScript (Fetch API)",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "adaptersHttp",
+   "modulo": "lib/adapters/http.js",
+   "arquivos": 1,
+   "linhas": 1610,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [
+    "handleSocketError",
+    "isNodeNativeEnvProxySupported",
+    "isNodeEnvProxyEnabled",
+    "getProxyEnvAgent",
+    "getDirectAgent",
+    "setDirectAgent",
+    "getTunnelingAgent",
+    "dispatchBeforeRedirect"
+   ],
+   "lido_pelo_inventario": true,
+   "digital": "2:8cd4b66a41b87535",
+   "nome": "Node HTTP transport",
+   "descricao": "Performs requests with Node's http and https modules, adding proxy tunneling, redirect handling, rate limits and decompression, which the browser-bound adapters cannot provide.",
+   "container": "axiosLib",
+   "area": "AreaAdapters",
+   "status": "Pronto",
+   "tecnologia": "JavaScript (Node only)",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "adaptersXhr",
+   "modulo": "lib/adapters/xhr.js",
+   "arquivos": 1,
+   "linhas": 385,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [],
+   "lido_pelo_inventario": true,
+   "digital": "2:5155e81f928a87fe",
+   "nome": "Browser XHR transport",
+   "descricao": "Drives XMLHttpRequest in browsers and maps timeouts, aborts and status-0 responses to Axios errors, because XHR is the only transport with native upload progress there.",
+   "container": "axiosLib",
+   "area": "AreaAdapters",
+   "status": "Pronto",
+   "tecnologia": "JavaScript (browser only)",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "libAxios",
+   "modulo": "lib/axios.js",
+   "arquivos": 1,
+   "linhas": 90,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [
+    "createInstance"
+   ],
+   "lido_pelo_inventario": true,
+   "digital": "2:6e8faf87a4cbec64",
+   "nome": "Default instance factory",
+   "descricao": "Builds the default axios instance and factory for custom instances, re-exporting cancel, error and helper APIs from one entry point so consumers import a single module.",
+   "container": "axiosLib",
+   "area": "AreaClient",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "cancelCancelToken",
+   "modulo": "lib/cancel/CancelToken.js",
+   "arquivos": 1,
+   "linhas": 136,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [
+    "CancelToken"
+   ],
+   "lido_pelo_inventario": true,
+   "digital": "2:e6369c66de11df16",
+   "nome": "Token-based cancellation",
+   "descricao": "Implements the token-based cancellation API, where one token's promise notifies every subscribed request, so related requests can be aborted together with a single call.",
+   "container": "axiosLib",
+   "area": "AreaErrors",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "lodemap-modelador (revisado)"
+  },
+  {
+   "id": "cancelCanceledError",
+   "modulo": "lib/cancel/CanceledError.js",
+   "arquivos": 1,
+   "linhas": 23,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [
+    "CanceledError"
+   ],
+   "lido_pelo_inventario": true,
+   "digital": "2:11ac168ff1c02521",
+   "nome": "Cancellation error type",
+   "descricao": "Extends AxiosError with the ERR_CANCELED code and a __CANCEL__ flag, so isCancel can tell user cancellations apart from network failures without inspecting messages.",
+   "container": "axiosLib",
+   "area": "AreaErrors",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "cancelIsCancel",
+   "modulo": "lib/cancel/isCancel.js",
+   "arquivos": 1,
+   "linhas": 6,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [],
+   "lido_pelo_inventario": true,
+   "digital": "2:7e68e4eaa307d7bb",
+   "nome": "Cancellation check helper",
+   "descricao": "Tests a thrown value for the __CANCEL__ marker instead of instanceof, so cancellation is detected even when errors cross realms or module copies in the same process.",
+   "container": "axiosLib",
+   "area": "AreaErrors",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "coreAxios",
+   "modulo": "lib/core/Axios.js",
+   "arquivos": 1,
+   "linhas": 362,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [
+    "Axios"
+   ],
+   "lido_pelo_inventario": true,
+   "digital": "2:9c34a716455fce19",
+   "nome": "Request orchestration class",
+   "descricao": "Holds per-instance defaults and interceptors, merges each call's config, and generates the shorthand methods, so every request runs through one ordered pipeline.",
+   "container": "axiosLib",
+   "area": "AreaPipeline",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "coreAxiosError",
+   "modulo": "lib/core/AxiosError.js",
+   "arquivos": 1,
+   "linhas": 279,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [
+    "hasOwnOrPrototypeToJSON",
+    "redactConfig",
+    "stringifySafely",
+    "aggregateErrorMessage",
+    "getCauseStackIndex",
+    "appendCauseStack",
+    "AxiosError"
+   ],
+   "lido_pelo_inventario": true,
+   "digital": "2:859a8669cee30568",
+   "nome": "Structured error class",
+   "descricao": "Carries code, config, request and response on each failure, and redacts secret config keys and URL credentials, so logged errors do not leak credentials.",
+   "container": "axiosLib",
+   "area": "AreaErrors",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "coreAxiosHeaders",
+   "modulo": "lib/core/AxiosHeaders.js",
+   "arquivos": 1,
+   "linhas": 488,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [
+    "normalizeHeader",
+    "normalizeValue",
+    "parseTokens",
+    "trimOWS",
+    "decodeQuotedString",
+    "parseParameters",
+    "matchHeaderValue",
+    "formatHeader"
+   ],
+   "lido_pelo_inventario": true,
+   "digital": "2:fe7b0f411bacd032",
+   "nome": "Case-insensitive header map",
+   "descricao": "Stores headers under normalized names with set, get and merge helpers, and rejects invalid names or values, because raw object headers silently duplicate keys in different casings.",
+   "container": "axiosLib",
+   "area": "AreaUrlHeaders",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "coreInterceptorManager",
+   "modulo": "lib/core/InterceptorManager.js",
+   "arquivos": 1,
+   "linhas": 183,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [
+    "countHandlers",
+    "trimHandlers",
+    "normalizeHandlerId",
+    "syncHandlerEntries",
+    "InterceptorManager"
+   ],
+   "lido_pelo_inventario": true,
+   "digital": "2:eee5deaf88822ac9",
+   "nome": "Interceptor stack manager",
+   "descricao": "Keeps request and response interceptors in an ordered stack with synchronous and runWhen flags, and skips entries ejected mid-run, so removals during a request do not break the chain.",
+   "container": "axiosLib",
+   "area": "AreaPipeline",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "coreAssertParamsAcyclic",
+   "modulo": "lib/core/assertParamsAcyclic.js",
+   "arquivos": 1,
+   "linhas": 50,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [],
+   "lido_pelo_inventario": true,
+   "digital": "2:31b77e823fb3d557",
+   "nome": "Params cycle guard",
+   "descricao": "Walks the merged params iteratively and throws ERR_BAD_OPTION_VALUE on true cycles, tracking the active path so shared but acyclic objects still pass, so circular params fail fast with a clear error instead of reaching the query serializer.",
+   "container": "axiosLib",
+   "area": "AreaUrlHeaders",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "coreBuildFullPath",
+   "modulo": "lib/core/buildFullPath.js",
+   "arquivos": 1,
+   "linhas": 77,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [
+    "redactFragment",
+    "redactSensitiveURLParts",
+    "assertValidHttpProtocolURL"
+   ],
+   "lido_pelo_inventario": true,
+   "digital": "2:e7769fd30b186097",
+   "nome": "Base URL joiner",
+   "descricao": "Joins baseURL with relative paths and refuses malformed or disallowed absolute URLs, redacting credentials and query secrets from the message, so errors stay safe to log.",
+   "container": "axiosLib",
+   "area": "AreaUrlHeaders",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [
+    "Gate"
+   ],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "coreCreateMultipartBody",
+   "modulo": "lib/core/createMultipartBody.js",
+   "arquivos": 1,
+   "linhas": 38,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [],
+   "lido_pelo_inventario": true,
+   "digital": "2:6269c40de441ccde",
+   "nome": "Multipart body builder",
+   "descricao": "Builds a multipart Blob from FormData for the fetch adapter, generating a boundary when none is given and translating serialization failures into AxiosError codes (ERR_NOT_SUPPORT, ERR_BAD_OPTION_VALUE, ERR_BAD_REQUEST), so uploads can be size-limited or streamed.",
+   "container": "axiosLib",
+   "area": "AreaPayload",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "coreDispatchRequest",
+   "modulo": "lib/core/dispatchRequest.js",
+   "arquivos": 1,
+   "linhas": 133,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [
+    "throwIfCancellationRequested",
+    "resolveClock",
+    "elapsedSince"
+   ],
+   "lido_pelo_inventario": true,
+   "digital": "2:f4b66465a4ce4b87",
+   "nome": "Request dispatch and transforms",
+   "descricao": "Runs request transforms, flattens the config, checks cancellation, calls the selected adapter, and then transforms the response, so every adapter sees the same prepared input.",
+   "container": "axiosLib",
+   "area": "AreaPipeline",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "coreMergeConfig",
+   "modulo": "lib/core/mergeConfig.js",
+   "arquivos": 1,
+   "linhas": 238,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [
+    "mergeParams",
+    "getMergedValue",
+    "mergeDeepProperties",
+    "valueFromConfig2",
+    "defaultToConfig2",
+    "getMergedTransitionalOption",
+    "mergeDirectKeys",
+    "mergeHeaders"
+   ],
+   "lido_pelo_inventario": true,
+   "digital": "2:5421cfc553c4586b",
+   "nome": "Config merge with precedence",
+   "descricao": "Merges two config objects into a null-prototype result using per-key rules for headers, auth and URLs, so later config layers override earlier ones without prototype leakage.",
+   "container": "axiosLib",
+   "area": "AreaPipeline",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "coreMethodList",
+   "modulo": "lib/core/methodList.js",
+   "arquivos": 1,
+   "linhas": 18,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [],
+   "lido_pelo_inventario": true,
+   "digital": "2:47a92ee710ada304",
+   "nome": "Supported HTTP methods list",
+   "descricao": "Lists the frozen set of HTTP method names that get shorthand functions, including PURGE, LINK and QUERY, so adding a method requires one edit in one place.",
+   "container": "axiosLib",
+   "area": "AreaClient",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [
+    "Dados"
+   ],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "coreSetFormDataHeaders",
+   "modulo": "lib/core/setFormDataHeaders.js",
+   "arquivos": 1,
+   "linhas": 28,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [],
+   "lido_pelo_inventario": true,
+   "digital": "2:c46f568f80899631",
+   "nome": "FormData header policy",
+   "descricao": "Copies FormData-generated headers into the request, either all of them or only content-type and content-length per formDataHeaderPolicy, so multipart boundaries apply predictably.",
+   "container": "axiosLib",
+   "area": "AreaPayload",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "lodemap-modelador (revisado)"
+  },
+  {
+   "id": "coreSettle",
+   "modulo": "lib/core/settle.js",
+   "arquivos": 1,
+   "linhas": 28,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [],
+   "lido_pelo_inventario": true,
+   "digital": "2:9b2aea5a897251df",
+   "nome": "Status-based promise settlement",
+   "descricao": "Resolves or rejects the request promise by applying validateStatus, mapping 4xx to ERR_BAD_REQUEST and other failures to ERR_BAD_RESPONSE, so adapters share one status rule.",
+   "container": "axiosLib",
+   "area": "AreaPipeline",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [
+    "Gate"
+   ],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "coreTransformData",
+   "modulo": "lib/core/transformData.js",
+   "arquivos": 1,
+   "linhas": 29,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [],
+   "lido_pelo_inventario": true,
+   "digital": "2:629a6643d0149d02",
+   "nome": "Request and response transforms",
+   "descricao": "Runs the configured transformRequest or transformResponse functions in order with normalized headers, so each function sees the same header object and status code.",
+   "container": "axiosLib",
+   "area": "AreaPipeline",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "defaultsIndex",
+   "modulo": "lib/defaults/index.js",
+   "arquivos": 1,
+   "linhas": 179,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [
+    "stringifySafely"
+   ],
+   "lido_pelo_inventario": true,
+   "digital": "2:dbb8f1271c465852",
+   "nome": "Default configuration object",
+   "descricao": "Defines the built-in config, including JSON parsing, transform functions, adapters and validateStatus, and picks the right form encoders, so every instance starts from one baseline.",
+   "container": "axiosLib",
+   "area": "AreaClient",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "defaultsTransitional",
+   "modulo": "lib/defaults/transitional.js",
+   "arquivos": 1,
+   "linhas": 12,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [],
+   "lido_pelo_inventario": true,
+   "digital": "2:2a1e2130d95cd1f4",
+   "nome": "Transitional behavior flags",
+   "descricao": "Holds boolean switches for legacy behaviors such as silent JSON parsing and interceptor ordering, so maintainers can change defaults in one place during a migration.",
+   "container": "axiosLib",
+   "area": "AreaClient",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [
+    "Dados"
+   ],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "classesFormData",
+   "modulo": "lib/env/classes/FormData.js",
+   "arquivos": 1,
+   "linhas": 3,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [],
+   "lido_pelo_inventario": true,
+   "digital": "2:4cb483a473c9b09a",
+   "nome": "Environment FormData selector",
+   "descricao": "Exports the global FormData when present and falls back to the form-data package, so Node processes get a multipart class even without a global FormData.",
+   "container": "axiosLib",
+   "area": "AreaPlatform",
+   "status": "Pronto",
+   "tecnologia": "JavaScript (Node only)",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "envData",
+   "modulo": "lib/env/data.js",
+   "arquivos": 1,
+   "linhas": 1,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [],
+   "lido_pelo_inventario": true,
+   "digital": "2:470aee8bf09beb4f",
+   "nome": "Package version constant",
+   "descricao": "Exports the library VERSION string as a single constant, which default headers and deprecation messages read to report the running release.",
+   "container": "axiosLib",
+   "area": "AreaPlatform",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [
+    "Dados"
+   ],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "helpersAxiosTransformStream",
+   "modulo": "lib/helpers/AxiosTransformStream.js",
+   "arquivos": 1,
+   "linhas": 166,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [
+    "AxiosTransformStream"
+   ],
+   "lido_pelo_inventario": true,
+   "digital": "2:ad9e0b1d23793a07",
+   "nome": "Throttled transform stream",
+   "descricao": "Caps throughput and emits progress from a Node Transform stream using a sliding time window, so uploads and downloads can be rate-limited with the maxRate option.",
+   "container": "axiosLib",
+   "area": "AreaStreaming",
+   "status": "Pronto",
+   "tecnologia": "JavaScript (Node only)",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "helpersAxiosURLSearchParams",
+   "modulo": "lib/helpers/AxiosURLSearchParams.js",
+   "arquivos": 1,
+   "linhas": 60,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [
+    "encode",
+    "AxiosURLSearchParams"
+   ],
+   "lido_pelo_inventario": true,
+   "digital": "2:0574ea268119dbd4",
+   "nome": "URLSearchParams fallback class",
+   "descricao": "Fallback URLSearchParams class that percent-encodes pairs with plus for spaces, used where the native class is missing, so query and form encoding stay consistent.",
+   "container": "axiosLib",
+   "area": "AreaPayload",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "lodemap-modelador (revisado)"
+  },
+  {
+   "id": "helpersHttp2Sessions",
+   "modulo": "lib/helpers/Http2Sessions.js",
+   "arquivos": 1,
+   "linhas": 123,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [
+    "Http2Sessions"
+   ],
+   "lido_pelo_inventario": true,
+   "digital": "2:37159cedce364f7a",
+   "nome": "HTTP/2 session pool",
+   "descricao": "Caches HTTP/2 sessions per authority and option set, reusing live connections and expiring idle ones after a timeout, so repeated requests avoid new TLS handshakes.",
+   "container": "axiosLib",
+   "area": "AreaAdapters",
+   "status": "Pronto",
+   "tecnologia": "JavaScript (Node only)",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "helpersHttpStatusCode",
+   "modulo": "lib/helpers/HttpStatusCode.js",
+   "arquivos": 1,
+   "linhas": 89,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [],
+   "lido_pelo_inventario": true,
+   "digital": "2:b2522f3d55af8d34",
+   "nome": "HTTP status code constants",
+   "descricao": "Maps readable names such as NotFound to numeric status codes, including deprecated aliases kept for compatibility, so callers avoid magic numbers in validateStatus checks.",
+   "container": "axiosLib",
+   "area": "AreaErrors",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [
+    "Dados"
+   ],
+   "propriedades": {
+    "nota": "Keeps deprecated aliases (see @deprecated entries in the source) for backward compatibility."
+   },
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "helpersZlibHeaderTransformStream",
+   "modulo": "lib/helpers/ZlibHeaderTransformStream.js",
+   "arquivos": 1,
+   "linhas": 30,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [
+    "ZlibHeaderTransformStream"
+   ],
+   "lido_pelo_inventario": true,
+   "digital": "2:7688769f756f5a3e",
+   "nome": "Zlib header repair stream",
+   "descricao": "Prepends a default zlib header when a deflate body lacks one, because some servers send raw deflate that Node's inflate rejects, so decompression still succeeds.",
+   "container": "axiosLib",
+   "area": "AreaStreaming",
+   "status": "Pronto",
+   "tecnologia": "JavaScript (Node only)",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "helpersBind",
+   "modulo": "lib/helpers/bind.js",
+   "arquivos": 1,
+   "linhas": 15,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [],
+   "lido_pelo_inventario": true,
+   "digital": "2:a016cb4e6f3a1499",
+   "nome": "Bound function helper",
+   "descricao": "Wraps a function so it always runs with a fixed this value, which lets axios expose instance methods as plain functions that can be passed around safely.",
+   "container": "axiosLib",
+   "area": "AreaPlatform",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "helpersBuildURL",
+   "modulo": "lib/helpers/buildURL.js",
+   "arquivos": 1,
+   "linhas": 70,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [
+    "encode"
+   ],
+   "lido_pelo_inventario": true,
+   "digital": "2:80dad2dc407ac859",
+   "nome": "Query string builder",
+   "descricao": "Appends serialized params to a URL while keeping reserved characters like colon and comma readable, and honors custom serializers, so generated query strings stay compact and predictable.",
+   "container": "axiosLib",
+   "area": "AreaUrlHeaders",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "helpersCallbackify",
+   "modulo": "lib/helpers/callbackify.js",
+   "arquivos": 1,
+   "linhas": 19,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [],
+   "lido_pelo_inventario": true,
+   "digital": "2:044dfc98b7399117",
+   "nome": "Async-to-callback wrapper",
+   "descricao": "Converts an async function into a callback-style one with an optional result reducer, so the HTTP adapter can wrap a custom async DNS lookup for Node's callback-based sockets.",
+   "container": "axiosLib",
+   "area": "AreaAdapters",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "lodemap-modelador (revisado)"
+  },
+  {
+   "id": "helpersCombineURLs",
+   "modulo": "lib/helpers/combineURLs.js",
+   "arquivos": 1,
+   "linhas": 24,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [],
+   "lido_pelo_inventario": true,
+   "digital": "2:11a6f308df134885",
+   "nome": "URL segment joiner",
+   "descricao": "Joins a base URL and a relative path with exactly one slash, trimming trailing slashes from the base, so baseURL and url values never produce double or missing separators.",
+   "container": "axiosLib",
+   "area": "AreaUrlHeaders",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "helpersComposeSignals",
+   "modulo": "lib/helpers/composeSignals.js",
+   "arquivos": 1,
+   "linhas": 72,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [],
+   "lido_pelo_inventario": true,
+   "digital": "2:4ac725ed3bc33149",
+   "nome": "Abort signal composer",
+   "descricao": "Merges user cancel signals and a timeout into one AbortSignal, unsubscribing on completion, so a request aborts on whichever trigger fires first without leaking listeners.",
+   "container": "axiosLib",
+   "area": "AreaErrors",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "helpersCookies",
+   "modulo": "lib/helpers/cookies.js",
+   "arquivos": 1,
+   "linhas": 89,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [],
+   "lido_pelo_inventario": true,
+   "digital": "2:bedca942d9f04a6d",
+   "nome": "Cookie read and write",
+   "descricao": "Reads and writes XSRF cookies via document.cookie or the Cookie Store API, splitting on semicolons instead of building a regex from the name to avoid ReDoS and wrong-cookie matches.",
+   "container": "axiosLib",
+   "area": "AreaUrlHeaders",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "helpersDeprecatedMethod",
+   "modulo": "lib/helpers/deprecatedMethod.js",
+   "arquivos": 1,
+   "linhas": 32,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [],
+   "lido_pelo_inventario": true,
+   "digital": "2:ef721e2386af1a57",
+   "nome": "Deprecation warning emitter",
+   "descricao": "Prints a console warning that names a deprecated method and its replacement, so callers see migration guidance without the call throwing.",
+   "container": "axiosLib",
+   "area": "AreaPlatform",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "helpersEstimateDataURLDecodedBytes",
+   "modulo": "lib/helpers/estimateDataURLDecodedBytes.js",
+   "arquivos": 1,
+   "linhas": 194,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [
+    "estimateDataURLBufferAllocation"
+   ],
+   "lido_pelo_inventario": true,
+   "digital": "2:3b68beafcb421348",
+   "nome": "Data URL size estimator",
+   "descricao": "Estimates decoded byte length of data: URLs without allocating buffers, so maxContentLength can reject oversized payloads before any memory is committed.",
+   "container": "axiosLib",
+   "area": "AreaPayload",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "helpersFormDataToBlob",
+   "modulo": "lib/helpers/formDataToBlob.js",
+   "arquivos": 1,
+   "linhas": 114,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [
+    "FormDataError"
+   ],
+   "lido_pelo_inventario": true,
+   "digital": "2:8d1e5bd039447bea",
+   "nome": "FormData to Blob",
+   "descricao": "Converts FormData into a native multipart Blob, counting UTF-8 field bytes without encoding copies and enforcing the body-size limit before building it, and composes existing File data by reference, so large uploads avoid extra buffers.",
+   "container": "axiosLib",
+   "area": "AreaPayload",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "helpersFormDataToJSON",
+   "modulo": "lib/helpers/formDataToJSON.js",
+   "arquivos": 1,
+   "linhas": 150,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [
+    "throwIfDepthExceeded",
+    "parsePropPath",
+    "arrayToObject",
+    "normalizeArray",
+    "normalizeArrays",
+    "formDataToJSON"
+   ],
+   "lido_pelo_inventario": true,
+   "digital": "2:33ba4b5b5a26ee95",
+   "nome": "FormData to JSON converter",
+   "descricao": "Turns FormData entries into nested objects by parsing bracket and dot paths, with a depth cap and fail-fast parsing, so form submissions convert to JSON safely.",
+   "container": "axiosLib",
+   "area": "AreaPayload",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "helpersFormDataToStream",
+   "modulo": "lib/helpers/formDataToStream.js",
+   "arquivos": 1,
+   "linhas": 120,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [
+    "FormDataPart"
+   ],
+   "lido_pelo_inventario": true,
+   "digital": "2:60734122d8b9a22b",
+   "nome": "Multipart form stream",
+   "descricao": "Streams FormData parts as multipart bytes with a generated boundary and computed length, so large uploads reach Node's HTTP stack without buffering the whole body.",
+   "container": "axiosLib",
+   "area": "AreaStreaming",
+   "status": "Pronto",
+   "tecnologia": "JavaScript (Node only)",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "helpersFromDataURI",
+   "modulo": "lib/helpers/fromDataURI.js",
+   "arquivos": 1,
+   "linhas": 76,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [],
+   "lido_pelo_inventario": true,
+   "digital": "2:2708c9dba1bbaee6",
+   "nome": "Data URI decoder",
+   "descricao": "Decodes RFC 2397 data: URIs into a Buffer or Blob, applying the spec default mediatype, so inline payloads work in Node the same as in browsers.",
+   "container": "axiosLib",
+   "area": "AreaPayload",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "helpersIsAbsoluteURL",
+   "modulo": "lib/helpers/isAbsoluteURL.js",
+   "arquivos": 1,
+   "linhas": 20,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [],
+   "lido_pelo_inventario": true,
+   "digital": "2:02faccad5f9bd256",
+   "nome": "Absolute URL detector",
+   "descricao": "Detects an absolute URL by RFC 3986 scheme syntax or a leading double slash, so protocol-relative URLs skip baseURL joining.",
+   "container": "axiosLib",
+   "area": "AreaUrlHeaders",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "helpersIsAxiosError",
+   "modulo": "lib/helpers/isAxiosError.js",
+   "arquivos": 1,
+   "linhas": 15,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [],
+   "lido_pelo_inventario": true,
+   "digital": "2:7da312dc94f51c6f",
+   "nome": "Axios error type guard",
+   "descricao": "Checks for the isAxiosError flag on plain objects, not instanceof, so errors from other copies of axios are still recognized by callers.",
+   "container": "axiosLib",
+   "area": "AreaErrors",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "helpersIsURLSameOrigin",
+   "modulo": "lib/helpers/isURLSameOrigin.js",
+   "arquivos": 1,
+   "linhas": 12,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [],
+   "lido_pelo_inventario": true,
+   "digital": "2:b4c6b94bbb91e82a",
+   "nome": "Same-origin check",
+   "descricao": "Compares protocol, host and port with the page origin, so the XSRF header is sent only to same-origin URLs in standard browsers.",
+   "container": "axiosLib",
+   "area": "AreaUrlHeaders",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [
+    "Gate"
+   ],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "helpersNormalizeURLForProtocolCheck",
+   "modulo": "lib/helpers/normalizeURLForProtocolCheck.js",
+   "arquivos": 1,
+   "linhas": 25,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [],
+   "lido_pelo_inventario": true,
+   "digital": "2:20ce5e291309f6f8",
+   "nome": "URL protocol normalizer",
+   "descricao": "Strips leading control characters and embedded tabs or newlines the way WHATWG parsing does, so protocol checks see the same scheme the browser will use.",
+   "container": "axiosLib",
+   "area": "AreaUrlHeaders",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "helpersNull",
+   "modulo": "lib/helpers/null.js",
+   "arquivos": 1,
+   "linhas": 3,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [],
+   "lido_pelo_inventario": true,
+   "digital": "2:96052ac4228353fd",
+   "nome": "Null browser stub",
+   "descricao": "Exports null as a stand-in module, so the browser build can swap out Node-only adapters through the package browser field without pulling in Node built-ins.",
+   "container": "axiosLib",
+   "area": "AreaPlatform",
+   "status": "Pronto",
+   "tecnologia": "JavaScript (browser only)",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "helpersParseHeaders",
+   "modulo": "lib/helpers/parseHeaders.js",
+   "arquivos": 1,
+   "linhas": 73,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [],
+   "lido_pelo_inventario": true,
+   "digital": "2:dc929b1fc0c2ce4d",
+   "nome": "Raw header parser",
+   "descricao": "Parses raw header text into an object and drops duplicates for headers Node itself ignores, so merged values match what Node's HTTP layer exposes.",
+   "container": "axiosLib",
+   "area": "AreaUrlHeaders",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "helpersParseProtocol",
+   "modulo": "lib/helpers/parseProtocol.js",
+   "arquivos": 1,
+   "linhas": 7,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [],
+   "lido_pelo_inventario": true,
+   "digital": "2:b40b00cb93ac5164",
+   "nome": "URL scheme extractor",
+   "descricao": "Extracts the scheme from a URL string with one regex and returns an empty string when none is found, so adapters can pick a transport by protocol.",
+   "container": "axiosLib",
+   "area": "AreaUrlHeaders",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "helpersProgressEventReducer",
+   "modulo": "lib/helpers/progressEventReducer.js",
+   "arquivos": 1,
+   "linhas": 55,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [],
+   "lido_pelo_inventario": true,
+   "digital": "2:1ac53eff9fdf574d",
+   "nome": "Throttled progress reducer",
+   "descricao": "Clamps loaded counts, computes rate and ETA with a speedometer, and throttles callbacks, so progress listeners receive steady, accurate events instead of raw bursts.",
+   "container": "axiosLib",
+   "area": "AreaStreaming",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "helpersReadBlob",
+   "modulo": "lib/helpers/readBlob.js",
+   "arquivos": 1,
+   "linhas": 16,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [],
+   "lido_pelo_inventario": true,
+   "digital": "2:40c5660e4bcc7843",
+   "nome": "Blob chunk reader",
+   "descricao": "Reads a Blob as an async iterator using stream, arrayBuffer or iterator, whichever is available, so multipart encoding works across runtimes with different Blob APIs.",
+   "container": "axiosLib",
+   "area": "AreaPayload",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "helpersResolveConfig",
+   "modulo": "lib/helpers/resolveConfig.js",
+   "arquivos": 1,
+   "linhas": 121,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [
+    "resolveConfig"
+   ],
+   "lido_pelo_inventario": true,
+   "digital": "2:31a233699a381d04",
+   "nome": "Request config resolver",
+   "descricao": "Turns the merged config into final URL, headers and body by applying basic auth, XSRF and FormData headers, so adapters receive a ready-to-send request description.",
+   "container": "axiosLib",
+   "area": "AreaPipeline",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "helpersSanitizeHeaderValue",
+   "modulo": "lib/helpers/sanitizeHeaderValue.js",
+   "arquivos": 1,
+   "linhas": 61,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [
+    "trimSPorHTAB",
+    "sanitizeValue",
+    "toByteStringHeaderObject"
+   ],
+   "lido_pelo_inventario": true,
+   "digital": "2:7005236fda9cf894",
+   "nome": "Header value sanitizer",
+   "descricao": "Trims whitespace and strips control bytes from header values, and converts them to byte strings for fetch, so invalid characters cannot break the request or inject headers.",
+   "container": "axiosLib",
+   "area": "AreaUrlHeaders",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [
+    "Gate"
+   ],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "helpersShouldBypassProxy",
+   "modulo": "lib/helpers/shouldBypassProxy.js",
+   "arquivos": 1,
+   "linhas": 521,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [],
+   "lido_pelo_inventario": true,
+   "digital": "2:a0c0d7d0fe7f7c54",
+   "nome": "Proxy bypass matcher",
+   "descricao": "Decides whether a host skips the proxy by canonicalizing IPv4 shorthand, octal and hex forms and unmapping IPv4-mapped IPv6, so bypass rules cannot be evaded by alternate spellings.",
+   "container": "axiosLib",
+   "area": "AreaAdapters",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "helpersSpeedometer",
+   "modulo": "lib/helpers/speedometer.js",
+   "arquivos": 1,
+   "linhas": 56,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [
+    "speedometer"
+   ],
+   "lido_pelo_inventario": true,
+   "digital": "2:5253d86952d3b92f",
+   "nome": "Transfer rate estimator",
+   "descricao": "Computes bytes per second over a fixed ring buffer of recent samples and reports nothing until a minimum window passes, so early rate figures do not spike.",
+   "container": "axiosLib",
+   "area": "AreaStreaming",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "helpersSpread",
+   "modulo": "lib/helpers/spread.js",
+   "arquivos": 1,
+   "linhas": 29,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [],
+   "lido_pelo_inventario": true,
+   "digital": "2:0f27d2f350b49bee",
+   "nome": "Array argument spreader",
+   "descricao": "Wraps a function so it receives an array as its argument list, which lets promise chains pass multiple results to callbacks such as axios.spread.",
+   "container": "axiosLib",
+   "area": "AreaPlatform",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "helpersThrottle",
+   "modulo": "lib/helpers/throttle.js",
+   "arquivos": 1,
+   "linhas": 46,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [
+    "throttle"
+   ],
+   "lido_pelo_inventario": true,
+   "digital": "2:6c95aae4ce4875f7",
+   "nome": "Call rate limiter",
+   "descricao": "Limits a function to a set frequency and trails the last call with a timer, returning flush helpers, so progress events are emitted at a steady rate without dropping the final value.",
+   "container": "axiosLib",
+   "area": "AreaStreaming",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "helpersToFormData",
+   "modulo": "lib/helpers/toFormData.js",
+   "arquivos": 1,
+   "linhas": 280,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [
+    "isVisitable",
+    "removeBrackets",
+    "renderKey",
+    "isFlatArray",
+    "toFormData"
+   ],
+   "lido_pelo_inventario": true,
+   "digital": "2:e5ccaf40be793406",
+   "nome": "Object to FormData encoder",
+   "descricao": "Serializes nested objects into FormData or URLSearchParams with bracket keys and a depth limit of 100, and enforces that limit so deep payloads fail with a clear error.",
+   "container": "axiosLib",
+   "area": "AreaPayload",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "helpersToURLEncodedForm",
+   "modulo": "lib/helpers/toURLEncodedForm.js",
+   "arquivos": 1,
+   "linhas": 20,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [],
+   "lido_pelo_inventario": true,
+   "digital": "2:84df810ac53abe64",
+   "nome": "URL-encoded body encoder",
+   "descricao": "Encodes objects as application/x-www-form-urlencoded, writing Node Buffers as base64, so form posts keep binary values intact without a separate serializer.",
+   "container": "axiosLib",
+   "area": "AreaPayload",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "helpersTrackStream",
+   "modulo": "lib/helpers/trackStream.js",
+   "arquivos": 1,
+   "linhas": 90,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [],
+   "lido_pelo_inventario": true,
+   "digital": "2:16f54dfbd935c3d6",
+   "nome": "Stream progress tracker",
+   "descricao": "Wraps a ReadableStream in another that counts bytes and fires progress and finish callbacks once, so fetch uploads report progress without buffering the body.",
+   "container": "axiosLib",
+   "area": "AreaStreaming",
+   "status": "Pronto",
+   "tecnologia": "JavaScript (Web Streams)",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "helpersValidator",
+   "modulo": "lib/helpers/validator.js",
+   "arquivos": 1,
+   "linhas": 113,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [
+    "assertOptions"
+   ],
+   "lido_pelo_inventario": true,
+   "digital": "2:be2e6c593b05930d",
+   "nome": "Option schema validator",
+   "descricao": "Checks option types against a schema and emits one-time deprecation warnings for removed transitional options, so misconfigured instances fail early with clear messages.",
+   "container": "axiosLib",
+   "area": "AreaPipeline",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [
+    "Gate"
+   ],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "classesBlob",
+   "modulo": "lib/platform/browser/classes/Blob.js",
+   "arquivos": 1,
+   "linhas": 4,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [],
+   "lido_pelo_inventario": true,
+   "digital": "2:8644bc024d8d8d83",
+   "nome": "Browser Blob export",
+   "descricao": "Exports the global Blob or null when absent, so browser builds reference Blob without throwing in workers or older environments that lack it.",
+   "container": "axiosLib",
+   "area": "AreaPlatform",
+   "status": "Pronto",
+   "tecnologia": "JavaScript (browser only)",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "classesFormData2",
+   "modulo": "lib/platform/browser/classes/FormData.js",
+   "arquivos": 1,
+   "linhas": 4,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [],
+   "lido_pelo_inventario": true,
+   "digital": "2:238e9e1c261b63d3",
+   "nome": "Browser FormData export",
+   "descricao": "Exports the global FormData or null when absent, so the browser platform can detect multipart support without a hard reference to the global.",
+   "container": "axiosLib",
+   "area": "AreaPlatform",
+   "status": "Pronto",
+   "tecnologia": "JavaScript (browser only)",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "classesURLSearchParams",
+   "modulo": "lib/platform/browser/classes/URLSearchParams.js",
+   "arquivos": 1,
+   "linhas": 5,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [],
+   "lido_pelo_inventario": true,
+   "digital": "2:ca3c8019dfb887f2",
+   "nome": "Browser URLSearchParams export",
+   "descricao": "Uses the native URLSearchParams when present and falls back to AxiosURLSearchParams otherwise, so query encoding works in older browsers too.",
+   "container": "axiosLib",
+   "area": "AreaPlatform",
+   "status": "Pronto",
+   "tecnologia": "JavaScript (browser only)",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "browserIndex",
+   "modulo": "lib/platform/browser/index.js",
+   "arquivos": 1,
+   "linhas": 14,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [],
+   "lido_pelo_inventario": true,
+   "digital": "2:424ec9487a418213",
+   "nome": "Browser platform descriptor",
+   "descricao": "Describes browser capabilities by flagging isBrowser, listing supported protocols and wiring the browser class set, so shared code picks browser behavior at runtime.",
+   "container": "axiosLib",
+   "area": "AreaPlatform",
+   "status": "Pronto",
+   "tecnologia": "JavaScript (browser only)",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "commonUtils",
+   "modulo": "lib/platform/common/utils.js",
+   "arquivos": 1,
+   "linhas": 53,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [],
+   "lido_pelo_inventario": true,
+   "digital": "2:4283ed64df5fe37e",
+   "nome": "Shared environment detection",
+   "descricao": "Detects standard browser, web worker and React Native environments from window, document and navigator, so axios picks the right XSRF and FormData behavior in each.",
+   "container": "axiosLib",
+   "area": "AreaPlatform",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "platformIndex",
+   "modulo": "lib/platform/index.js",
+   "arquivos": 1,
+   "linhas": 8,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [],
+   "lido_pelo_inventario": true,
+   "digital": "2:07b6327342db79ac",
+   "nome": "Platform facade",
+   "descricao": "Merges the Node platform descriptor with shared environment detection into one object, so modules import a single platform API and the browser build swaps it through the bundler.",
+   "container": "axiosLib",
+   "area": "AreaPlatform",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "lodemap-modelador (revisado)"
+  },
+  {
+   "id": "classesBuffer",
+   "modulo": "lib/platform/node/classes/Buffer.js",
+   "arquivos": 1,
+   "linhas": 12,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [],
+   "lido_pelo_inventario": true,
+   "digital": "2:e395c8d4a66da17e",
+   "nome": "Node Buffer adapter",
+   "descricao": "Wraps Buffer creation behind an availability check, so form and body encoders can handle binary values on Node while staying safe where Buffer is absent.",
+   "container": "axiosLib",
+   "area": "AreaPlatform",
+   "status": "Pronto",
+   "tecnologia": "JavaScript (Node only)",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "classesFormData3",
+   "modulo": "lib/platform/node/classes/FormData.js",
+   "arquivos": 1,
+   "linhas": 4,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [],
+   "lido_pelo_inventario": true,
+   "digital": "2:1b0b2fa59ad4a1d0",
+   "nome": "Node FormData re-export",
+   "descricao": "Re-exports the form-data package on Node, so multipart encoding uses a full implementation with boundaries and file streams where no native FormData exists.",
+   "container": "axiosLib",
+   "area": "AreaPlatform",
+   "status": "Pronto",
+   "tecnologia": "JavaScript (Node only)",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "classesURLSearchParams2",
+   "modulo": "lib/platform/node/classes/URLSearchParams.js",
+   "arquivos": 1,
+   "linhas": 5,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [],
+   "lido_pelo_inventario": true,
+   "digital": "2:ac2599fa3ad2240c",
+   "nome": "Node URLSearchParams re-export",
+   "descricao": "Re-exports the URLSearchParams class from Node's url module, so server-side query serialization uses the same class as the platform's built-in parser.",
+   "container": "axiosLib",
+   "area": "AreaPlatform",
+   "status": "Pronto",
+   "tecnologia": "JavaScript (Node only)",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "nodeIndex",
+   "modulo": "lib/platform/node/index.js",
+   "arquivos": 1,
+   "linhas": 38,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [],
+   "lido_pelo_inventario": true,
+   "digital": "2:54c28d275a428a7c",
+   "nome": "Node platform descriptor",
+   "descricao": "Describes the Node runtime with isNode, classes and protocols, and generates random boundary strings with crypto, so multipart bodies get unpredictable boundaries.",
+   "container": "axiosLib",
+   "area": "AreaPlatform",
+   "status": "Pronto",
+   "tecnologia": "JavaScript (Node only)",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  },
+  {
+   "id": "libUtils",
+   "modulo": "lib/utils.js",
+   "arquivos": 1,
+   "linhas": 1202,
+   "linguagem": "javascript",
+   "dica": "",
+   "simbolos": [
+    "isBuffer",
+    "isArrayBufferView",
+    "getGlobal",
+    "forEach",
+    "findKey",
+    "merge",
+    "isSpecCompliantForm"
+   ],
+   "lido_pelo_inventario": true,
+   "digital": "2:70ee91726cde8a72",
+   "nome": "Shared utility toolkit",
+   "descricao": "Provides type checks, safe object iteration and prototype-pollution guards used across the library, so helpers ignore inherited keys that could alter request behavior.",
+   "container": "axiosLib",
+   "area": "AreaPlatform",
+   "status": "Pronto",
+   "tecnologia": "JavaScript",
+   "tags": [],
+   "propriedades": {},
+   "descrito_por": "claude -p haiku medium"
+  }
+ ],
+ "relacoes": [
+  {
+   "de": "lib/adapters/adapters.js",
+   "para": "lib/adapters/fetch.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Registers the lazy fetch getter as the fetch adapter",
+   "tecnologia": "Adapter registry",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/adapters.js",
+   "para": "lib/adapters/http.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Registers it as the Node.js http adapter",
+   "tecnologia": "Adapter registry",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/adapters.js",
+   "para": "lib/adapters/xhr.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Registers it as the browser xhr adapter",
+   "tecnologia": "Adapter registry",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/adapters.js",
+   "para": "lib/core/AxiosError.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Throws unknown or unsupported adapter errors with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/adapters.js",
+   "para": "lib/utils.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Iterates the adapter registry and checks adapter types with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/fetch.js",
+   "para": "lib/core/AxiosError.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Raises network, timeout and bad-response errors with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/fetch.js",
+   "para": "lib/core/AxiosHeaders.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Builds request headers and wraps response headers with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/fetch.js",
+   "para": "lib/core/createMultipartBody.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Builds the multipart Blob for size-limited or streamed uploads with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/fetch.js",
+   "para": "lib/core/settle.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Settles the promise from the response status through",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/fetch.js",
+   "para": "lib/env/data.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Reads the package version for the User-Agent from",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/fetch.js",
+   "para": "lib/helpers/composeSignals.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Merges the abort signal, cancel token and timeout through",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/fetch.js",
+   "para": "lib/helpers/estimateDataURLDecodedBytes.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Checks the size of data: URLs before decoding with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/fetch.js",
+   "para": "lib/helpers/progressEventReducer.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Emits upload and download progress through",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/fetch.js",
+   "para": "lib/helpers/resolveConfig.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Resolves URL, headers, auth and body policy with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/fetch.js",
+   "para": "lib/helpers/sanitizeHeaderValue.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Converts header values to byte strings with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/fetch.js",
+   "para": "lib/helpers/trackStream.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Counts streamed request and response bytes through",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/fetch.js",
+   "para": "lib/platform/index.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Reads runtime capability flags from",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/fetch.js",
+   "para": "lib/utils.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Classifies body types and merges config values with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/http.js",
+   "para": "lib/cancel/CanceledError.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Aborts the request with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/http.js",
+   "para": "lib/core/AxiosError.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Raises network, timeout, size and redirect errors with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/http.js",
+   "para": "lib/core/AxiosHeaders.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Builds request headers and wraps response headers with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/http.js",
+   "para": "lib/core/buildFullPath.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Joins baseURL and url into the request URL with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/http.js",
+   "para": "lib/core/setFormDataHeaders.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Applies the multipart header policy through",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/http.js",
+   "para": "lib/core/settle.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Settles the promise from the response status through",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/http.js",
+   "para": "lib/defaults/transitional.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Reads transitional behavior flags from",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/http.js",
+   "para": "lib/env/data.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Reads the package version for the User-Agent and boundary tag from",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/http.js",
+   "para": "lib/helpers/AxiosTransformStream.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Throttles upload and download streams with",
+   "tecnologia": "Node.js streams",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/http.js",
+   "para": "lib/helpers/Http2Sessions.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Reuses pooled HTTP/2 sessions from",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/http.js",
+   "para": "lib/helpers/ZlibHeaderTransformStream.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Repairs compressed response streams with",
+   "tecnologia": "Node.js streams",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/http.js",
+   "para": "lib/helpers/bind.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Rebinds the pooled agent hooks of the direct connection with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/http.js",
+   "para": "lib/helpers/buildURL.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Appends serialized params to the URL with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/http.js",
+   "para": "lib/helpers/callbackify.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Wraps the async DNS lookup as a callback with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/http.js",
+   "para": "lib/helpers/estimateDataURLDecodedBytes.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Caps buffer allocation for data: URLs with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/http.js",
+   "para": "lib/helpers/formDataToStream.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Streams multipart FormData bodies with",
+   "tecnologia": "Node.js streams",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/http.js",
+   "para": "lib/helpers/fromDataURI.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Decodes data: URLs without a network call with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/http.js",
+   "para": "lib/helpers/progressEventReducer.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Emits upload and download progress through",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/http.js",
+   "para": "lib/helpers/readBlob.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Reads Blob bodies as chunks with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/http.js",
+   "para": "lib/helpers/sanitizeHeaderValue.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Converts header values to byte strings with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/http.js",
+   "para": "lib/helpers/shouldBypassProxy.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Matches NO_PROXY rules with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/http.js",
+   "para": "lib/platform/index.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Reads runtime capability flags from",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/http.js",
+   "para": "lib/utils.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Classifies body types, stream kinds and numeric limits with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/xhr.js",
+   "para": "lib/cancel/CanceledError.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Aborts the request with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/xhr.js",
+   "para": "lib/core/AxiosError.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Raises network, timeout and abort errors with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/xhr.js",
+   "para": "lib/core/AxiosHeaders.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Wraps request and response headers with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/xhr.js",
+   "para": "lib/core/settle.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Settles the promise from the response status through",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/xhr.js",
+   "para": "lib/defaults/transitional.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Reads timeout-clarification flags from",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/xhr.js",
+   "para": "lib/helpers/cookies.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Reads the XSRF cookie asynchronously through",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/xhr.js",
+   "para": "lib/helpers/normalizeURLForProtocolCheck.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Normalizes the URL before the scheme check with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/xhr.js",
+   "para": "lib/helpers/parseProtocol.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Rejects unsupported URL schemes with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/xhr.js",
+   "para": "lib/helpers/progressEventReducer.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Emits upload and download progress through",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/xhr.js",
+   "para": "lib/helpers/resolveConfig.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Resolves URL, headers, auth and body policy with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/xhr.js",
+   "para": "lib/helpers/sanitizeHeaderValue.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Converts header values to byte strings with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/xhr.js",
+   "para": "lib/platform/index.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Checks the browser environment through",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/xhr.js",
+   "para": "lib/utils.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Iterates headers with forEach and checks for undefined with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/axios.js",
+   "para": "lib/adapters/adapters.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Exposes getAdapter from",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/axios.js",
+   "para": "lib/cancel/CancelToken.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Exposes the cancel token class from",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/axios.js",
+   "para": "lib/cancel/CanceledError.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Exposes the cancellation error from",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/axios.js",
+   "para": "lib/cancel/isCancel.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Exposes the cancellation check from",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/axios.js",
+   "para": "lib/core/Axios.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Instantiates the client and binds request on it with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/axios.js",
+   "para": "lib/core/AxiosError.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Exposes the error class from",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/axios.js",
+   "para": "lib/core/AxiosHeaders.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Exposes the headers class from",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/axios.js",
+   "para": "lib/core/mergeConfig.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Merges instance config in axios.create with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/axios.js",
+   "para": "lib/defaults/index.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Seeds the default instance with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/axios.js",
+   "para": "lib/env/data.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Exposes the package version from",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/axios.js",
+   "para": "lib/helpers/HttpStatusCode.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Exposes the status code table from",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/axios.js",
+   "para": "lib/helpers/bind.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Binds the request method to the instance with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/axios.js",
+   "para": "lib/helpers/formDataToJSON.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Exposes axios.formToJSON with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/axios.js",
+   "para": "lib/helpers/isAxiosError.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Exposes axios.isAxiosError with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/axios.js",
+   "para": "lib/helpers/spread.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Exposes axios.spread with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/axios.js",
+   "para": "lib/helpers/toFormData.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Exposes axios.toFormData with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/axios.js",
+   "para": "lib/utils.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Copies prototype members onto the instance and detects HTML forms with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/cancel/CancelToken.js",
+   "para": "lib/cancel/CanceledError.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Builds the cancellation reason with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/cancel/CanceledError.js",
+   "para": "lib/core/AxiosError.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Extends as a subclass of",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/core/Axios.js",
+   "para": "lib/core/AxiosError.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Finds the wrapped cause in the error stack with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/core/Axios.js",
+   "para": "lib/core/AxiosHeaders.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Merges common and per-method headers with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/core/Axios.js",
+   "para": "lib/core/InterceptorManager.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Registers and runs request and response interceptors from",
+   "tecnologia": "Promise chain",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/core/Axios.js",
+   "para": "lib/core/buildFullPath.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Builds the full URL in getUri with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/core/Axios.js",
+   "para": "lib/core/dispatchRequest.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Hands the merged config over for dispatch to",
+   "tecnologia": "Promise chain",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/core/Axios.js",
+   "para": "lib/core/mergeConfig.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Merges instance defaults with each call config through",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/core/Axios.js",
+   "para": "lib/core/methodList.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Generates the get/post/put shortcut methods from",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/core/Axios.js",
+   "para": "lib/defaults/transitional.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Falls back to the default transitional flags from",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/core/Axios.js",
+   "para": "lib/helpers/buildURL.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Serializes params in getUri with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/core/Axios.js",
+   "para": "lib/helpers/validator.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Validates config options and transitional flags with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/core/Axios.js",
+   "para": "lib/utils.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Merges config and iterates the method list with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/core/AxiosError.js",
+   "para": "lib/core/AxiosHeaders.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Redacts and serializes headers of the failed config with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/core/AxiosError.js",
+   "para": "lib/utils.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Serializes the error to plain JSON and checks types with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/core/AxiosHeaders.js",
+   "para": "lib/helpers/parseHeaders.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Parses raw header strings with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/core/AxiosHeaders.js",
+   "para": "lib/helpers/sanitizeHeaderValue.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Strips unsafe characters from header values with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/core/AxiosHeaders.js",
+   "para": "lib/utils.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Normalizes header names and checks value types with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/core/InterceptorManager.js",
+   "para": "lib/utils.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Iterates registered handlers with forEach from",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/core/assertParamsAcyclic.js",
+   "para": "lib/core/AxiosError.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Throws ERR_BAD_OPTION_VALUE on a circular reference with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/core/assertParamsAcyclic.js",
+   "para": "lib/utils.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Checks plain objects and arrays and reads own properties with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/core/buildFullPath.js",
+   "para": "lib/core/AxiosError.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Throws on unsafe URLs and redacts credentials with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/core/buildFullPath.js",
+   "para": "lib/helpers/combineURLs.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Joins the base and relative URL with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/core/buildFullPath.js",
+   "para": "lib/helpers/isAbsoluteURL.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Skips joining for absolute URLs with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/core/buildFullPath.js",
+   "para": "lib/helpers/normalizeURLForProtocolCheck.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Normalizes the URL before the scheme check with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/core/createMultipartBody.js",
+   "para": "lib/core/AxiosError.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Raises unsupported-Blob, random-source and serialization errors with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/core/createMultipartBody.js",
+   "para": "lib/helpers/formDataToBlob.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Serializes the FormData into a Blob with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/core/createMultipartBody.js",
+   "para": "lib/platform/index.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Reads the random string generator from",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/core/createMultipartBody.js",
+   "para": "lib/utils.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Checks for functions and reads the global crypto with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/core/dispatchRequest.js",
+   "para": "lib/adapters/adapters.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Resolves config.adapter or the default list through",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/core/dispatchRequest.js",
+   "para": "lib/cancel/CanceledError.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Throws when the abort signal has fired with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/core/dispatchRequest.js",
+   "para": "lib/cancel/isCancel.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Tells cancellations from other rejections with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/core/dispatchRequest.js",
+   "para": "lib/core/AxiosHeaders.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Wraps request and response headers with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/core/dispatchRequest.js",
+   "para": "lib/core/transformData.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Runs transformRequest and transformResponse through",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/core/dispatchRequest.js",
+   "para": "lib/defaults/index.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Reads the default adapter from",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/core/dispatchRequest.js",
+   "para": "lib/utils.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Copies the config safely with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/core/mergeConfig.js",
+   "para": "lib/core/AxiosHeaders.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Flattens header instances before merging with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/core/mergeConfig.js",
+   "para": "lib/core/assertParamsAcyclic.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Rejects circular params after merging them with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/core/mergeConfig.js",
+   "para": "lib/utils.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Merges plain-object config values and checks types with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/core/settle.js",
+   "para": "lib/core/AxiosError.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Rejects out-of-range statuses with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/core/transformData.js",
+   "para": "lib/core/AxiosHeaders.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Hands normalized headers to each transform with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/core/transformData.js",
+   "para": "lib/defaults/index.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Falls back to the default transforms from",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/core/transformData.js",
+   "para": "lib/utils.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Iterates the transform functions with forEach from",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/defaults/index.js",
+   "para": "lib/core/AxiosError.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Raises JSON parse errors with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/defaults/index.js",
+   "para": "lib/core/methodList.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Creates a header bucket per method from",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/defaults/index.js",
+   "para": "lib/defaults/transitional.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Embeds the default transitional flags from",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/defaults/index.js",
+   "para": "lib/helpers/formDataToJSON.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Converts FormData bodies to JSON with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/defaults/index.js",
+   "para": "lib/helpers/toFormData.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Serializes objects to multipart bodies with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/defaults/index.js",
+   "para": "lib/helpers/toURLEncodedForm.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Serializes objects to urlencoded bodies with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/defaults/index.js",
+   "para": "lib/platform/index.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Picks the platform FormData and Blob classes from",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/defaults/index.js",
+   "para": "lib/utils.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Classifies body types to pick the request serializer with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/helpers/AxiosTransformStream.js",
+   "para": "lib/utils.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Copies stream options with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/helpers/AxiosURLSearchParams.js",
+   "para": "lib/helpers/toFormData.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Encodes key/value pairs with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/helpers/buildURL.js",
+   "para": "lib/helpers/AxiosURLSearchParams.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Serializes params into the query string with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/helpers/buildURL.js",
+   "para": "lib/utils.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Reads params safely and checks types with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/helpers/callbackify.js",
+   "para": "lib/utils.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Detects async functions with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/helpers/composeSignals.js",
+   "para": "lib/cancel/CanceledError.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Aborts with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/helpers/composeSignals.js",
+   "para": "lib/core/AxiosError.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Aborts with a timeout error from",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/helpers/composeSignals.js",
+   "para": "lib/utils.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Defers the abort callback with asap from",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/helpers/cookies.js",
+   "para": "lib/platform/index.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Enables itself only in standard browser environments via",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/helpers/cookies.js",
+   "para": "lib/utils.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Type checks with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/helpers/formDataToBlob.js",
+   "para": "lib/utils.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Checks string and function types with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/helpers/formDataToJSON.js",
+   "para": "lib/core/AxiosError.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Throws on excessive nesting with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/helpers/formDataToJSON.js",
+   "para": "lib/helpers/toFormData.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Shares the maximum nesting depth constant with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/helpers/formDataToJSON.js",
+   "para": "lib/utils.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Iterates FormData entries and checks types with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/helpers/formDataToStream.js",
+   "para": "lib/helpers/readBlob.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Reads blob parts with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/helpers/formDataToStream.js",
+   "para": "lib/platform/index.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Generates the multipart boundary with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/helpers/formDataToStream.js",
+   "para": "lib/utils.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Classifies parts and sizes multipart bodies with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/helpers/fromDataURI.js",
+   "para": "lib/core/AxiosError.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Throws on invalid or unsupported data URIs with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/helpers/fromDataURI.js",
+   "para": "lib/helpers/parseProtocol.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Extracts the URI scheme with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/helpers/fromDataURI.js",
+   "para": "lib/platform/index.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Gets the Blob class from",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/helpers/isAxiosError.js",
+   "para": "lib/utils.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Type checks with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/helpers/isURLSameOrigin.js",
+   "para": "lib/platform/index.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Compares URLs against the current origin through",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/helpers/parseHeaders.js",
+   "para": "lib/utils.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Builds the set of repeatable headers with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/helpers/progressEventReducer.js",
+   "para": "lib/helpers/speedometer.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Computes the transfer rate with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/helpers/progressEventReducer.js",
+   "para": "lib/helpers/throttle.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Limits how often events are emitted with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/helpers/progressEventReducer.js",
+   "para": "lib/utils.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Defers progress callbacks with asap from",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/helpers/resolveConfig.js",
+   "para": "lib/core/AxiosError.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Throws on invalid auth or option values with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/helpers/resolveConfig.js",
+   "para": "lib/core/AxiosHeaders.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Builds the merged request headers with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/helpers/resolveConfig.js",
+   "para": "lib/core/buildFullPath.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Resolves the full URL with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/helpers/resolveConfig.js",
+   "para": "lib/core/mergeConfig.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Merges the raw config with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/helpers/resolveConfig.js",
+   "para": "lib/core/setFormDataHeaders.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Applies the FormData header policy through",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/helpers/resolveConfig.js",
+   "para": "lib/helpers/buildURL.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Appends serialized params with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/helpers/resolveConfig.js",
+   "para": "lib/helpers/cookies.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Reads the XSRF cookie with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/helpers/resolveConfig.js",
+   "para": "lib/helpers/isURLSameOrigin.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Sends the XSRF header only to the same origin via",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/helpers/resolveConfig.js",
+   "para": "lib/platform/index.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Reads browser and worker environment flags from",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/helpers/resolveConfig.js",
+   "para": "lib/utils.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Reads config values safely and classifies FormData bodies with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/helpers/sanitizeHeaderValue.js",
+   "para": "lib/utils.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Iterates header values with forEach from",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/helpers/toFormData.js",
+   "para": "lib/core/AxiosError.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Throws on invalid input and excess depth with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/helpers/toFormData.js",
+   "para": "lib/platform/node/classes/Buffer.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Converts buffers when Node.js is available through",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/helpers/toFormData.js",
+   "para": "lib/platform/node/classes/FormData.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Creates the form-data instance in Node.js via",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/helpers/toFormData.js",
+   "para": "lib/utils.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Walks and type-checks values to flatten them with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/helpers/toURLEncodedForm.js",
+   "para": "lib/helpers/toFormData.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Visits entries with a custom visitor in",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/helpers/toURLEncodedForm.js",
+   "para": "lib/platform/index.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Reads the URLSearchParams class from",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/helpers/toURLEncodedForm.js",
+   "para": "lib/utils.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Type checks with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/helpers/validator.js",
+   "para": "lib/core/AxiosError.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Throws option errors with",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/helpers/validator.js",
+   "para": "lib/env/data.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Prints the version in deprecation warnings from",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/platform/browser/classes/URLSearchParams.js",
+   "para": "lib/helpers/AxiosURLSearchParams.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Falls back to when the native class is missing",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/platform/browser/index.js",
+   "para": "lib/platform/browser/classes/Blob.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Bundles the browser Blob from",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/platform/browser/index.js",
+   "para": "lib/platform/browser/classes/FormData.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Bundles the browser FormData from",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/platform/browser/index.js",
+   "para": "lib/platform/browser/classes/URLSearchParams.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Bundles the browser URLSearchParams from",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/platform/index.js",
+   "para": "lib/platform/common/utils.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Spreads the environment detection flags from",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/platform/index.js",
+   "para": "lib/platform/node/index.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Spreads the Node.js platform descriptor from",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/platform/node/index.js",
+   "para": "lib/platform/node/classes/FormData.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Bundles the Node.js FormData from",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/platform/node/index.js",
+   "para": "lib/platform/node/classes/URLSearchParams.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Bundles the Node.js URLSearchParams from",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/utils.js",
+   "para": "lib/helpers/bind.js",
+   "arestas": 1,
+   "tipos": {
+    "imports": 1
+   },
+   "verbo": "Wraps functions with the bound-call helper from",
+   "tecnologia": "Function call",
+   "manter": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/core/dispatchRequest.js",
+   "para": "lib/adapters/http.js",
+   "arestas": 0,
+   "tipos": {},
+   "verbo": "Invokes the adapter picked from config.adapter, in Node.js",
+   "tecnologia": "config.adapter",
+   "manter": true,
+   "manual": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/core/dispatchRequest.js",
+   "para": "lib/adapters/xhr.js",
+   "arestas": 0,
+   "tipos": {},
+   "verbo": "Invokes the adapter picked from config.adapter, in browsers",
+   "tecnologia": "config.adapter",
+   "manter": true,
+   "manual": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/core/dispatchRequest.js",
+   "para": "lib/adapters/fetch.js",
+   "arestas": 0,
+   "tipos": {},
+   "verbo": "Invokes the adapter picked from config.adapter, on fetch runtimes",
+   "tecnologia": "config.adapter",
+   "manter": true,
+   "manual": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/defaults/index.js",
+   "para": "lib/adapters/adapters.js",
+   "arestas": 0,
+   "tipos": {},
+   "verbo": "Names the default adapter order xhr, http, fetch for",
+   "tecnologia": "config.adapter",
+   "manter": true,
+   "manual": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/core/dispatchRequest.js",
+   "para": "lib/cancel/CancelToken.js",
+   "arestas": 0,
+   "tipos": {},
+   "verbo": "Asks the token whether cancellation was requested",
+   "tecnologia": "config.cancelToken",
+   "manter": true,
+   "manual": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/xhr.js",
+   "para": "lib/cancel/CancelToken.js",
+   "arestas": 0,
+   "tipos": {},
+   "verbo": "Subscribes its abort handler to the token of",
+   "tecnologia": "config.cancelToken",
+   "manter": true,
+   "manual": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/http.js",
+   "para": "lib/cancel/CancelToken.js",
+   "arestas": 0,
+   "tipos": {},
+   "verbo": "Subscribes its abort handler to the token of",
+   "tecnologia": "config.cancelToken",
+   "manter": true,
+   "manual": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/fetch.js",
+   "para": "lib/cancel/CancelToken.js",
+   "arestas": 0,
+   "tipos": {},
+   "verbo": "Converts the token into an abort signal with",
+   "tecnologia": "config.cancelToken",
+   "manter": true,
+   "manual": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/platform/index.js",
+   "para": "lib/platform/browser/index.js",
+   "arestas": 0,
+   "tipos": {},
+   "verbo": "Is replaced by the browser descriptor in browser and React Native bundles",
+   "tecnologia": "package.json browser field",
+   "manter": true,
+   "manual": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/adapters/adapters.js",
+   "para": "lib/helpers/null.js",
+   "arestas": 0,
+   "tipos": {},
+   "verbo": "Receives a null stub instead of the HTTP adapter in browser bundles",
+   "tecnologia": "package.json browser field",
+   "manter": true,
+   "manual": true,
+   "sumiu_do_codigo": false
+  },
+  {
+   "de": "lib/helpers/toFormData.js",
+   "para": "lib/helpers/null.js",
+   "arestas": 0,
+   "tipos": {},
+   "verbo": "Receives null stubs instead of the Node.js Buffer and FormData in browser bundles",
+   "tecnologia": "package.json browser field",
+   "manter": true,
+   "manual": true,
+   "sumiu_do_codigo": false
+  }
+ ],
+ "removidos": [],
+ "pendentes": {
+  "componentes_novos": [],
+  "componentes_revisar": [],
+  "relacoes_novas": [],
+  "componentes_sem_container_ou_status": []
+ }
+}

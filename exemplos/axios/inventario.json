@@ -1,0 +1,558 @@
+{
+  "modulos": [
+    {
+      "caminho": "lib/adapters/adapters.js",
+      "tipo": "arquivo",
+      "tamanho": "132 l",
+      "proposito": "import utils from '../utils.js';",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/adapters/fetch.js",
+      "tipo": "arquivo",
+      "tamanho": "696 l",
+      "proposito": "import platform from '../platform/index.js';",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/adapters/http.js",
+      "tipo": "arquivo",
+      "tamanho": "1490 l",
+      "proposito": "import utils from '../utils.js';",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/adapters/xhr.js",
+      "tipo": "arquivo",
+      "tamanho": "277 l",
+      "proposito": "import utils from '../utils.js';",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/axios.js",
+      "tipo": "arquivo",
+      "tamanho": "89 l",
+      "proposito": "import utils from './utils.js';",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/cancel/CancelToken.js",
+      "tipo": "arquivo",
+      "tamanho": "135 l",
+      "proposito": "import CanceledError from './CanceledError.js';",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/cancel/CanceledError.js",
+      "tipo": "arquivo",
+      "tamanho": "22 l",
+      "proposito": "import AxiosError from '../core/AxiosError.js';",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/cancel/isCancel.js",
+      "tipo": "arquivo",
+      "tamanho": "5 l",
+      "proposito": "export default function isCancel(value) {",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/core/Axios.js",
+      "tipo": "arquivo",
+      "tamanho": "306 l",
+      "proposito": "import utils from '../utils.js';",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/core/AxiosError.js",
+      "tipo": "arquivo",
+      "tamanho": "219 l",
+      "proposito": "import utils from '../utils.js';",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/core/AxiosHeaders.js",
+      "tipo": "arquivo",
+      "tamanho": "474 l",
+      "proposito": "import utils from '../utils.js';",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/core/InterceptorManager.js",
+      "tipo": "arquivo",
+      "tamanho": "171 l",
+      "proposito": "import utils from '../utils.js';",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/core/buildFullPath.js",
+      "tipo": "arquivo",
+      "tamanho": "76 l",
+      "proposito": "import AxiosError, { REDACTED } from './AxiosError.js';",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/core/dispatchRequest.js",
+      "tipo": "arquivo",
+      "tamanho": "95 l",
+      "proposito": "import transformData from './transformData.js';",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/core/mergeConfig.js",
+      "tipo": "arquivo",
+      "tamanho": "174 l",
+      "proposito": "import utils from '../utils.js';",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/core/methodList.js",
+      "tipo": "arquivo",
+      "tamanho": "17 l",
+      "proposito": "const methodList = Object.freeze([",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/core/setFormDataHeaders.js",
+      "tipo": "arquivo",
+      "tamanho": "27 l",
+      "proposito": "const FORM_DATA_CONTENT_HEADERS = ['content-type', 'content-length'];",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/core/settle.js",
+      "tipo": "arquivo",
+      "tamanho": "27 l",
+      "proposito": "import AxiosError from './AxiosError.js';",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/core/transformData.js",
+      "tipo": "arquivo",
+      "tamanho": "28 l",
+      "proposito": "import utils from '../utils.js';",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/defaults/index.js",
+      "tipo": "arquivo",
+      "tamanho": "178 l",
+      "proposito": "import utils from '../utils.js';",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/defaults/transitional.js",
+      "tipo": "arquivo",
+      "tamanho": "10 l",
+      "proposito": "export default {",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/env/classes/FormData.js",
+      "tipo": "arquivo",
+      "tamanho": "2 l",
+      "proposito": "import _FormData from 'form-data';",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/env/data.js",
+      "tipo": "arquivo",
+      "tamanho": "1 l",
+      "proposito": "export const VERSION = \"1.20.0\";",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/helpers/AxiosTransformStream.js",
+      "tipo": "arquivo",
+      "tamanho": "156 l",
+      "proposito": "import stream from 'stream';",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/helpers/AxiosURLSearchParams.js",
+      "tipo": "arquivo",
+      "tamanho": "59 l",
+      "proposito": "import toFormData from './toFormData.js';",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/helpers/Http2Sessions.js",
+      "tipo": "arquivo",
+      "tamanho": "121 l",
+      "proposito": "Node-only: relies on the built-in `http2` module. Browser/react-native",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/helpers/HttpStatusCode.js",
+      "tipo": "arquivo",
+      "tamanho": "88 l",
+      "proposito": "const HttpStatusCode = {",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/helpers/ZlibHeaderTransformStream.js",
+      "tipo": "arquivo",
+      "tamanho": "29 l",
+      "proposito": "import stream from 'stream';",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/helpers/bind.js",
+      "tipo": "arquivo",
+      "tamanho": "14 l",
+      "proposito": "Create a bound version of a function with a specified `this` context",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/helpers/buildURL.js",
+      "tipo": "arquivo",
+      "tamanho": "69 l",
+      "proposito": "import utils from '../utils.js';",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/helpers/callbackify.js",
+      "tipo": "arquivo",
+      "tamanho": "18 l",
+      "proposito": "import utils from '../utils.js';",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/helpers/combineURLs.js",
+      "tipo": "arquivo",
+      "tamanho": "23 l",
+      "proposito": "Creates a new URL by combining the specified URLs",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/helpers/composeSignals.js",
+      "tipo": "arquivo",
+      "tamanho": "68 l",
+      "proposito": "import CanceledError from '../cancel/CanceledError.js';",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/helpers/cookies.js",
+      "tipo": "arquivo",
+      "tamanho": "64 l",
+      "proposito": "import utils from '../utils.js';",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/helpers/deprecatedMethod.js",
+      "tipo": "arquivo",
+      "tamanho": "31 l",
+      "proposito": "eslint no-console:0*/",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/helpers/estimateDataURLDecodedBytes.js",
+      "tipo": "arquivo",
+      "tamanho": "166 l",
+      "proposito": "Estimate data: URL byte lengths *without* allocating large buffers.",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/helpers/formDataToJSON.js",
+      "tipo": "arquivo",
+      "tamanho": "125 l",
+      "proposito": "import utils from '../utils.js';",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/helpers/formDataToStream.js",
+      "tipo": "arquivo",
+      "tamanho": "119 l",
+      "proposito": "import util from 'util';",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/helpers/fromDataURI.js",
+      "tipo": "arquivo",
+      "tamanho": "69 l",
+      "proposito": "import AxiosError from '../core/AxiosError.js';",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/helpers/isAbsoluteURL.js",
+      "tipo": "arquivo",
+      "tamanho": "19 l",
+      "proposito": "Determines whether the specified URL is absolute",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/helpers/isAxiosError.js",
+      "tipo": "arquivo",
+      "tamanho": "14 l",
+      "proposito": "import utils from '../utils.js';",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/helpers/isURLSameOrigin.js",
+      "tipo": "arquivo",
+      "tamanho": "16 l",
+      "proposito": "import platform from '../platform/index.js';",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/helpers/normalizeURLForProtocolCheck.js",
+      "tipo": "arquivo",
+      "tamanho": "24 l",
+      "proposito": "const urlParserControlCharacters = /[\\t\\n\\r]/g;",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/helpers/null.js",
+      "tipo": "arquivo",
+      "tamanho": "2 l",
+      "proposito": "eslint-disable-next-line strict",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/helpers/parseHeaders.js",
+      "tipo": "arquivo",
+      "tamanho": "71 l",
+      "proposito": "import utils from '../utils.js';",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/helpers/parseProtocol.js",
+      "tipo": "arquivo",
+      "tamanho": "6 l",
+      "proposito": "export default function parseProtocol(url) {",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/helpers/progressEventReducer.js",
+      "tipo": "arquivo",
+      "tamanho": "54 l",
+      "proposito": "import speedometer from './speedometer.js';",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/helpers/readBlob.js",
+      "tipo": "arquivo",
+      "tamanho": "15 l",
+      "proposito": "const { asyncIterator } = Symbol;",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/helpers/resolveConfig.js",
+      "tipo": "arquivo",
+      "tamanho": "107 l",
+      "proposito": "import platform from '../platform/index.js';",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/helpers/sanitizeHeaderValue.js",
+      "tipo": "arquivo",
+      "tamanho": "60 l",
+      "proposito": "import utils from '../utils.js';",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/helpers/shouldBypassProxy.js",
+      "tipo": "arquivo",
+      "tamanho": "505 l",
+      "proposito": "const LOOPBACK_HOSTNAMES = new Set(['localhost', '0.0.0.0']);",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/helpers/speedometer.js",
+      "tipo": "arquivo",
+      "tamanho": "55 l",
+      "proposito": "Calculate data maxRate",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/helpers/spread.js",
+      "tipo": "arquivo",
+      "tamanho": "28 l",
+      "proposito": "Syntactic sugar for invoking a function and expanding an array for arguments.",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/helpers/throttle.js",
+      "tipo": "arquivo",
+      "tamanho": "45 l",
+      "proposito": "Throttle decorator",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/helpers/toFormData.js",
+      "tipo": "arquivo",
+      "tamanho": "279 l",
+      "proposito": "import utils from '../utils.js';",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/helpers/toURLEncodedForm.js",
+      "tipo": "arquivo",
+      "tamanho": "19 l",
+      "proposito": "import utils from '../utils.js';",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/helpers/trackStream.js",
+      "tipo": "arquivo",
+      "tamanho": "89 l",
+      "proposito": "export const streamChunk = function* (chunk, chunkSize) {",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/helpers/validator.js",
+      "tipo": "arquivo",
+      "tamanho": "112 l",
+      "proposito": "import { VERSION } from '../env/data.js';",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/platform/browser/classes/Blob.js",
+      "tipo": "arquivo",
+      "tamanho": "3 l",
+      "proposito": "export default typeof Blob !== 'undefined' ? Blob : null;",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/platform/browser/classes/FormData.js",
+      "tipo": "arquivo",
+      "tamanho": "3 l",
+      "proposito": "export default typeof FormData !== 'undefined' ? FormData : null;",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/platform/browser/classes/URLSearchParams.js",
+      "tipo": "arquivo",
+      "tamanho": "4 l",
+      "proposito": "import AxiosURLSearchParams from '../../../helpers/AxiosURLSearchParams.js';",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/platform/browser/index.js",
+      "tipo": "arquivo",
+      "tamanho": "13 l",
+      "proposito": "import URLSearchParams from './classes/URLSearchParams.js';",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/platform/common/utils.js",
+      "tipo": "arquivo",
+      "tamanho": "52 l",
+      "proposito": "const hasBrowserEnv = typeof window !== 'undefined' && typeof document !== 'undefined';",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/platform/index.js",
+      "tipo": "arquivo",
+      "tamanho": "7 l",
+      "proposito": "import platform from './node/index.js';",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/platform/node/classes/Buffer.js",
+      "tipo": "arquivo",
+      "tamanho": "11 l",
+      "proposito": "export default {",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/platform/node/classes/FormData.js",
+      "tipo": "arquivo",
+      "tamanho": "3 l",
+      "proposito": "import FormData from 'form-data';",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/platform/node/classes/URLSearchParams.js",
+      "tipo": "arquivo",
+      "tamanho": "4 l",
+      "proposito": "import url from 'url';",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/platform/node/index.js",
+      "tipo": "arquivo",
+      "tamanho": "37 l",
+      "proposito": "import crypto from 'crypto';",
+      "coberto_por": null,
+      "importado_por": []
+    },
+    {
+      "caminho": "lib/utils.js",
+      "tipo": "arquivo",
+      "tamanho": "1150 l",
+      "proposito": "import bind from './helpers/bind.js';",
+      "coberto_por": null,
+      "importado_por": []
+    }
+  ],
+  "cobertos": 0,
+  "fora": 69
+}

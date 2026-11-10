@@ -32,8 +32,9 @@ e depois no PATH (shutil.which); só o site estático (--com-site) precisa dele.
 Etapas, na ordem: [incremental] páginas fixas faltantes; 1 validate; 2 export json; 3 gerar_docs; 4 gerar_leitor;
 5 codegraph_ponte --relacoes e gerar_explorador; 6 extensões locais ("extensoes" do lodemap.json e env
 LODEMAP_EXTENSOES, separada por ";" e, fora do Windows, também por ":"); 7 site estático (--com-site);
-por fim lodemap_diff --marcar. Falha de etapa obrigatória (1 a 5): código 1. Falha de extensão, da ponte, do
-site ou do --marcar: só aviso.
+por fim lodemap_diff --marcar e, se o script da skill existir, a linha do tempo da arquitetura (linha_do_tempo.py,
+lida do git; sem repositório git ela é pulada com aviso). Falha de etapa obrigatória (1 a 5): código 1. Falha de
+extensão, da ponte, do site, do --marcar ou da linha do tempo: só aviso.
 """
 from __future__ import annotations
 
@@ -423,6 +424,22 @@ def executar(a: argparse.Namespace, scripts: Path, env_proc=None) -> int:
     if marca.returncode != 0:
         aviso(r"Não consegui gravar .lodemap/estado.json (o próximo diff será completo).",
               r"Could not write .lodemap/estado.json (the next diff will be a full one).")
+
+    # Linha do tempo da arquitetura (0 tokens): última etapa, nunca obrigatória. Sem o script da skill, segue calada.
+    linha = template / ".." / ".." / "scripts" / "linha_do_tempo.py"
+    if tpl_ok and linha.is_file():
+        info("linha do tempo da arquitetura (histórico git)", "architecture timeline (git history)")
+        try:
+            rc = _rodar([py, str(linha), "--mapa", str(raiz)], env=env, capturar=True).returncode
+        except OSError as e:
+            aviso(f"A linha do tempo não rodou: {e}", f"The timeline did not run: {e}")
+            rc = 0
+        if rc == 3:
+            aviso("A linha do tempo não foi gerada: a pasta não está num repositório git.",
+                  "The timeline was not generated: the folder is not in a git repository.")
+        elif rc != 0:
+            aviso(f"A linha do tempo falhou (código {rc}); o resto está pronto.",
+                  f"The timeline failed (code {rc}); everything else is ready.")
 
     info("Pronto. Leitor em leitor/index.html; registre a mudança em docs/99-registro-de-atualizacoes.md.",
          "Done. Reader at leitor/index.html; log the change in docs/99-registro-de-atualizacoes.md.")

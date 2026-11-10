@@ -1,0 +1,19 @@
+{
+  "linguagem": "go",
+  "descricao": "Import com alias, dot, blank, bloco e linha unica, module path do go.mod raiz e de go.mod aninhado com replace, prefixo parecido (shop2), pacote de varios arquivos (aresta vai para o representante: arquivo com o nome da pasta, senao o primeiro em ordem alfabetica), _test.go externo, import em comentario e em string crua.",
+  "arestas": [
+    ["cmd/shop/main.go", "internal/store/store.go"],
+    ["cmd/shop/main.go", "internal/dot/helpers.go"],
+    ["cmd/shop/main.go", "internal/drivers/postgres.go"],
+    ["cmd/shop/main.go", "pkg/money/money.go"],
+    ["cmd/shop/main.go", "third/lib/lib.go"],
+    ["internal/store/store.go", "pkg/money/money.go"],
+    ["internal/store/store.go", "internal/store/sql/sql.go"],
+    ["internal/store/cache.go", "internal/dot/helpers.go"],
+    ["internal/drivers/postgres.go", "internal/store/sql/sql.go"],
+    ["pkg/money/money_test.go", "internal/store/store.go"],
+    ["pkg/money/money_test.go", "pkg/money/money.go"],
+    ["tools/gen.go", "pkg/money/money.go"]
+  ],
+  "limites": []
+}

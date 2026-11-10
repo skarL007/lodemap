@@ -1,0 +1,2007 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Explorador da arquitetura</title>
+<link rel="icon" href="data:,">
+<!-- Dados gerados por scripts/gerar_explorador.py (rode scripts/atualizar.ps1 depois de mudar o DSL).
+     Bibliotecas embutidas em vendor/ (MIT, licenças ao lado): abre por file:// e por http sem nenhuma requisição externa. -->
+<script>
+(function () {
+  var t = null;
+  try {
+    var q = new URLSearchParams(location.search).get("tema");
+    if (q === "claro") t = "light"; else if (q === "escuro") t = "dark"; else t = localStorage.getItem("sds-tema");
+  } catch (e) { /* sem localStorage */ }
+  if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
+})();
+</script>
+<script src="dados.js"></script>
+<script>
+/* Textos da interface do explorador, em português (padrão) e inglês. Funções recebem valores já escapados; listas de
+   dois itens (p*) são singular e plural. O conteúdo do modelo (nomes, descrições, ADRs) não passa por aqui. */
+window.LODEMAP_I18N = {
+  pt: {
+    titulo: "Explorador da arquitetura", docTitulo: n => "Mapa · " + n, arquitetura: "Arquitetura",
+    painelAbrir: "Abrir visões e filtros", painelTitulo: "Visões e filtros",
+    marcaTitulo: "Abrir o mapa", navAria: "Seções do mapa", navMapa: "Mapa", navDocs: "Documentação", navDecisoes: "Decisões", menuRotulo: "Seções",
+    temaParaClaro: "Mudar para o tema claro", temaParaEscuro: "Mudar para o tema escuro", temaClaro: "Tema claro", temaEscuro: "Tema escuro",
+    idiomaGrupo: "Idioma",
+    buscaRotulo: "Buscar componente, container ou arquivo", paletaAbrir: "Abrir a paleta de comandos", paletaTitulo: "Paleta: elementos, visões, fluxos e ações",
+    visoesFiltros: "Visões e filtros", visoes: "Visões", fluxos: "Fluxos", colorirPor: "Colorir por", mostrarStatus: "Mostrar status",
+    provaNoCodigo: "Prova no código", soModelo: "Só no modelo", atalhosTitulo: "Atalhos",
+    atalhos: mod => `Clique: foco · <kbd>Shift</kbd>+clique: caminho entre dois nós · duplo clique: vizinhança no modelo · <kbd>${mod}</kbd>: paleta · <kbd>/</kbd>: buscar · <kbd>F</kbd>: enquadrar · <kbd>←</kbd> <kbd>→</kbd>: passos do percurso · <kbd>Esc</kbd>: limpar`,
+    montando: "Montando o diagrama…", grafoAria: "Grafo da arquitetura",
+    nadaMostrar: "Nada para mostrar", mostrarTodosStatus: "Mostrar todos os status",
+    reorganizarTitulo: "Refazer o layout automático desta visão", reorganizar: "Reorganizar",
+    enquadrarTitulo: "Enquadrar o diagrama (F)", enquadrar: "Enquadrar o diagrama", legendaTitulo: "Legenda",
+    percursoAria: "Percurso do fluxo", passoAnt: "Passo anterior", passoAntTitulo: "Passo anterior (←)", passoProx: "Próximo passo", passoProxTitulo: "Próximo passo (→)",
+    copiarLinkTitulo: "Copiar o link deste passo", copiarLink: "Copiar link", passosBtn: "Passos",
+    inspetor: "Inspetor", fecharInspetor: "Fechar o inspetor",
+    paletaDialogo: "Paleta de comandos", paletaBusca: "Buscar elemento, visão, fluxo ou ação", paletaPh: "Elemento, visão, fluxo ou ação", paletaResultados: "Resultados",
+    paletaRodape: "<span><kbd>↑</kbd> <kbd>↓</kbd> escolher</span><span><kbd>Enter</kbd> abrir</span><span><kbd>Esc</kbd> fechar</span>",
+    erroTitulo: "Não foi possível abrir o explorador", tentarDeNovo: "Tentar de novo",
+    erroDados: "Não achei explorador/dados.js. Rode scripts/atualizar.ps1 e tente de novo.",
+    erroCytoscape: "Não consegui carregar explorador/vendor/cytoscape.min.js. Copie a pasta vendor/ do template da skill para explorador/ e tente de novo.",
+    status: { Pronto: "Pronto", "Em andamento": "Em andamento", Aguardando: "Aguardando", Planejado: "Planejado", "Fora do foco": "Fora do foco", Externo: "Externo" },
+    tipos: { Pessoa: "Pessoa", Sistema: "Sistema", Container: "Container", Componente: "Componente", "Ação": "Ação", "Visão": "Visão", Fluxo: "Fluxo" },
+    confianca: { alta: "alta", media: "média", baixa: "baixa" },
+    pComponente: ["componente", "componentes"], pPendencia: ["pendência", "pendências"], pPasso: ["passo", "passos"], pSalto: ["salto", "saltos"],
+    pRelConfirmada: ["relação confirmada", "relações confirmadas"], pAresta: ["aresta", "arestas"], pRodada: ["rodada", "rodadas"],
+    pCompTocado: ["componente tocado", "componentes tocados"], pModSemComp: ["módulo sem componente", "módulos sem componente"],
+    pModNovoSem: ["módulo novo sem componente", "módulos novos sem componente"], pCompApar: ["componente tocado aparece", "componentes tocados aparecem"],
+    pApar: ["aparece", "aparecem"], pLigFalta: ["ligação do código falta", "ligações do código faltam"],
+    noCodigo: "no código", noModelo: "no modelo",
+    notaProva: (rels, fonte) => `${rels} no código (fonte: ${fonte}). As demais relações entre componentes existem só no modelo.`,
+    saude: "Saúde", saudeTitulo: "Saúde do mapa: nota do gate de qualidade, pendências e provas",
+    mudouDesde: de => `Mudou desde ${de}`, mudouTitulo: "Realçar os componentes cujo código mudou desde a última geração do mapa",
+    modeloInteiro: "Modelo inteiro", modeloInteiroTitulo: "Todos os elementos e relações do modelo", modeloInteiroDesc: "Todos os elementos e todas as relações declaradas.",
+    semFluxos: "Nenhum fluxo no modelo. Declare uma visão dynamic no DSL para ganhar um percurso.",
+    vizinhancaDe: nome => "Vizinhança de " + nome, voltar: "voltar",
+    sentidos: { ambos: "Tudo o que liga a ele", saida: "O que ele usa", entrada: "Quem usa ele" },
+    vizDesc: (sentido, fim) => `${sentido} no modelo inteiro, até ${fim}.`, fimCadeia: "o fim da cadeia",
+    setas: "no sentido das setas", semSetas: "ignorando o sentido das setas",
+    semCaminho: (a, b) => `Não há caminho entre <b>${a}</b> e <b>${b}</b> nesta visão. Tente no Modelo inteiro.`,
+    caminhoAte: (nome, saltos, sentido) => `<b>Caminho até ${nome}</b> (${saltos}, ${sentido})`,
+    percurso: "Percurso", passosAria: "Passos do percurso", comecaLegenda: (n, desc) => `<b>${n}</b> · ${desc} · <kbd>→</kbd> começa`,
+    seloSemProva: "sem prova no código", seloConfirmado: "confirmado no código",
+    confirmadosNoCodigo: n => `${n} confirmados no código`, semProva: n => `${n} sem prova`,
+    linkCopiado: "Link do passo copiado", linkCopiar: "Copie o endereço da barra: ele já aponta para este passo",
+    vazioSemElementos: "Esta visão não tem elementos. Escolha outra visão na lista ou adicione elementos a ela no DSL.",
+    vazioFiltrados: "Os filtros de Mostrar status escondem todos os elementos desta visão. Marque ao menos um status.",
+    marcadoComo: tag => "Marcado como " + tag, semMarcador: "Sem o marcador",
+    obsSim: "Declara métricas ou eventos", obsNao: "Sem observabilidade declarada",
+    legFoco: "foco", legSaida: "saída e caminho", legEntrada: "entrada", legOrdem: "ordem do passo no percurso",
+    legConfirmada: "confirmada no código", legSoModelo: "só no modelo", legMudou: de => `mudou desde ${de}`,
+    colorir: { status: "Status", area: "Área", container: "Container", tipo: "Tipo", obs: "Observabilidade declarada" },
+    grupoAtributo: "Atributo", grupoMarcador: "Marcador",
+    oQueMudouDesde: de => `O que mudou desde ${de}`, saudeMapa: "Saúde do mapa", nota: n => "nota " + n,
+    vazioInspetor: "Selecione um nó para ver descrição, status, código, decisões, documentos, ligações e o impacto de mudá-lo. Clique numa ligação para ver se o código a confirma.",
+    campos: { container: "Container", grupo: "Grupo", tecnologia: "Tecnologia", area: "Área", codigo: "Código", spec: "Especificação", guia: "Guia", handoff: "Handoff",
+      observabilidade: "Observabilidade", metricas: "Números citados", marcadores: "Marcadores" },
+    abrirVsCode: "Abrir no VS Code", eMais: n => `e mais ${n}`,
+    campoMet: "campo", semMeta: "sem meta", alcanceAria: "Alcance do foco", usa: n => `Usa (${n})`, usadoPor: n => `É usado por (${n})`, cadeia: "Cadeia completa",
+    tipoFluxo: "fluxo", tipoVisao: "visão", esteElemento: "este elemento", voltarPercurso: "Voltar ao percurso",
+    metricasTitulo: n => `Métricas (${n})`, impactoTitulo: "Fecho transitivo pelas relações declaradas", impactoCab: "Impacto de mudar este elemento",
+    dependemDele: "Dependem dele, direta ou indiretamente:", eleDepende: "Ele depende de:", explorarViz: "Explorar a vizinhança no modelo",
+    decisoes: n => `Decisões (${n})`, documentos: n => `Documentos (${n})`, memoria: n => `Memória (${n})`,
+    nenhumaAdr: id => `Nenhuma ADR cita ${id}.`, nenhumDoc: id => `Nenhum documento cita ${id}.`, licao: "Lição", invariante: " · invariante",
+    nenhumaLicao: "Nenhuma lição do Synapse cita o código deste elemento.",
+    semSaida: "Nenhuma relação de saída declarada.", semEntrada: "Nenhuma relação de entrada declarada.",
+    apareceEm: "Aparece em", semVisao: "Não aparece em nenhuma visão.", foraDoFoco: " · fora do foco",
+    provaConfirmada: (arestas, conf) => `confirmada no código · ${arestas}, confiança ${conf}`, provaSoModelo: "só no modelo",
+    ligacao: "Ligação", origem: nome => "Origem: " + nome, destino: nome => "Destino: " + nome,
+    provaNaoAplica: precisa => `A prova no código vale para ligações entre componentes${precisa ? " e precisa de relacoes-codigo.json (codegraph_ponte.py --relacoes)" : ""}.`,
+    confirmadaTitulo: "Confirmada no código",
+    confirmadaCorpo: (arestas, tipo, conf, fonte) => `${arestas} de ${tipo} entre os arquivos dos dois componentes, confiança ${conf} (fonte: ${fonte}).`,
+    tipoChamada: "chamada", tipoImport: "import", soModeloTitulo: "Só no modelo",
+    soModeloCorpo: fonte => `O código não mostra aresta entre os arquivos dos dois componentes (fonte: ${fonte}). Pode ser uma relação por configuração, protocolo ou documento, ou o modelo pode estar adiantado.`,
+    oQueMudou: "O que mudou",
+    mudouDesc: (quando, ate, nesta) => `Do commit da última geração do mapa (${quando}) até ${ate}. ${nesta}`,
+    ateNaoCommitado: "o que ainda não foi commitado", ateCommitEMais: ate => ate + ", com o que ainda não foi commitado",
+    nestaVisaoMudou: (n, txt) => n ? txt + " nesta visão." : "Nenhum componente tocado aparece nesta visão.",
+    verNoModelo: "Ver no modelo inteiro", compTocadosTitulo: n => `Componentes tocados (${n})`, nenhumCompTocado: "Nenhum componente do modelo foi tocado.",
+    modNovoAviso: (cab, ele) => `<b>${cab}</b> · o teste de cobertura vai falhar até o modelo ganhar um componente para ${ele}.`,
+    ele: "ele", eles: "eles", modNovos: "Módulos novos", modMudados: "Módulos mudados", modRemovidos: "Módulos removidos",
+    relSoModeloTitulo: "Relações só no modelo",
+    relSoModeloDesc: (fonte, nesta) => `Relações entre componentes que o código não confirma (fonte: ${fonte}). Tracejado: só no modelo; contínuo verde: confirmada. ${nesta}`,
+    nestaVisaoRel: (n, txt) => n ? txt + " nesta visão." : "Nenhuma aparece nesta visão.",
+    confirmadasTitulo: n => `Confirmadas no código (${n})`, nenhumaConfirmada: "Nenhuma relação confirmada.", soModeloLista: n => `Só no modelo (${n})`, eMaisPonto: n => `e mais ${n}.`,
+    gate: "Gate de qualidade", aprovado: "aprovado", reprovado: "reprovado",
+    notaRodada: (rodadas, quando) => `Nota da última rodada do revisor (${rodadas}), gravada em .lodemap/estado.json em ${quando}.`,
+    pendenciasTitulo: n => `Pendências (${n})`, semPendencia: "Nenhuma pendência aberta.",
+    semNota: "Sem nota de qualidade: rode o gate (qualidade.py) para gravar a saúde em .lodemap/estado.json.",
+    provaRelacoes: "Prova das relações", confirmadasSoModelo: (c, s) => `${c} confirmadas · ${s} só no modelo`, fonteLinha: (falta, fonte) => `${falta} no modelo · fonte ${fonte}`,
+    mudancas: "Mudanças",
+    nadaEncontrado: txt => `Nada encontrado para “${txt}”`,
+    corPor: nome => "Colorir por " + nome.toLowerCase(), corPorMarcador: t => "Colorir por marcador " + t,
+    acReorganizar: "Reorganizar o diagrama", acEnquadrar: "Enquadrar o diagrama",
+    acMudou: (mostra, de) => (mostra ? "Mostrar" : "Esconder") + " o que mudou desde " + de, acSoModelo: mostra => (mostra ? "Mostrar" : "Esconder") + " relações só no modelo",
+    acSaude: "Saúde do mapa", acTema: "Alternar tema claro e escuro", acDocs: "Abrir a documentação",
+    nElementos: n => n + " elementos",
+    paletaVazia: q => `Nada encontrado para “${q}”. Tente o nome de um componente, uma visão, um fluxo ou uma ação como “Reorganizar”.`
+  },
+  en: {
+    titulo: "Architecture explorer", docTitulo: n => "Map · " + n, arquitetura: "Architecture",
+    painelAbrir: "Open views and filters", painelTitulo: "Views and filters",
+    marcaTitulo: "Open the map", navAria: "Map sections", navMapa: "Map", navDocs: "Documentation", navDecisoes: "Decisions", menuRotulo: "Sections",
+    temaParaClaro: "Switch to the light theme", temaParaEscuro: "Switch to the dark theme", temaClaro: "Light theme", temaEscuro: "Dark theme",
+    idiomaGrupo: "Language",
+    buscaRotulo: "Search component, container or file", paletaAbrir: "Open the command palette", paletaTitulo: "Palette: elements, views, flows and actions",
+    visoesFiltros: "Views and filters", visoes: "Views", fluxos: "Flows", colorirPor: "Color by", mostrarStatus: "Show status",
+    provaNoCodigo: "Proof in the code", soModelo: "Model only", atalhosTitulo: "Shortcuts",
+    atalhos: mod => `Click: focus · <kbd>Shift</kbd>+click: path between two nodes · double click: neighborhood in the model · <kbd>${mod}</kbd>: palette · <kbd>/</kbd>: search · <kbd>F</kbd>: fit · <kbd>←</kbd> <kbd>→</kbd>: walkthrough steps · <kbd>Esc</kbd>: clear`,
+    montando: "Building the diagram…", grafoAria: "Architecture graph",
+    nadaMostrar: "Nothing to show", mostrarTodosStatus: "Show all statuses",
+    reorganizarTitulo: "Redo the automatic layout of this view", reorganizar: "Rearrange",
+    enquadrarTitulo: "Fit the diagram (F)", enquadrar: "Fit the diagram", legendaTitulo: "Legend",
+    percursoAria: "Flow walkthrough", passoAnt: "Previous step", passoAntTitulo: "Previous step (←)", passoProx: "Next step", passoProxTitulo: "Next step (→)",
+    copiarLinkTitulo: "Copy the link to this step", copiarLink: "Copy link", passosBtn: "Steps",
+    inspetor: "Inspector", fecharInspetor: "Close the inspector",
+    paletaDialogo: "Command palette", paletaBusca: "Search element, view, flow or action", paletaPh: "Element, view, flow or action", paletaResultados: "Results",
+    paletaRodape: "<span><kbd>↑</kbd> <kbd>↓</kbd> choose</span><span><kbd>Enter</kbd> open</span><span><kbd>Esc</kbd> close</span>",
+    erroTitulo: "Could not open the explorer", tentarDeNovo: "Try again",
+    erroDados: "Could not find explorador/dados.js. Run scripts/atualizar.ps1 and try again.",
+    erroCytoscape: "Could not load explorador/vendor/cytoscape.min.js. Copy the vendor/ folder from the skill template into explorador/ and try again.",
+    status: { Pronto: "Done", "Em andamento": "In progress", Aguardando: "Waiting", Planejado: "Planned", "Fora do foco": "Out of focus", Externo: "External" },
+    tipos: { Pessoa: "Person", Sistema: "System", Container: "Container", Componente: "Component", "Ação": "Action", "Visão": "View", Fluxo: "Flow" },
+    confianca: { alta: "high", media: "medium", baixa: "low" },
+    pComponente: ["component", "components"], pPendencia: ["pending item", "pending items"], pPasso: ["step", "steps"], pSalto: ["hop", "hops"],
+    pRelConfirmada: ["confirmed relation", "confirmed relations"], pAresta: ["edge", "edges"], pRodada: ["round", "rounds"],
+    pCompTocado: ["touched component", "touched components"], pModSemComp: ["module without a component", "modules without a component"],
+    pModNovoSem: ["new module without a component", "new modules without a component"], pCompApar: ["touched component appears", "touched components appear"],
+    pApar: ["appears", "appear"], pLigFalta: ["link in the code is missing", "links in the code are missing"],
+    noCodigo: "in the code", noModelo: "in the model",
+    notaProva: (rels, fonte) => `${rels} in the code (source: ${fonte}). The other relations between components exist only in the model.`,
+    saude: "Health", saudeTitulo: "Map health: quality-gate score, pending items and proofs",
+    mudouDesde: de => `Changed since ${de}`, mudouTitulo: "Highlight the components whose code changed since the map was last generated",
+    modeloInteiro: "Whole model", modeloInteiroTitulo: "Every element and relation of the model", modeloInteiroDesc: "Every element and every declared relation.",
+    semFluxos: "No flow in the model. Declare a dynamic view in the DSL to get a walkthrough.",
+    vizinhancaDe: nome => "Neighborhood of " + nome, voltar: "back",
+    sentidos: { ambos: "Everything linked to it", saida: "What it uses", entrada: "What uses it" },
+    vizDesc: (sentido, fim) => `${sentido} in the whole model, up to ${fim}.`, fimCadeia: "the end of the chain",
+    setas: "following the arrows", semSetas: "ignoring arrow direction",
+    semCaminho: (a, b) => `There is no path between <b>${a}</b> and <b>${b}</b> in this view. Try the Whole model.`,
+    caminhoAte: (nome, saltos, sentido) => `<b>Path to ${nome}</b> (${saltos}, ${sentido})`,
+    percurso: "Walkthrough", passosAria: "Walkthrough steps", comecaLegenda: (n, desc) => `<b>${n}</b> · ${desc} · <kbd>→</kbd> to start`,
+    seloSemProva: "no proof in the code", seloConfirmado: "confirmed in the code",
+    confirmadosNoCodigo: n => `${n} confirmed in the code`, semProva: n => `${n} without proof`,
+    linkCopiado: "Step link copied", linkCopiar: "Copy the address from the address bar: it already points to this step",
+    vazioSemElementos: "This view has no elements. Pick another view from the list or add elements to it in the DSL.",
+    vazioFiltrados: "The Show status filters hide every element of this view. Check at least one status.",
+    marcadoComo: tag => "Marked as " + tag, semMarcador: "Without the marker",
+    obsSim: "Declares metrics or events", obsNao: "No declared observability",
+    legFoco: "focus", legSaida: "outgoing and path", legEntrada: "incoming", legOrdem: "step order in the walkthrough",
+    legConfirmada: "confirmed in the code", legSoModelo: "model only", legMudou: de => `changed since ${de}`,
+    colorir: { status: "Status", area: "Area", container: "Container", tipo: "Type", obs: "Declared observability" },
+    grupoAtributo: "Attribute", grupoMarcador: "Marker",
+    oQueMudouDesde: de => `What changed since ${de}`, saudeMapa: "Map health", nota: n => "score " + n,
+    vazioInspetor: "Select a node to see its description, status, code, decisions, documents, links and the impact of changing it. Click a link to see whether the code confirms it.",
+    campos: { container: "Container", grupo: "Group", tecnologia: "Technology", area: "Area", codigo: "Code", spec: "Specification", guia: "Guide", handoff: "Handoff",
+      observabilidade: "Observability", metricas: "Cited numbers", marcadores: "Markers" },
+    abrirVsCode: "Open in VS Code", eMais: n => `and ${n} more`,
+    campoMet: "field", semMeta: "no target", alcanceAria: "Focus scope", usa: n => `Uses (${n})`, usadoPor: n => `Used by (${n})`, cadeia: "Full chain",
+    tipoFluxo: "flow", tipoVisao: "view", esteElemento: "this element", voltarPercurso: "Back to the walkthrough",
+    metricasTitulo: n => `Metrics (${n})`, impactoTitulo: "Transitive closure over the declared relations", impactoCab: "Impact of changing this element",
+    dependemDele: "Depend on it, directly or indirectly:", eleDepende: "It depends on:", explorarViz: "Explore the neighborhood in the model",
+    decisoes: n => `Decisions (${n})`, documentos: n => `Documents (${n})`, memoria: n => `Memory (${n})`,
+    nenhumaAdr: id => `No ADR mentions ${id}.`, nenhumDoc: id => `No document mentions ${id}.`, licao: "Lesson", invariante: " · invariant",
+    nenhumaLicao: "No Synapse lesson mentions the code of this element.",
+    semSaida: "No outgoing relation declared.", semEntrada: "No incoming relation declared.",
+    apareceEm: "Appears in", semVisao: "Does not appear in any view.", foraDoFoco: " · out of focus",
+    provaConfirmada: (arestas, conf) => `confirmed in the code · ${arestas}, confidence ${conf}`, provaSoModelo: "model only",
+    ligacao: "Relationship", origem: nome => "Source: " + nome, destino: nome => "Target: " + nome,
+    provaNaoAplica: precisa => `Proof in the code applies to links between components${precisa ? " and needs relacoes-codigo.json (codegraph_ponte.py --relacoes)" : ""}.`,
+    confirmadaTitulo: "Confirmed in the code",
+    confirmadaCorpo: (arestas, tipo, conf, fonte) => `${arestas} (${tipo}) between the files of the two components, confidence ${conf} (source: ${fonte}).`,
+    tipoChamada: "call", tipoImport: "import", soModeloTitulo: "Model only",
+    soModeloCorpo: fonte => `The code shows no edge between the files of the two components (source: ${fonte}). It may be a relation through configuration, protocol or document, or the model may be ahead of the code.`,
+    oQueMudou: "What changed",
+    mudouDesc: (quando, ate, nesta) => `From the commit of the last map generation (${quando}) to ${ate}. ${nesta}`,
+    ateNaoCommitado: "what is not committed yet", ateCommitEMais: ate => ate + ", plus what is not committed yet",
+    nestaVisaoMudou: (n, txt) => n ? txt + " in this view." : "No touched component appears in this view.",
+    verNoModelo: "See in the whole model", compTocadosTitulo: n => `Touched components (${n})`, nenhumCompTocado: "No component of the model was touched.",
+    modNovoAviso: (cab, ele) => `<b>${cab}</b> · the coverage test will fail until the model gets a component for ${ele}.`,
+    ele: "it", eles: "them", modNovos: "New modules", modMudados: "Changed modules", modRemovidos: "Removed modules",
+    relSoModeloTitulo: "Model-only relations",
+    relSoModeloDesc: (fonte, nesta) => `Relations between components that the code does not confirm (source: ${fonte}). Dashed: model only; solid green: confirmed. ${nesta}`,
+    nestaVisaoRel: (n, txt) => n ? txt + " in this view." : "None appears in this view.",
+    confirmadasTitulo: n => `Confirmed in the code (${n})`, nenhumaConfirmada: "No confirmed relation.", soModeloLista: n => `Model only (${n})`, eMaisPonto: n => `and ${n} more.`,
+    gate: "Quality gate", aprovado: "approved", reprovado: "rejected",
+    notaRodada: (rodadas, quando) => `Score of the reviewer's last pass (${rodadas}), saved in .lodemap/estado.json on ${quando}.`,
+    pendenciasTitulo: n => `Pending items (${n})`, semPendencia: "No open pending item.",
+    semNota: "No quality score: run the gate (qualidade.py) to save the health in .lodemap/estado.json.",
+    provaRelacoes: "Proof of the relations", confirmadasSoModelo: (c, s) => `${c} confirmed · ${s} model only`, fonteLinha: (falta, fonte) => `${falta} in the model · source ${fonte}`,
+    mudancas: "Changes",
+    nadaEncontrado: txt => `Nothing found for “${txt}”`,
+    corPor: nome => "Color by " + nome.toLowerCase(), corPorMarcador: t => "Color by marker " + t,
+    acReorganizar: "Rearrange the diagram", acEnquadrar: "Fit the diagram",
+    acMudou: (mostra, de) => (mostra ? "Show" : "Hide") + " what changed since " + de, acSoModelo: mostra => (mostra ? "Show" : "Hide") + " model-only relations",
+    acSaude: "Map health", acTema: "Toggle light and dark theme", acDocs: "Open the documentation",
+    nElementos: n => n + " elements",
+    paletaVazia: q => `Nothing found for “${q}”. Try the name of a component, a view, a flow or an action such as “Rearrange”.`
+  }
+};
+</script>
+<script src="vendor/cytoscape.min.js"></script>
+<script src="vendor/dagre.min.js"></script>
+<script src="vendor/cytoscape-dagre.js"></script>
+<style>
+/* sds:tokens:start */
+/* Lode Design System - tokens. Fonte única do explorador e do leitor.
+   Princípios: fonte do sistema, uma cor de marca, neutros, uma cor por estado, separadores finos, grade de 4/8 px,
+   dois raios (controle e superfície), sombra só no tema claro, movimento curto e respeito a prefers-reduced-motion.
+   Escuro é o padrão das ferramentas; o claro entra por prefers-color-scheme ou [data-theme="light"]. */
+:root {
+  color-scheme: dark;
+  /* tipografia: no máximo duas famílias */
+  --font-sans: "Geist", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+  --text-xs: 12px;  --text-sm: 13px;  --text-md: 15px;  --text-lg: 17px;
+  --text-xl: 22px;  --text-2xl: 28px; --text-3xl: 40px; --text-4xl: clamp(44px, 6vw, 72px);
+  --leading-tight: 1.1; --leading-snug: 1.3; --leading-body: 1.55;
+  --tracking-display: -0.03em; --tracking-title: -0.015em; --tracking-caps: 0.06em;
+  --weight-regular: 400; --weight-medium: 500; --weight-semibold: 600; --weight-bold: 700;
+
+  /* espaço: múltiplos de 4 */
+  --space-1: 4px;  --space-2: 8px;  --space-3: 12px; --space-4: 16px; --space-5: 24px;
+  --space-6: 32px; --space-7: 48px; --space-8: 64px; --space-9: 96px; --space-10: 128px;
+
+  /* forma: dois raios, usados com intenção */
+  --radius-control: 8px;  --radius-surface: 14px; --radius-pill: 999px;
+  --hairline: 1px;
+
+  /* cores — escuro (padrão) */
+  --bg: #000000;            /* fundo da janela */
+  --bg-grouped: #0b0b0d;    /* área de conteúdo */
+  --surface: #1c1c1e;       /* cartões e painéis */
+  --surface-2: #2c2c2e;     /* elevado, hover */
+  --surface-3: #3a3a3c;     /* controles */
+  --separator: rgba(84, 84, 88, 0.6);
+  --separator-strong: rgba(120, 120, 128, 0.7);
+  --label: #f5f5f7;                       /* 18.6:1 sobre --surface */
+  --label-2: rgba(235, 235, 245, 0.68);   /* ~9:1 sobre --surface: texto secundário */
+  --label-3: rgba(235, 235, 245, 0.46);   /* ~4.6:1: só legenda e metadado */
+  --label-disabled: rgba(235, 235, 245, 0.28);
+  --brand: #0a84ff;          /* única cor de marca */
+  --brand-hover: #409cff;
+  --brand-ink: #ffffff;      /* texto sobre --brand */
+  --brand-tint: rgba(10, 132, 255, 0.16);
+  --ok: #30d158;   --ok-tint: rgba(48, 209, 88, 0.16);
+  --warn: #ff9f0a; --warn-tint: rgba(255, 159, 10, 0.16);
+  --err: #ff453a;  --err-tint: rgba(255, 69, 58, 0.16);
+  --info: var(--brand); --info-tint: var(--brand-tint);
+  --focus: #409cff;
+  --shadow-1: none; --shadow-2: none;
+  --material: rgba(28, 28, 30, 0.72);    /* barra translúcida (com backdrop-filter) */
+
+  /* status do mapa e da Mesa (semântica única) */
+  --status-pronto: var(--ok);
+  --status-andamento: var(--brand);
+  --status-aguardando: var(--warn);
+  --status-planejado: rgba(235, 235, 245, 0.55);
+  --status-fora: rgba(235, 235, 245, 0.3);
+  --status-falha: var(--err);
+
+  /* movimento */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 120ms; --dur: 200ms; --dur-slow: 360ms;
+
+  /* camadas */
+  --z-bar: 40; --z-drawer: 60; --z-dialog: 80; --z-toast: 90;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    color-scheme: light;
+    --bg: #ffffff; --bg-grouped: #f5f5f7; --surface: #ffffff; --surface-2: #f2f2f4; --surface-3: #e8e8ed;
+    --separator: rgba(60, 60, 67, 0.18); --separator-strong: rgba(60, 60, 67, 0.32);
+    --label: #1d1d1f; --label-2: #515154; --label-3: #6e6e73; --label-disabled: rgba(60, 60, 67, 0.3);
+    --brand: #0066cc; --brand-hover: #0071e3; --brand-ink: #ffffff; --brand-tint: rgba(0, 102, 204, 0.1);
+    --ok: #1f7a35; --ok-tint: rgba(31, 122, 53, 0.1);
+    --warn: #a54800; --warn-tint: rgba(165, 72, 0, 0.1);
+    --err: #c4001a; --err-tint: rgba(196, 0, 26, 0.08);
+    --focus: #0071e3;
+    --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.06), 0 1px 1px rgba(0, 0, 0, 0.04);
+    --shadow-2: 0 8px 24px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
+    --material: rgba(255, 255, 255, 0.72);
+    --status-planejado: #6e6e73; --status-fora: #aeaeb2;
+  }
+}
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #ffffff; --bg-grouped: #f5f5f7; --surface: #ffffff; --surface-2: #f2f2f4; --surface-3: #e8e8ed;
+  --separator: rgba(60, 60, 67, 0.18); --separator-strong: rgba(60, 60, 67, 0.32);
+  --label: #1d1d1f; --label-2: #515154; --label-3: #6e6e73; --label-disabled: rgba(60, 60, 67, 0.3);
+  --brand: #0066cc; --brand-hover: #0071e3; --brand-ink: #ffffff; --brand-tint: rgba(0, 102, 204, 0.1);
+  --ok: #1f7a35; --ok-tint: rgba(31, 122, 53, 0.1);
+  --warn: #a54800; --warn-tint: rgba(165, 72, 0, 0.1);
+  --err: #c4001a; --err-tint: rgba(196, 0, 26, 0.08);
+  --focus: #0071e3;
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.06), 0 1px 1px rgba(0, 0, 0, 0.04);
+  --shadow-2: 0 8px 24px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
+  --material: rgba(255, 255, 255, 0.72);
+  --status-planejado: #6e6e73; --status-fora: #aeaeb2;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --dur-fast: 0ms; --dur: 0ms; --dur-slow: 0ms; }
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0ms !important; scroll-behavior: auto !important; }
+}
+
+/* base mínima compartilhada */
+.sds { font-family: var(--font-sans); font-size: var(--text-md); line-height: var(--leading-body); color: var(--label);
+       background: var(--bg-grouped); -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+.sds :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: var(--radius-control); }
+.sds-caps { font: var(--weight-semibold) var(--text-xs) / 1.4 var(--font-sans); letter-spacing: var(--tracking-caps);
+            text-transform: uppercase; color: var(--label-3); }
+.sds-num { font-family: var(--font-sans); font-variant-numeric: tabular-nums; }
+.sds-btn { display: inline-flex; align-items: center; gap: var(--space-2); min-height: 36px; padding: 0 var(--space-4);
+           border: var(--hairline) solid var(--separator-strong); border-radius: var(--radius-control);
+           background: var(--surface-2); color: var(--label); font: var(--weight-medium) var(--text-sm) / 1 var(--font-sans);
+           cursor: pointer; transition: background var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out); }
+.sds-btn:hover { background: var(--surface-3); }
+.sds-btn--primary { background: var(--brand); border-color: transparent; color: var(--brand-ink); }
+.sds-btn--primary:hover { background: var(--brand-hover); }
+.sds-btn:disabled { color: var(--label-disabled); cursor: not-allowed; }
+.sds-card { background: var(--surface); border: var(--hairline) solid var(--separator); border-radius: var(--radius-surface);
+            box-shadow: var(--shadow-1); }
+.sds-bar { position: sticky; top: 0; z-index: var(--z-bar); background: var(--material);
+           -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px);
+           border-bottom: var(--hairline) solid var(--separator); }
+.sds-badge { display: inline-flex; align-items: center; gap: 6px; padding: 2px var(--space-2); border-radius: var(--radius-pill);
+             font: var(--weight-medium) var(--text-xs) / 1.5 var(--font-sans); background: var(--surface-2); color: var(--label-2); }
+.sds-badge::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.sds-badge--ok { background: var(--ok-tint); color: var(--ok); }
+.sds-badge--warn { background: var(--warn-tint); color: var(--warn); }
+.sds-badge--err { background: var(--err-tint); color: var(--err); }
+.sds-badge--info { background: var(--brand-tint); color: var(--brand); }
+.sds-skeleton { background: linear-gradient(90deg, var(--surface-2) 25%, var(--surface-3) 37%, var(--surface-2) 63%);
+                background-size: 400% 100%; animation: sds-shimmer 1.4s var(--ease-in-out) infinite; border-radius: var(--radius-control); }
+@keyframes sds-shimmer { 0% { background-position: 100% 0; } 100% { background-position: 0 0; } }
+/* sds:tokens:end */
+/* lodemap:barra:css:start */
+/* Barra comum do Lodemap (Mapa, Documentação, Decisões): mesmo bloco nas duas páginas; o teste compara. */
+.lm-barra { display: flex; align-items: center; gap: var(--space-3); height: 56px; padding: 0 var(--space-4); }
+.lm-barra > * { flex: none; }
+.lm-barra :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+/* Ordem do DOM: gaveta da página, bloco lodemap:barra (marca, seções, menu), busca e extras da página, bloco
+   lodemap:barra-fim (tema e script). A ordem visual segue a do DOM, para o Tab andar na ordem que se vê. */
+.lm-gaveta { order: 0; }
+.lm-marca { order: 1; display: inline-flex; align-items: center; gap: var(--space-2); min-width: 0; max-width: 260px;
+            padding: var(--space-1) var(--space-2) var(--space-1) var(--space-1); border-radius: var(--radius-control);
+            color: var(--label); font: var(--weight-semibold) var(--text-md) / 1.2 var(--font-sans);
+            letter-spacing: var(--tracking-title); text-decoration: none; }
+.lm-marca:hover { background: var(--surface-2); text-decoration: none; }
+.lm-marca svg { flex: none; color: var(--brand); }
+.lm-proj { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lm-nav { order: 2; display: flex; align-items: center; gap: 2px; }
+.lm-nav a { display: inline-flex; align-items: center; min-height: 32px; padding: 0 var(--space-3); border-radius: var(--radius-control);
+            color: var(--label-2); font: var(--weight-medium) var(--text-sm) / 1 var(--font-sans); text-decoration: none; white-space: nowrap;
+            transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out); }
+.lm-nav a:hover { background: var(--surface-2); color: var(--label); text-decoration: none; }
+.lm-nav a[aria-current="page"] { background: var(--brand-tint); color: var(--brand); }
+.lm-busca { order: 3; flex: 1 1 260px; min-width: 0; max-width: 440px; margin-left: auto; }
+.lm-extra { order: 4; }
+.lm-menu { order: 5; display: none; align-items: center; gap: var(--space-1); min-height: 36px; padding: 0 var(--space-2) 0 var(--space-3);
+           border: var(--hairline) solid var(--separator); border-radius: var(--radius-control); background: transparent; color: var(--label);
+           font: var(--weight-medium) var(--text-sm) / 1 var(--font-sans); cursor: pointer; }
+.lm-menu:hover { background: var(--surface-2); }
+.lm-menu svg { color: var(--label-3); transition: transform var(--dur-fast) var(--ease-out); }
+.lm-menu[aria-expanded="true"] svg { transform: rotate(180deg); }
+.lm-tema { order: 6; display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; padding: 0; border: 0;
+           border-radius: var(--radius-control); background: transparent; color: var(--label-2); cursor: pointer; }
+.lm-tema:hover { background: var(--surface-2); color: var(--label); }
+@media (max-width: 900px) {
+  .lm-barra { flex-wrap: wrap; height: auto; min-height: 56px; padding: var(--space-2) var(--space-3); gap: var(--space-2); }
+  .lm-marca { flex: 1 1 0; max-width: none; }
+  .lm-menu { display: inline-flex; }
+  .lm-nav { position: absolute; z-index: var(--z-dialog); top: 52px; right: var(--space-3); display: none; flex-direction: column;
+            align-items: stretch; min-width: 220px; padding: var(--space-2); background: var(--surface);
+            border: var(--hairline) solid var(--separator-strong); border-radius: var(--radius-surface); box-shadow: var(--shadow-2); }
+  .lm-nav.lm-aberto { display: flex; }
+  .lm-nav a { min-height: 44px; font-size: var(--text-md); }
+  /* segunda linha na ordem do DOM (foco por Tab = ordem visual): busca e tema; a quebra vem do ::after */
+  .lm-barra::after { content: ""; order: 6; flex-basis: 100%; height: 0; margin-top: calc(var(--space-2) * -1); }
+  .lm-busca { order: 7; flex: 1 1 0; max-width: none; margin: 0; }
+  .lm-tema { order: 8; }
+  .lm-extra { order: 9; }
+}
+/* lodemap:barra:css:end */
+/* ------------------------------------------------------------ explorador (só tokens do design system) */
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { height: 100%; margin: 0; }
+body { height: 100dvh; overflow: hidden; display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto; grid-template-columns: 248px minmax(0, 1fr) 368px;
+  grid-template-areas: "topo topo topo" "esq centro dir" "esq rodape dir"; }
+.vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+a { color: var(--brand); text-decoration: none; }
+a:hover { text-decoration: underline; }
+svg.ic { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+
+/* barra superior */
+header { grid-area: topo; }
+#contagens { color: var(--label-3); font-size: var(--text-xs); white-space: nowrap; }
+.campo-busca { position: relative; display: flex; align-items: center; }
+.campo-busca > svg { position: absolute; left: 10px; color: var(--label-3); pointer-events: none; }
+#busca { width: 100%; height: 32px; padding: 0 64px 0 32px; border-radius: var(--radius-control);
+  border: var(--hairline) solid var(--separator); background: var(--surface-2); color: var(--label);
+  font: var(--weight-regular) var(--text-sm) / 1 var(--font-sans); transition: border-color var(--dur-fast) var(--ease-out); }
+#busca::placeholder { color: var(--label-3); }
+#busca:focus { border-color: var(--brand); outline: none; }
+#busca:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+#btnPaleta { position: absolute; right: 4px; display: inline-flex; align-items: center; height: 24px; padding: 0 var(--space-1);
+  border: 0; border-radius: 6px; background: none; cursor: pointer; }
+#btnPaleta:hover kbd { color: var(--label); }
+.acoes { display: flex; gap: var(--space-2); align-items: center; }
+.botao { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 32px; padding: 0 var(--space-3);
+  border: var(--hairline) solid var(--separator); border-radius: var(--radius-control); background: transparent; color: var(--label);
+  font: var(--weight-medium) var(--text-sm) / 1 var(--font-sans); cursor: pointer; text-decoration: none; white-space: nowrap;
+  transition: background var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out); }
+.botao:hover { background: var(--surface-2); text-decoration: none; }
+.botao.primario { background: var(--brand); border-color: transparent; color: var(--brand-ink); }
+.botao.primario:hover { background: var(--brand-hover); }
+.botao.icone { width: 32px; padding: 0; }
+.botao:disabled { color: var(--label-disabled); cursor: not-allowed; background: transparent; }
+/* seletor de idioma PT | EN: fica entre a busca e o tema (segunda linha no celular) */
+.lm-idioma { order: 5; display: inline-flex; gap: 2px; }
+.lm-idioma .botao { min-width: 36px; min-height: 36px; padding: 0 var(--space-2); border-color: transparent; color: var(--label-2); }
+.lm-idioma .botao:hover { color: var(--label); }
+.lm-idioma .botao[aria-pressed="true"] { background: var(--brand-tint); color: var(--brand); }
+#btnPainel, #fecharDetalhe, #btnPassos { display: none; }
+/* chips de estado do mapa: o único elemento em pílula da barra */
+.chip { display: inline-flex; align-items: center; gap: 6px; min-height: 28px; padding: 0 var(--space-3); border: var(--hairline) solid transparent;
+  border-radius: var(--radius-pill); background: var(--surface-2); color: var(--label-2); cursor: pointer; white-space: nowrap;
+  font: var(--weight-medium) var(--text-xs) / 1 var(--font-sans); font-variant-numeric: tabular-nums;
+  transition: background var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out); }
+.chip::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.chip:hover { border-color: var(--separator-strong); }
+.chip b { color: var(--label); font-weight: var(--weight-semibold); }
+.chip--ok { background: var(--ok-tint); color: var(--ok); }
+.chip--aviso { background: var(--warn-tint); color: var(--warn); }
+.chip[aria-pressed="true"] { border-color: currentColor; }
+
+/* lateral esquerda */
+aside { overflow: auto; overscroll-behavior: contain; }
+#esq { grid-area: esq; border-right: var(--hairline) solid var(--separator); padding: var(--space-4) var(--space-3) var(--space-6); background: var(--bg-grouped); }
+#dir { grid-area: dir; border-left: var(--hairline) solid var(--separator); background: var(--surface); }
+h2 { margin: var(--space-5) 0 var(--space-2); padding: 0 var(--space-2); font: var(--weight-semibold) var(--text-xs) / 1.4 var(--font-sans);
+  letter-spacing: var(--tracking-caps); text-transform: uppercase; color: var(--label-3); }
+h2:first-child { margin-top: 0; }
+h2 label { cursor: pointer; color: inherit; font: inherit; }
+.lista { display: flex; flex-direction: column; gap: 1px; }
+.item { display: flex; justify-content: space-between; align-items: center; gap: var(--space-2); width: 100%; min-height: 32px;
+  padding: 6px var(--space-2); border: 0; border-radius: var(--radius-control); background: none; color: var(--label);
+  font: var(--weight-regular) var(--text-sm) / 1.3 var(--font-sans); text-align: left; cursor: pointer;
+  transition: background var(--dur-fast) var(--ease-out); }
+.item span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.item:hover { background: var(--surface-2); }
+.item.ativo { background: var(--brand-tint); color: var(--label); font-weight: var(--weight-medium); }
+.item.ativo small { color: var(--brand); }
+.item--filho { padding-left: calc(var(--space-2) + 14px); }
+.item--filho span { color: var(--label-2); }
+.item small { flex: none; color: var(--label-3); font-size: var(--text-xs); font-variant-numeric: tabular-nums; }
+.linha { display: flex; gap: var(--space-2); align-items: center; flex-wrap: wrap; margin: var(--space-1) 0; padding: 0 var(--space-2); }
+label { display: flex; gap: var(--space-2); align-items: center; font-size: var(--text-sm); color: var(--label-2); cursor: pointer; }
+select { min-height: 32px; max-width: 100%; padding: 0 var(--space-2); border: var(--hairline) solid var(--separator); border-radius: var(--radius-control);
+  background: var(--surface-2); color: var(--label); font: var(--weight-regular) var(--text-sm) / 1 var(--font-sans); }
+.linha > select { flex: 1; }
+input[type="checkbox"] { width: 16px; height: 16px; margin: 0; accent-color: var(--brand); }
+.filtros { display: flex; flex-direction: column; gap: 2px; padding: 0 var(--space-2); }
+.filtros label { min-height: 28px; color: var(--label); }
+.filtros small { margin-left: auto; color: var(--label-3); font-size: var(--text-xs); font-variant-numeric: tabular-nums; }
+#blocoProva h2 { margin-top: var(--space-5); }
+.nota { margin: var(--space-1) 0 0; padding: 0 var(--space-2); color: var(--label-3); font-size: var(--text-xs); line-height: 1.5; }
+.bolinha { display: inline-block; flex: none; width: 8px; height: 8px; border-radius: 50%; }
+.atalhos { padding: 0 var(--space-2); color: var(--label-3); font-size: var(--text-xs); line-height: 1.8; }
+kbd { font: var(--weight-medium) 11px / 1 var(--font-mono); padding: 2px 5px; white-space: nowrap; border: var(--hairline) solid var(--separator); border-radius: 4px; background: var(--surface-2); color: var(--label-2); }
+
+/* centro: o diagrama */
+#centro { grid-area: centro; position: relative; min-width: 0; min-height: 0; background: var(--bg-grouped); }
+#cy { position: absolute; inset: 0; }
+.flutuante { position: absolute; background: var(--material); -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px);
+  border: var(--hairline) solid var(--separator); border-radius: var(--radius-control); box-shadow: var(--shadow-2); }
+#tituloVisao { left: var(--space-3); top: var(--space-3); max-width: min(560px, calc(100% - 200px)); padding: var(--space-2) var(--space-3); }
+#tituloVisao:empty { display: none; }
+#tituloVisao b { display: block; font-size: var(--text-sm); font-weight: var(--weight-semibold); }
+#tituloVisao div { margin-top: 2px; font-size: var(--text-xs); color: var(--label-2); }
+#ferramentas { right: var(--space-3); top: var(--space-3); display: flex; gap: 2px; padding: 2px; }
+#ferramentas .botao { border-color: transparent; }
+#legendaCaixa { left: var(--space-3); bottom: var(--space-3); max-width: 280px; padding: var(--space-2) var(--space-3); font-size: var(--text-xs); }
+#legendaCaixa summary { cursor: pointer; color: var(--label-2); font-weight: var(--weight-medium); border-radius: 4px; }
+#legenda { display: flex; flex-direction: column; gap: var(--space-1); margin-top: var(--space-2); max-height: 36vh; overflow: auto; color: var(--label-2); }
+#legenda div { display: flex; align-items: center; gap: var(--space-2); }
+.traco { display: inline-block; flex: none; width: 16px; height: 2px; border-radius: 1px; }
+.traco.tracejado { height: 0; border-top: 2px dashed currentColor; background: none !important; }
+.anel { display: inline-block; flex: none; width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--brand); }
+.num-leg { display: inline-grid; place-content: center; flex: none; min-width: 16px; height: 16px; padding: 0 3px; border: 1px solid var(--brand); border-radius: 4px;
+  color: var(--brand); font: var(--weight-semibold) 10px / 1 var(--font-sans); }
+#aviso { left: 50%; bottom: var(--space-4); transform: translateX(-50%); padding: var(--space-2) var(--space-4); font-size: var(--text-sm); white-space: nowrap; }
+#carregando { position: absolute; inset: 0; display: grid; place-content: center; gap: var(--space-4); padding: var(--space-6); }
+#carregando .sds-skeleton { width: min(520px, 70vw); height: 44px; }
+#carregando .sds-skeleton:nth-child(2) { width: min(360px, 52vw); justify-self: center; }
+#carregando .sds-skeleton:nth-child(3) { width: min(440px, 60vw); justify-self: end; }
+#carregando p { margin: 0; text-align: center; color: var(--label-3); font-size: var(--text-sm); }
+.estado { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: var(--space-3); padding: var(--space-6); text-align: center; }
+.estado[hidden] { display: none; }
+.estado h3 { margin: 0; font-size: var(--text-lg); font-weight: var(--weight-semibold); letter-spacing: var(--tracking-title); }
+.estado p { margin: 0; max-width: 46ch; color: var(--label-2); font-size: var(--text-sm); }
+
+/* rodapé do percurso */
+footer { grid-area: rodape; display: none; align-items: center; gap: var(--space-2); min-height: 52px; padding: var(--space-2) var(--space-4);
+  border-top: var(--hairline) solid var(--separator); background: var(--material); -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px); }
+footer.visivel { display: flex; }
+#legendaPasso { flex: 1; min-width: 0; font-size: var(--text-sm); color: var(--label); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#legendaPasso b { color: var(--brand); font-variant-numeric: tabular-nums; font-weight: var(--weight-semibold); }
+.vazio { color: var(--label-3); font-size: var(--text-sm); }
+
+/* inspetor */
+.cab-inspetor { display: flex; justify-content: space-between; align-items: center; min-height: 44px; padding: var(--space-2) var(--space-4) 0; }
+#detalhes { padding: var(--space-2) var(--space-4) var(--space-6); }
+#detalhes > .vazio { padding: var(--space-5) 0 var(--space-3); }
+#detalhes h2 { padding: 0; }
+.det-tipo { font: var(--weight-semibold) var(--text-xs) / 1.4 var(--font-sans); letter-spacing: var(--tracking-caps); text-transform: uppercase; color: var(--label-3); }
+.det-nome { margin: 2px 0 var(--space-2); font-size: var(--text-xl); font-weight: var(--weight-semibold); line-height: var(--leading-snug); letter-spacing: var(--tracking-title); text-wrap: balance; overflow-wrap: anywhere; }
+.det-cab { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; font-size: var(--text-sm); }
+.det-desc { margin: var(--space-3) 0 var(--space-4); color: var(--label-2); font-size: var(--text-sm); }
+.st-badge { display: inline-flex; align-items: center; gap: 6px; padding: 2px var(--space-2); border-radius: var(--radius-pill);
+  font: var(--weight-medium) var(--text-xs) / 1.5 var(--font-sans); background: color-mix(in srgb, currentColor 14%, transparent); }
+.st-badge::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.tabela { width: 100%; border-collapse: collapse; font-size: var(--text-sm); table-layout: fixed; }
+.tabela td { padding: var(--space-2) 0; border-top: var(--hairline) solid var(--separator); vertical-align: top; overflow-wrap: anywhere; }
+.tabela td:first-child { width: 34%; padding-right: var(--space-3); color: var(--label-3); }
+.tabela code, code { font: 12px / 1.4 var(--font-mono); color: var(--label-2); }
+.tag { display: inline-block; margin: 1px 2px 1px 0; padding: 1px 6px; border-radius: var(--radius-pill); background: var(--surface-2); color: var(--label-2); font-size: var(--text-xs); }
+.metrica { display: inline-block; margin: 2px 4px 0 0; padding: 1px 6px; border-radius: 4px; background: var(--surface-2); color: var(--label-2); font: 12px / 1.4 var(--font-mono); }
+.rel { display: block; width: 100%; margin: 0; padding: var(--space-2) 0; border: 0; border-top: var(--hairline) solid var(--separator); background: none;
+  color: var(--label); text-align: left; font: inherit; cursor: pointer; }
+.rel:hover b { color: var(--brand); }
+.rel b { font-size: var(--text-sm); font-weight: var(--weight-medium); }
+.rel div { font-size: var(--text-xs); color: var(--label-3); }
+.selo { display: inline-flex; align-items: center; gap: 4px; margin-top: var(--space-1); font: var(--weight-medium) var(--text-xs) / 1.4 var(--font-sans); color: var(--label-3); }
+.selo::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.selo--ok { color: var(--ok); }
+.selo--aviso { color: var(--warn); }
+.impacto { margin: var(--space-4) 0; padding: var(--space-3); border-radius: var(--radius-control); background: var(--surface-2); font-size: var(--text-sm); color: var(--label-2); }
+.impacto b { color: var(--label); font-variant-numeric: tabular-nums; }
+.impacto.aviso { background: var(--warn-tint); }
+.impacto ol, .impacto ul { margin: var(--space-2) 0 0; padding-left: var(--space-5); }
+.det-acoes { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: var(--space-3) 0; }
+/* alcance do foco: controle segmentado */
+.seg { display: flex; margin: var(--space-3) 0 var(--space-2); padding: 2px; border-radius: var(--radius-control); background: var(--surface-2); }
+.seg button { flex: 1; min-height: 28px; padding: 0 var(--space-2); border: 0; border-radius: 6px; background: none; color: var(--label-2); cursor: pointer;
+  font: var(--weight-medium) var(--text-xs) / 1 var(--font-sans); font-variant-numeric: tabular-nums; white-space: nowrap;
+  transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out); }
+.seg button:hover { color: var(--label); }
+.seg button[aria-pressed="true"] { background: var(--surface); color: var(--brand); box-shadow: var(--shadow-1); }
+.voltar { display: inline-flex; align-items: center; gap: 4px; margin-bottom: var(--space-2); padding: 0; border: 0; background: none; color: var(--brand);
+  font: var(--weight-medium) var(--text-sm) / 1.4 var(--font-sans); cursor: pointer; }
+.ligacoes { margin: 0; padding: 0; list-style: none; }
+.ligacoes li { padding: var(--space-2) 0; border-top: var(--hairline) solid var(--separator); font-size: var(--text-sm); }
+.ligacoes li span { display: block; color: var(--label-3); font-size: var(--text-xs); }
+.licao { margin: 0; padding: var(--space-2) 0; border-top: var(--hairline) solid var(--separator); font-size: var(--text-sm); }
+.licao b { display: block; font-weight: var(--weight-medium); }
+.licao span { color: var(--label-2); font-size: var(--text-xs); }
+.saude-total { display: flex; align-items: baseline; gap: var(--space-2); margin: var(--space-1) 0 var(--space-3); }
+.saude-total b { font-size: var(--text-3xl); font-weight: var(--weight-bold); letter-spacing: var(--tracking-display); line-height: 1; font-variant-numeric: tabular-nums; }
+
+/* percurso: lista de passos */
+.passos { margin: var(--space-3) 0 0; padding: 0; list-style: none; }
+.passo-item { display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: var(--space-3); width: 100%; padding: var(--space-2); border: 0;
+  border-radius: var(--radius-control); background: none; color: var(--label); text-align: left; font: inherit; cursor: pointer;
+  transition: background var(--dur-fast) var(--ease-out); }
+.passo-item:hover { background: var(--surface-2); }
+.passo-num { display: grid; place-content: center; width: 24px; height: 24px; border: var(--hairline) solid var(--separator-strong); border-radius: 50%;
+  color: var(--label-2); font: var(--weight-semibold) var(--text-xs) / 1 var(--font-sans); font-variant-numeric: tabular-nums;
+  transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out); }
+.passo-txt b { display: block; font-size: var(--text-sm); font-weight: var(--weight-medium); line-height: 1.35; }
+.passo-txt span { display: block; color: var(--label-2); font-size: var(--text-xs); line-height: 1.45; }
+.passo-item.visto .passo-num { color: var(--brand); border-color: var(--brand); }
+.passo-item.atual { background: var(--brand-tint); }
+.passo-item.atual .passo-num { background: var(--brand); border-color: var(--brand); color: var(--brand-ink); }
+.percurso-resumo { display: flex; flex-wrap: wrap; gap: var(--space-3); color: var(--label-3); font-size: var(--text-xs); font-variant-numeric: tabular-nums; }
+
+/* paleta de comandos */
+#paleta { position: fixed; inset: 0; z-index: var(--z-dialog); display: flex; justify-content: center; align-items: flex-start; padding: 12vh var(--space-4) var(--space-4);
+  background: color-mix(in srgb, var(--bg) 55%, transparent); }
+.paleta-caixa { display: flex; flex-direction: column; width: min(640px, 100%); max-height: 72dvh; overflow: hidden;
+  background: var(--surface); border: var(--hairline) solid var(--separator); border-radius: var(--radius-surface); box-shadow: var(--shadow-2); }
+.paleta-campo { position: relative; display: flex; align-items: center; border-bottom: var(--hairline) solid var(--separator); }
+.paleta-campo svg { position: absolute; left: var(--space-4); width: 18px; height: 18px; color: var(--label-3); }
+#paletaBusca { flex: 1; height: 52px; padding: 0 var(--space-4) 0 48px; border: 0; background: none; color: var(--label); font: var(--weight-regular) var(--text-lg) / 1 var(--font-sans); }
+#paletaBusca:focus { outline: none; }
+#paletaBusca::placeholder { color: var(--label-3); }
+.paleta-campo kbd { margin-right: var(--space-4); }
+#paletaLista { flex: 1; margin: 0; padding: var(--space-2); overflow: auto; list-style: none; }
+#paletaLista li[role="option"] { display: flex; align-items: center; gap: var(--space-3); min-height: 40px; padding: var(--space-2) var(--space-3); border-radius: var(--radius-control); cursor: pointer; }
+#paletaLista li[aria-selected="true"] { background: var(--brand-tint); }
+#paletaLista li .p-tit { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--text-sm); color: var(--label); }
+#paletaLista li .p-sub { color: var(--label-3); font-size: var(--text-xs); }
+#paletaLista li .p-tipo { flex: none; font: var(--weight-semibold) 11px / 1 var(--font-sans); letter-spacing: var(--tracking-caps); text-transform: uppercase; color: var(--label-3); }
+#paletaLista .p-vazio { padding: var(--space-5) var(--space-3); color: var(--label-2); font-size: var(--text-sm); text-align: center; }
+.paleta-rodape { display: flex; gap: var(--space-3); padding: var(--space-2) var(--space-4); border-top: var(--hairline) solid var(--separator); color: var(--label-3); font-size: var(--text-xs); }
+
+#erro { position: fixed; inset: 0; z-index: var(--z-dialog); display: none; background: var(--bg-grouped); }
+#erro.estado { display: none; }
+#erro.visivel { display: grid; }
+#veu { display: none; }
+
+@media (max-width: 1180px) { body { grid-template-columns: 228px minmax(0, 1fr) 328px; } }
+@media (max-width: 900px) {
+  body { grid-template-columns: minmax(0, 1fr); grid-template-areas: "topo" "centro" "rodape"; }
+  #contagens { display: none; }
+  #btnPainel { display: inline-flex; }
+  .acoes { flex: 1 1 100%; overflow-x: auto; padding-bottom: 2px; }
+  #btnReorganizar .rot { display: none; }
+  .lm-idioma { order: 8; }
+  .acoes:not(:has(.chip:not([hidden]))) { display: none; }
+  #tituloVisao { max-width: calc(100% - 104px); }
+  #legendaCaixa { max-width: calc(100% - 24px); }
+  footer { padding: var(--space-2) var(--space-3); }
+  #legendaPasso { font-size: var(--text-xs); }
+  #btnLinkPasso .rot { display: none; }
+  #btnPassos { display: inline-flex; }
+  #esq { position: fixed; z-index: var(--z-drawer); top: 0; bottom: 0; left: 0; width: min(320px, 86vw); border-right: var(--hairline) solid var(--separator);
+    transform: translateX(-100%); visibility: hidden; transition: transform var(--dur) var(--ease-out), visibility 0s linear var(--dur); }
+  body.com-painel #esq { transform: none; visibility: visible; transition: transform var(--dur) var(--ease-out); }
+  #dir { position: fixed; z-index: var(--z-drawer); left: 0; right: 0; bottom: 0; max-height: 56dvh; border: 0; border-top: var(--hairline) solid var(--separator);
+    border-radius: var(--radius-surface) var(--radius-surface) 0 0; box-shadow: var(--shadow-2);
+    transform: translateY(100%); visibility: hidden; transition: transform var(--dur) var(--ease-out), visibility 0s linear var(--dur); }
+  body.com-detalhe #dir { transform: none; visibility: visible; transition: transform var(--dur) var(--ease-out); }
+  #fecharDetalhe { display: inline-flex; }
+  #veu { position: fixed; inset: 0; z-index: calc(var(--z-drawer) - 1); background: color-mix(in srgb, var(--bg) 50%, transparent); }
+  body.com-painel #veu { display: block; }
+  #paleta { padding-top: var(--space-4); }
+  .paleta-rodape { display: none; }
+}
+</style>
+</head>
+<body class="sds" data-lm-pagina="mapa">
+<header class="sds-bar lm-barra">
+  <button class="botao icone lm-gaveta" id="btnPainel" aria-controls="esq" aria-expanded="false" aria-label="Abrir visões e filtros" title="Visões e filtros" data-i18n-aria="painelAbrir" data-i18n-title="painelTitulo">
+    <svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 4h11M2.5 8h11M2.5 12h11"/></svg></button>
+  <!-- lodemap:barra:start -->
+  <a class="lm-marca" href="../explorador/index.html" data-lm-href="../explorador/index.html" title="Abrir o mapa">
+    <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><circle cx="5" cy="5" r="2.5" fill="currentColor"/><circle cx="15" cy="7" r="2.5" fill="currentColor"/><circle cx="8" cy="15" r="2.5" fill="currentColor"/><path d="M5 5l10 2M5 5l3 10M15 7l-7 8" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>
+    <span class="lm-proj" id="lmProjeto">Arquitetura</span>
+  </a>
+  <nav class="lm-nav" id="lmNav" aria-label="Seções do mapa">
+    <a href="../explorador/index.html" data-lm-href="../explorador/index.html" data-lm="mapa">Mapa</a>
+    <a href="../leitor/index.html" data-lm-href="../leitor/index.html" data-lm="docs">Documentação</a>
+    <a href="../leitor/index.html#decisoes" data-lm-href="../leitor/index.html#decisoes" data-lm="decisoes">Decisões</a>
+  </nav>
+  <button class="lm-menu" id="lmMenu" type="button" aria-controls="lmNav" aria-expanded="false" aria-label="Seções do mapa">
+    <span id="lmMenuRotulo">Seções</span>
+    <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+  </button>
+  <!-- lodemap:barra:end -->
+  <div class="campo-busca lm-busca" role="search">
+    <label for="busca" class="vh" data-i18n="buscaRotulo">Buscar componente, container ou arquivo</label>
+    <svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg>
+    <input id="busca" type="search" list="nomes" placeholder="Buscar componente, container ou arquivo" data-i18n-ph="buscaRotulo" autocomplete="off">
+    <button type="button" id="btnPaleta" aria-haspopup="dialog" aria-label="Abrir a paleta de comandos" title="Paleta: elementos, visões, fluxos e ações" data-i18n-aria="paletaAbrir" data-i18n-title="paletaTitulo"><kbd id="kbdPaleta">Ctrl K</kbd></button>
+  </div>
+  <datalist id="nomes"></datalist>
+  <div class="acoes lm-extra">
+    <span id="contagens" class="sds-num"></span>
+    <button type="button" class="chip" id="chipSaude" hidden></button>
+    <button type="button" class="chip" id="chipMudou" aria-pressed="false" hidden></button>
+  </div>
+  <div class="lm-idioma" id="seletorIdioma" role="group" aria-label="Idioma" data-i18n-aria="idiomaGrupo">
+    <button type="button" class="botao" data-idioma="pt" lang="pt" aria-pressed="true" title="Português">PT</button>
+    <button type="button" class="botao" data-idioma="en" lang="en" aria-pressed="false" title="English">EN</button>
+  </div>
+  <!-- lodemap:barra-fim:start -->
+  <button class="lm-tema" id="lmTema" type="button" aria-label="Mudar o tema">
+    <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true" id="lmIcoTema"></svg>
+  </button>
+  <script>
+  // lodemap:barra:js
+  (function () {
+    "use strict";
+    var raiz = document.documentElement;
+    var nav = document.getElementById("lmNav"), menu = document.getElementById("lmMenu"), tema = document.getElementById("lmTema");
+    var ROTULOS = { mapa: "Mapa", docs: "Documentação", decisoes: "Decisões" };
+    var SOL = '<circle cx="9" cy="9" r="3.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M9 1.5v2M9 14.5v2M1.5 9h2M14.5 9h2M3.7 3.7l1.4 1.4M12.9 12.9l1.4 1.4M3.7 14.3l1.4-1.4M12.9 5.1l1.4-1.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>';
+    var LUA = '<path d="M14.5 11.2A6.5 6.5 0 0 1 6.8 3.5a6.5 6.5 0 1 0 7.7 7.7Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>';
+    function efetivo() {
+      return raiz.getAttribute("data-theme") || (window.matchMedia && matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+    }
+    function param() { var t = raiz.getAttribute("data-theme"); return t === "light" ? "claro" : t === "dark" ? "escuro" : ""; }
+    function comTema(url) {
+      var t = param(), i = url.indexOf("#");
+      var base = i < 0 ? url : url.slice(0, i), frag = i < 0 ? "" : url.slice(i);
+      base = base.replace(/([?&])tema=[^&#]*&?/, "$1").replace(/[?&]$/, "");
+      return t ? base + (base.indexOf("?") < 0 ? "?" : "&") + "tema=" + t + frag : base + frag;
+    }
+    function ligarLinks() {
+      document.querySelectorAll("[data-lm-href]").forEach(function (a) { a.setAttribute("href", comTema(a.getAttribute("data-lm-href"))); });
+    }
+    function pintarTema() {
+      var escuro = efetivo() === "dark";
+      document.getElementById("lmIcoTema").innerHTML = escuro ? SOL : LUA;
+      tema.setAttribute("aria-label", escuro ? "Mudar para o tema claro" : "Mudar para o tema escuro");
+      tema.title = escuro ? "Tema claro" : "Tema escuro";
+    }
+    function ativar(chave) {
+      nav.querySelectorAll("a").forEach(function (a) {
+        if (a.getAttribute("data-lm") === chave) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+      });
+      document.getElementById("lmMenuRotulo").textContent = ROTULOS[chave] || "Seções";
+    }
+    function abrir(sim, focar) {
+      nav.classList.toggle("lm-aberto", sim);
+      menu.setAttribute("aria-expanded", String(sim));
+      if (sim && focar) { var a = nav.querySelector('[aria-current="page"]') || nav.querySelector("a"); if (a) a.focus(); }
+    }
+    menu.addEventListener("click", function () { abrir(!nav.classList.contains("lm-aberto"), true); });
+    nav.addEventListener("click", function (ev) { if (ev.target.closest("a")) abrir(false); });
+    nav.addEventListener("keydown", function (ev) {
+      if (ev.key === "Escape" && nav.classList.contains("lm-aberto")) { ev.stopPropagation(); abrir(false); menu.focus(); }
+    });
+    document.addEventListener("click", function (ev) {
+      if (nav.classList.contains("lm-aberto") && !nav.contains(ev.target) && !menu.contains(ev.target)) abrir(false);
+    });
+    tema.addEventListener("click", function () {
+      var novo = efetivo() === "dark" ? "light" : "dark";
+      raiz.setAttribute("data-theme", novo);
+      try { localStorage.setItem("sds-tema", novo); } catch (e) { /* file:// sem armazenamento */ }
+      try {
+        var u = new URL(location.href);
+        u.searchParams.set("tema", param());
+        history.replaceState(history.state, "", u.toString());
+      } catch (e) { /* navegador antigo */ }
+      ligarLinks();
+      pintarTema();
+      document.dispatchEvent(new CustomEvent("lm:tema", { detail: { tema: novo } }));
+    });
+    if (window.matchMedia) matchMedia("(prefers-color-scheme: light)").addEventListener("change", pintarTema);
+    window.LodemapBarra = {
+      ativar: ativar,
+      comTema: comTema,
+      projeto: function (nome) { if (nome) document.getElementById("lmProjeto").textContent = nome; }
+    };
+    ligarLinks();
+    pintarTema();
+    ativar(document.body.getAttribute("data-lm-pagina") || "");
+  })();
+  </script>
+  <!-- lodemap:barra-fim:end -->
+</header>
+
+<aside id="esq" aria-label="Visões e filtros" data-i18n-aria="visoesFiltros">
+  <h2 data-i18n="visoes">Visões</h2>
+  <div class="lista" id="listaVisoes"></div>
+  <h2 data-i18n="fluxos">Fluxos</h2>
+  <div class="lista" id="listaFluxos"></div>
+  <h2><label for="colorir" data-i18n="colorirPor">Colorir por</label></h2>
+  <div class="linha"><select id="colorir"></select></div>
+  <h2 data-i18n="mostrarStatus">Mostrar status</h2>
+  <div id="filtrosStatus" class="filtros"></div>
+  <div id="blocoProva" hidden>
+    <h2 data-i18n="provaNoCodigo">Prova no código</h2>
+    <div class="filtros"><label><input type="checkbox" id="fSoModelo"><span data-i18n="soModelo">Só no modelo</span><small id="nSoModelo"></small></label></div>
+    <p class="nota" id="notaProva"></p>
+  </div>
+  <h2 data-i18n="atalhosTitulo">Atalhos</h2>
+  <div class="atalhos" data-i18n-html="atalhos">Clique: foco · <kbd>Shift</kbd>+clique: caminho entre dois nós · duplo clique: vizinhança no modelo · <kbd id="kbdAtalho">Ctrl K</kbd>: paleta · <kbd>/</kbd>: buscar · <kbd>F</kbd>: enquadrar · <kbd>←</kbd> <kbd>→</kbd>: passos do percurso · <kbd>Esc</kbd>: limpar</div>
+</aside>
+<div id="veu"></div>
+
+<main id="centro">
+  <div id="carregando" aria-live="polite"><div class="sds-skeleton"></div><div class="sds-skeleton"></div><div class="sds-skeleton"></div><p data-i18n="montando">Montando o diagrama…</p></div>
+  <div id="cy" role="img" aria-label="Grafo da arquitetura" data-i18n-aria="grafoAria"></div>
+  <div id="vazioVisao" class="estado" hidden><h3 data-i18n="nadaMostrar">Nada para mostrar</h3><p id="vazioTexto"></p><button class="botao" id="btnMostrarTodos" data-i18n="mostrarTodosStatus">Mostrar todos os status</button></div>
+  <div id="tituloVisao" class="flutuante"></div>
+  <div id="ferramentas" class="flutuante">
+    <button class="botao" id="btnReorganizar" title="Refazer o layout automático desta visão" data-i18n-title="reorganizarTitulo">
+      <svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9"/><path d="M13.5 2.5v3h-3"/></svg><span class="rot" data-i18n="reorganizar">Reorganizar</span></button>
+    <button class="botao icone" id="btnEnquadrar" title="Enquadrar o diagrama (F)" aria-label="Enquadrar o diagrama" data-i18n-title="enquadrarTitulo" data-i18n-aria="enquadrar">
+      <svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 6V2.5H6M10 2.5h3.5V6M13.5 10v3.5H10M6 13.5H2.5V10"/></svg></button>
+  </div>
+  <details id="legendaCaixa" class="flutuante"><summary data-i18n="legendaTitulo">Legenda</summary><div id="legenda"></div></details>
+  <div id="aviso" class="flutuante" role="status" aria-live="polite" hidden></div>
+</main>
+
+<footer id="rodape" aria-label="Percurso do fluxo" data-i18n-aria="percursoAria">
+  <button class="botao icone" id="passoAnt" title="Passo anterior (←)" aria-label="Passo anterior" data-i18n-title="passoAntTitulo" data-i18n-aria="passoAnt">
+    <svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3.5 5.5 8l4.5 4.5"/></svg></button>
+  <div id="legendaPasso" aria-live="polite"></div>
+  <button class="botao icone" id="passoProx" title="Próximo passo (→)" aria-label="Próximo passo" data-i18n-title="passoProxTitulo" data-i18n-aria="passoProx">
+    <svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5"/></svg></button>
+  <button class="botao" id="btnLinkPasso" title="Copiar o link deste passo" data-i18n-title="copiarLinkTitulo">
+    <svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M6.5 9.5a3 3 0 0 0 4.2 0l2-2a3 3 0 0 0-4.2-4.2l-.7.7M9.5 6.5a3 3 0 0 0-4.2 0l-2 2a3 3 0 0 0 4.2 4.2l.7-.7"/></svg><span class="rot" data-i18n="copiarLink">Copiar link</span></button>
+  <button class="botao" id="btnPassos" aria-controls="dir" data-i18n="passosBtn">Passos</button>
+</footer>
+
+<aside id="dir" aria-label="Inspetor" data-i18n-aria="inspetor">
+  <div class="cab-inspetor"><span class="det-tipo" id="rotInspetor">Inspetor</span><button class="botao icone" id="fecharDetalhe" aria-label="Fechar o inspetor" title="Fechar o inspetor" data-i18n-aria="fecharInspetor" data-i18n-title="fecharInspetor">
+    <svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg></button></div>
+  <div id="detalhes"></div>
+</aside>
+
+<div id="paleta" hidden>
+  <div class="paleta-caixa" role="dialog" aria-modal="true" aria-label="Paleta de comandos" data-i18n-aria="paletaDialogo">
+    <div class="paleta-campo">
+      <svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg>
+      <input id="paletaBusca" type="text" role="combobox" aria-expanded="true" aria-controls="paletaLista" aria-autocomplete="list"
+        aria-label="Buscar elemento, visão, fluxo ou ação" placeholder="Elemento, visão, fluxo ou ação" data-i18n-aria="paletaBusca" data-i18n-ph="paletaPh" autocomplete="off" spellcheck="false">
+      <kbd>Esc</kbd>
+    </div>
+    <ul id="paletaLista" role="listbox" aria-label="Resultados" data-i18n-aria="paletaResultados"></ul>
+    <div class="paleta-rodape" data-i18n-html="paletaRodape"><span><kbd>↑</kbd> <kbd>↓</kbd> escolher</span><span><kbd>Enter</kbd> abrir</span><span><kbd>Esc</kbd> fechar</span></div>
+  </div>
+</div>
+<div id="erro" class="estado" role="alert"><h3 data-i18n="erroTitulo">Não foi possível abrir o explorador</h3><p id="erroTexto"></p><button class="botao primario" id="btnTentar" data-i18n="tentarDeNovo">Tentar de novo</button></div>
+
+<script>
+(function () {
+  "use strict";
+  const $ = id => document.getElementById(id);
+  const raiz = document.documentElement;
+  const reduzir = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const dur = ms => reduzir() ? 0 : Math.min(ms, 200);
+  const estreito = () => matchMedia("(max-width: 900px)").matches;
+  let aoTrocarTema = () => {};
+
+  // ------------------------------------------------------------ idioma (pt padrão): ?lang= > localStorage "lodemap-idioma" > dados.idioma > pt
+  const T = window.LODEMAP_I18N, IDIOMAS = ["pt", "en"];
+  const mac = /Mac|iP(hone|ad|od)/.test(navigator.platform || "");
+  let lang = (() => {
+    try { const q = new URLSearchParams(location.search).get("lang"); if (IDIOMAS.includes(q)) return q; } catch (e) { /* sem URLSearchParams */ }
+    try { const g = localStorage.getItem("lodemap-idioma"); if (IDIOMAS.includes(g)) return g; } catch (e) { /* sem localStorage */ }
+    return window.ARQ && IDIOMAS.includes(window.ARQ.idioma) ? window.ARQ.idioma : "pt";
+  })();
+  const t = (k, ...a) => { const v = T[lang][k] !== undefined ? T[lang][k] : T.pt[k]; return typeof v === "function" ? v(...a) : v; };
+  // Marcadores canônicos da skill: o DSL os guarda em português (o estilos.dsl pinta por eles); a tela mostra no idioma.
+  const TAGS_EN = { Dados: "Data", Privacidade: "Privacy", Modelo: "Model", WebBrowser: "Web browser", Janela: "Window",
+                    Barramento: "Bus", Externo: "External", Nuvem: "Cloud" };
+  const nomeTag = tag => lang === "en" ? (TAGS_EN[tag] || tag) : tag === "WebBrowser" ? "Navegador" : tag;
+  const plural = (n, k) => n + " " + t(k)[n === 1 ? 0 : 1];
+  const rotSt = st => t("status")[st] || st;
+  const rotTipo = x => t("tipos")[x] || x;
+  const loc = () => lang === "en" ? "en" : "pt-BR";
+  let reInspetor = null;   // redesenha o inspetor aberto quando o idioma muda
+
+  // A barra comum (marca, seções, menu, tema) é o mesmo bloco nas duas páginas e fala português; daqui só se troca o texto.
+  function traduzirBarra() {
+    const marca = document.querySelector(".lm-marca"); if (marca) marca.title = t("marcaTitulo");
+    $("lmNav").setAttribute("aria-label", t("navAria")); $("lmMenu").setAttribute("aria-label", t("navAria"));
+    const nomes = { mapa: t("navMapa"), docs: t("navDocs"), decisoes: t("navDecisoes") };
+    document.querySelectorAll("#lmNav a[data-lm]").forEach(a => { a.textContent = nomes[a.dataset.lm] || a.textContent; });
+    $("lmMenuRotulo").textContent = nomes[document.body.getAttribute("data-lm-pagina")] || t("menuRotulo");
+    const escuro = (raiz.getAttribute("data-theme") || (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark")) === "dark";
+    $("lmTema").setAttribute("aria-label", t(escuro ? "temaParaClaro" : "temaParaEscuro"));
+    $("lmTema").title = t(escuro ? "temaClaro" : "temaEscuro");
+    if (!(window.ARQ && window.ARQ.nome)) $("lmProjeto").textContent = t("arquitetura");
+  }
+  // Com ?lang= na URL, os links da barra e do leitor levam o idioma junto (a escolha do seletor vale para as duas páginas pelo localStorage).
+  function comLang(url) {
+    let tem = false;
+    try { tem = new URLSearchParams(location.search).has("lang"); } catch (e) { /* sem URLSearchParams */ }
+    if (!tem) return url;
+    const i = url.indexOf("#"), base = i < 0 ? url : url.slice(0, i), frag = i < 0 ? "" : url.slice(i);
+    const b = base.replace(/([?&])lang=[^&#]*&?/, "$1").replace(/[?&]$/, "");
+    return b + (b.indexOf("?") < 0 ? "?" : "&") + "lang=" + lang + frag;
+  }
+  function ligarLinksLang() {
+    document.querySelectorAll("[data-lm-href]").forEach(a => a.setAttribute("href", comLang(a.getAttribute("href"))));
+  }
+  // Texto fixo da página: data-i18n (texto), data-i18n-html (HTML do dicionário), data-i18n-aria / -title / -ph (atributos).
+  function aplicarEstatico() {
+    raiz.lang = lang === "en" ? "en" : "pt-BR";
+    document.title = t("titulo");
+    document.querySelectorAll("[data-i18n]").forEach(el => { el.textContent = t(el.getAttribute("data-i18n")); });
+    document.querySelectorAll("[data-i18n-html]").forEach(el => { el.innerHTML = t(el.getAttribute("data-i18n-html"), mac ? "⌘K" : "Ctrl K"); });
+    [["aria", "aria-label"], ["title", "title"], ["ph", "placeholder"]].forEach(([sufixo, atributo]) => {
+      document.querySelectorAll("[data-i18n-" + sufixo + "]").forEach(el => el.setAttribute(atributo, t(el.getAttribute("data-i18n-" + sufixo))));
+    });
+    $("kbdPaleta").textContent = mac ? "⌘K" : "Ctrl K";
+    if (falha) $("erroTexto").textContent = t(falha);
+    document.querySelectorAll("#seletorIdioma [data-idioma]").forEach(b => b.setAttribute("aria-pressed", String(b.getAttribute("data-idioma") === lang)));
+    traduzirBarra();
+    ligarLinksLang();
+  }
+  function trocarIdioma(novo) {
+    lang = novo;
+    try { localStorage.setItem("lodemap-idioma", novo); } catch (e) { /* file:// sem armazenamento */ }
+    try {
+      const u = new URL(location.href);
+      if (u.searchParams.has("lang")) { u.searchParams.set("lang", novo); history.replaceState(history.state, "", u.toString()); }
+    } catch (e) { /* navegador antigo */ }
+    aplicarEstatico();
+    if (!falha) redesenharTexto();
+  }
+  // Redesenha só o texto montado em JS; o grafo, o foco e o percurso ficam onde estão.
+  function redesenharTexto() {
+    cabecalho();
+    montarListas();
+    if (visaoAtual) marcarLista(visaoAtual.chave);
+    tituloVisao();
+    legenda();
+    if (cy) aplicarFiltros();
+    if (fluxo) legendaPasso();
+    if (reInspetor) reInspetor();
+    if (!$("paleta").hidden) filtrarPaleta($("paletaBusca").value);
+  }
+
+  // ------------------------------------------------------------ tema (escuro padrão, claro pelo sistema; o botão fica na barra comum)
+  document.addEventListener("lm:tema", () => { aoTrocarTema(); traduzirBarra(); ligarLinksLang(); });
+  matchMedia("(prefers-color-scheme: light)").addEventListener("change", () => { aoTrocarTema(); traduzirBarra(); });
+  $("btnTentar").addEventListener("click", () => location.reload());
+
+  const D = window.ARQ;
+  const falha = !D ? "erroDados" : typeof cytoscape === "undefined" ? "erroCytoscape" : null;
+  $("seletorIdioma").addEventListener("click", ev => {
+    const b = ev.target.closest("[data-idioma]");
+    if (b && b.getAttribute("data-idioma") !== lang) trocarIdioma(b.getAttribute("data-idioma"));
+  });
+  aplicarEstatico();
+  if (falha) {
+    $("carregando").hidden = true;
+    $("erro").classList.add("visivel");
+    return;
+  }
+  try { if (window.cytoscapeDagre && !cytoscape("layout", "dagre")) cytoscape.use(window.cytoscapeDagre); } catch (e) { /* já registrado */ }
+  const temDagre = (() => { try { return !!cytoscape("layout", "dagre"); } catch (e) { return false; } })();
+
+  // ------------------------------------------------------------ cores dos tokens (o Cytoscape não lê CSS vars)
+  const sonda = document.createElement("span");
+  sonda.style.display = "none"; document.body.appendChild(sonda);
+  function rgba(css) {
+    sonda.style.color = ""; sonda.style.color = css;
+    const m = getComputedStyle(sonda).color.match(/[\d.]+/g) || ["0", "0", "0"];
+    return m.map(Number).concat(m.length < 4 ? [1] : []).slice(0, 4);
+  }
+  function tok(nome, fundo) {
+    const [r, g, b, a] = rgba("var(" + nome + ")");
+    if (a >= 1 || !fundo) return `rgb(${r},${g},${b})`;
+    const [fr, fg, fb] = rgba(fundo);
+    const mix = (c, f) => Math.round(c * a + f * (1 - a));
+    return `rgb(${mix(r, fr)},${mix(g, fg)},${mix(b, fb)})`;
+  }
+  let C = {};
+  function lerCores() {
+    const f = tok("--bg-grouped"), s = tok("--surface");
+    C = {
+      fundo: f, sup: s, sup2: tok("--surface-2"), sep: tok("--separator-strong", s), sepFundo: tok("--separator-strong", f), sepSuave: tok("--separator", f),
+      label: tok("--label"), label2: tok("--label-2", s), label2f: tok("--label-2", f), label3: tok("--label-3", f),
+      brand: tok("--brand"), brandInk: tok("--brand-ink"), warn: tok("--warn"), ok: tok("--ok"),
+      fonte: getComputedStyle(raiz).getPropertyValue("--font-sans").trim() || "system-ui, sans-serif",
+      st: {}
+    };
+    STATUS.forEach(x => { C.st[x[0]] = tok(x[2], s); });
+    C.st.Externo = tok("--label-3", s);
+  }
+
+  // ------------------------------------------------------------ índices
+  const STATUS = [
+    ["Pronto", "pronto", "--status-pronto"], ["Em andamento", "andamento", "--status-andamento"],
+    ["Aguardando", "codex", "--status-aguardando"], ["Planejado", "planejado", "--status-planejado"],
+    ["Fora do foco", "fora", "--status-fora"],
+  ];
+  // O dado guarda a chave canônica em português; o texto do modelo pode vir em qualquer um dos dois idiomas ("In progress", "EmAndamento").
+  const STATUS_CANON = {};
+  IDIOMAS.forEach(l => Object.entries(T[l].status).forEach(([k, rot]) => { STATUS_CANON[rot.replace(/\s/g, "").toLowerCase()] = k; }));
+  const canonSt = x => STATUS_CANON[String(x).replace(/\s/g, "").toLowerCase()] || x;
+  const varStatus = st => { const s = STATUS.find(x => x[0] === st); return s ? `var(${s[2]})` : "var(--label-3)"; };
+  const E = new Map(D.elementos.map(e => [e.id, e]));
+  const R = new Map(D.relacoes.map(r => [r.id, r]));
+  const saida = new Map(), entrada = new Map();
+  D.relacoes.forEach(r => {
+    if (!saida.has(r.de)) saida.set(r.de, []); saida.get(r.de).push(r);
+    if (!entrada.has(r.para)) entrada.set(r.para, []); entrada.get(r.para).push(r);
+  });
+  const visoesDo = new Map();
+  D.visoes.forEach(v => v.elementos.forEach(id => { if (!visoesDo.has(id)) visoesDo.set(id, []); visoesDo.get(id).push(v); }));
+  const statusDe = e => (e.props && e.props.status) ? canonSt(e.props.status) : (e.tags.includes("Externo") ? "Externo" : "Pronto");
+  const containerDe = e => e.tipo === "Componente" ? E.get(e.pai) : (e.tipo === "Container" ? e : null);
+  const areaDe = e => (e.props && e.props.area) ? e.props.area.replace(/^Area/, "") : (e.tipo === "Componente" ? "?" : e.tipo);
+  const temObs = e => !!(e.props && (e.props.observabilidade || e.props.metricas));
+  const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const caminhos = txt => (String(txt || "").match(/[A-Za-z0-9_.\-]+(?:\/[A-Za-z0-9_.\-]+)+\/?/g) || []);
+  // Raiz local do repositório, para o link "VS Code". Nunca vem do dados.js, que é versionado: aberto como arquivo,
+  // sai do próprio endereço; servido em 127.0.0.1, do .lodemap/local.json (fora do git). Hospedado, não existe.
+  let RAIZ = "";
+  (function () {
+    if (location.protocol === "file:" && D.arqRel != null) {
+      const p = decodeURIComponent(location.pathname).replace(/^\/([A-Za-z]:)/, "$1");
+      const suf = (D.arqRel ? "/" + D.arqRel : "") + "/explorador/index.html";
+      if (p.endsWith(suf)) RAIZ = p.slice(0, -suf.length);
+    } else if (/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname)) {
+      fetch("../.lodemap/local.json").then(r => r.ok ? r.json() : null)
+        .then(j => { if (j && j.repo) RAIZ = String(j.repo); }).catch(() => {});
+    }
+  })();
+  const linkVsCode = p => RAIZ ? "vscode://file/" + RAIZ + "/" + p : "";
+  const linkLeitor = ancora => comLang((D.leitor || "../leitor/index.html") + (ancora ? "#" + ancora : ""));
+  const porIdent = new Map(D.elementos.filter(e => e.ident).map(e => [e.ident, e]));
+  const metricasDe = new Map();
+  (D.metricas || []).forEach(m => (m.componentes || []).forEach(i => { const e = porIdent.get(i); if (!e) return; if (!metricasDe.has(e.id)) metricasDe.set(e.id, []); metricasDe.get(e.id).push(m); }));
+  const num = v => typeof v === "number" ? v.toLocaleString(loc(), { maximumFractionDigits: 2 }) : esc(v);
+  const curto = c => String(c || "").slice(0, 7);
+  const quando = iso => { const d = iso ? new Date(iso) : null; return d && !isNaN(d) ? d.toLocaleString(loc(), { dateStyle: "short", timeStyle: "short" }) : "—"; };
+  const agrupar = (lista, chave) => { const m = new Map(); lista.forEach(x => (x[chave] || []).forEach(id => { if (!m.has(id)) m.set(id, []); m.get(id).push(x); })); return m; };
+  const adrsDo = agrupar(D.adrs || [], "elementos");
+  const docsDo = agrupar(D.documentos || [], "elementos");
+  const PROVA = (D.prova && D.prova.porRelacao) || {};
+  const provaDe = rid => PROVA[rid] || null;
+  const MUD = D.mudancas && D.mudancas.modo === "incremental" ? D.mudancas : null;
+  const modulosMudados = new Map();
+  if (MUD) MUD.componentesAfetados.forEach(c => { const e = porIdent.get(c.id); if (e) modulosMudados.set(e.id, c.modulos || []); });
+  const nomeRel = r => `${(E.get(r.de) || {}).nome || "?"} → ${(E.get(r.para) || {}).nome || "?"}`;
+
+  // Categorias (área, container, tipo) não têm token: tons distintos com a mesma luminosidade, só no ponto do nó.
+  function paleta(chaves) {
+    const m = {}; chaves.forEach((k, i) => { m[k] = "hsl(" + Math.round((i * 360) / Math.max(1, chaves.length) + 210) % 360 + ",55%,52%)"; }); return m;
+  }
+  const paletaArea = paleta([...new Set(D.elementos.map(areaDe))].sort());
+  const paletaCont = paleta([...new Set(D.elementos.map(e => (containerDe(e) || {}).nome || e.tipo))].sort());
+  const paletaTipo = paleta(["Pessoa", "Sistema", "Container", "Componente"]);
+  const COLORIR = ["status", "area", "container", "tipo", "obs"];   // os nomes saem do dicionário (t("colorir")[chave])
+
+  // ------------------------------------------------------------ estado
+  let cy = null, visaoAtual = null, focoId = null, fluxo = null, passo = -1, destaque = null, colorir = "status";
+  let alcance = { dir: "ambos", prof: 1 };
+  let inspetor = "vazio";
+  const ocultos = new Set();
+
+  // ------------------------------------------------------------ cabeçalho e barra lateral
+  const marcadores = (() => {
+    const tags = new Map(); D.elementos.forEach(e => e.tags.forEach(t => tags.set(t, (tags.get(t) || 0) + 1)));
+    const ignorar = new Set(["Element", "Component", "Container", "Software System", "Person"]);
+    return [...tags.entries()].filter(([t]) => !ignorar.has(t) && !/^Area/.test(t) && !STATUS.some(s => s[1] === t.toLowerCase())).sort((a, b) => b[1] - a[1]);
+  })();
+  function cabecalho() {
+    if (window.LodemapBarra) LodemapBarra.projeto(D.nome);
+    document.title = t("docTitulo", D.nome || t("arquitetura"));
+    const comps = D.elementos.filter(e => e.tipo === "Componente");
+    const n = {}; comps.forEach(e => { const st = statusDe(e); n[st] = (n[st] || 0) + 1; });
+    $("contagens").textContent = plural(comps.length, "pComponente");
+    $("nomes").innerHTML = D.elementos.map(e => `<option value="${esc(e.nome)}">${esc(rotTipo(e.tipo))} · ${esc((containerDe(e) || {}).nome || "")}</option>`).join("");
+    $("filtrosStatus").innerHTML = STATUS.map(x => `<label><input type="checkbox" data-status="${x[0]}"${ocultos.has(x[0]) ? "" : " checked"}><span class="bolinha" style="background:var(${x[2]})"></span>${esc(rotSt(x[0]))}<small>${n[x[0]] || 0}</small></label>`).join("");
+    $("colorir").innerHTML = `<optgroup label="${esc(t("grupoAtributo"))}">${COLORIR.map(v => `<option value="${v}">${esc(t("colorir")[v])}</option>`).join("")}</optgroup>` +
+      (marcadores.length ? `<optgroup label="${esc(t("grupoMarcador"))}">${marcadores.map(([tag, c]) => `<option value="tag:${esc(tag)}">${esc(nomeTag(tag))} (${c})</option>`).join("")}</optgroup>` : "");
+    $("colorir").value = colorir;
+    if (D.prova) {
+      $("blocoProva").hidden = false;
+      $("nSoModelo").textContent = D.prova.resumo.soModelo;
+      $("notaProva").textContent = t("notaProva", plural(D.prova.resumo.confirmadas, "pRelConfirmada"), D.prova.fonte || "?");
+    }
+    if (D.qualidade) {
+      const q = D.qualidade, pend = (q.pendencias || []).length;
+      $("chipSaude").hidden = false;
+      $("chipSaude").className = "chip " + (q.aprovado && !pend ? "chip--ok" : "chip--aviso");
+      $("chipSaude").innerHTML = `${t("saude")} <b>${num(q.total)}</b>${pend ? " · " + plural(pend, "pPendencia") : ""}`;
+      $("chipSaude").title = t("saudeTitulo");
+    }
+    if (MUD) {
+      const nAf = MUD.componentesAfetados.length + MUD.semComponente.length;
+      $("chipMudou").hidden = false;
+      $("chipMudou").className = "chip " + (nAf ? "chip--aviso" : "");
+      $("chipMudou").innerHTML = `${esc(t("mudouDesde", curto(MUD.de)))} · <b>${nAf}</b>`;
+      $("chipMudou").title = t("mudouTitulo");
+    }
+  }
+
+  function montarListas() {
+    const est = D.visoes.filter(v => v.tipo === "estatica"), din = D.visoes.filter(v => v.tipo === "dinamica");
+    // "Container: componentes" seguido de "Container: Área" repetia o mesmo começo cortado em todas as linhas. A
+    // visão que repete o prefixo da anterior mostra só o que vem depois dos dois-pontos, recuada; o nome inteiro
+    // fica na dica.
+    let prefixo = null;
+    const botao = v => {
+      const corte = v.titulo.indexOf(": "), pre = corte > 0 ? v.titulo.slice(0, corte) : null;
+      const filho = pre !== null && pre === prefixo;
+      prefixo = pre;
+      return `<button class="item${filho ? " item--filho" : ""}" data-visao="${esc(v.chave)}" title="${esc(v.titulo + (v.desc ? " \u2014 " + v.desc : ""))}"><span>${esc(filho ? v.titulo.slice(corte + 2) : v.titulo)}</span><small>${v.elementos.length}</small></button>`;
+    };
+    $("listaVisoes").innerHTML = `<button class="item" data-visao="__tudo" title="${esc(t("modeloInteiroTitulo"))}"><span>${esc(t("modeloInteiro"))}</span><small>${D.elementos.length}</small></button>` + est.map(botao).join("");
+    $("listaFluxos").innerHTML = din.map(v => `<button class="item" data-visao="${esc(v.chave)}" title="${esc(v.desc)}"><span>${esc(v.titulo)}</span><small>${plural(v.fluxo.length, "pPasso")}</small></button>`).join("") ||
+      `<div class="vazio" style="padding:0 8px">${t("semFluxos")}</div>`;
+    document.querySelectorAll("[data-visao]").forEach(b => b.addEventListener("click", () => { abrirVisao(b.dataset.visao); painel(false); }));
+  }
+
+  // ------------------------------------------------------------ montagem do grafo
+  function classesRel(r) {
+    const c = r.tags.map(t => "t-" + t.replace(/\W/g, ""));
+    const p = provaDe(r.id); if (p) c.push(p.estado === "confirmada" ? "provada" : "semprova");
+    return c.join(" ");
+  }
+  function elementosCy(ids, relIds, fluxoV) {
+    const set = new Set(ids);
+    const nos = [], arestas = [];
+    const paisUsados = new Set();
+    ids.forEach(id => {
+      const e = E.get(id); if (!e) return;
+      let parent;
+      if (e.tipo === "Componente" && e.pai && !set.has(e.pai)) { parent = "c" + e.pai; paisUsados.add(e.pai); }
+      nos.push({ data: { id: "n" + id, eid: id, label: e.nome, parent }, classes: classesDo(e) });
+    });
+    paisUsados.forEach(pid => { const p = E.get(pid); nos.push({ data: { id: "c" + pid, label: p.nome, grupo: true }, classes: "grupo" }); });
+    if (fluxoV) {
+      // Percurso: uma aresta por passo (a mesma relação pode voltar em outro passo), numerada pela ordem.
+      fluxoV.fluxo.forEach((f, k) => {
+        const r = R.get(f.rel); if (!r || !set.has(r.de) || !set.has(r.para)) return;
+        const [s, t] = f.resposta ? [r.para, r.de] : [r.de, r.para];
+        arestas.push({ data: { id: "p" + k, rid: r.id, passo: k, source: "n" + s, target: "n" + t, label: f.desc || r.desc, ordem: f.ordem || String(k + 1) },
+          classes: classesRel(r) + (f.resposta ? " resposta" : "") });
+      });
+    } else {
+      const vistos = new Set();
+      (relIds ? relIds.map(id => R.get(id)).filter(Boolean) : D.relacoes).forEach(r => {
+        if (vistos.has(r.id) || !set.has(r.de) || !set.has(r.para)) return;
+        vistos.add(r.id);
+        arestas.push({ data: { id: "r" + r.id, rid: r.id, source: "n" + r.de, target: "n" + r.para, label: r.desc, ordem: "" }, classes: classesRel(r) });
+      });
+    }
+    return nos.concat(arestas);
+  }
+  function classesDo(e) {
+    const c = ["tipo-" + e.tipo, "st-" + (STATUS.find(s => s[0] === statusDe(e)) || ["", "externo"])[1]];
+    if (e.tags.includes("Dados")) c.push("dados");
+    if (e.tags.includes("Externo")) c.push("externo");
+    return c.join(" ");
+  }
+
+  function corDoNo(e) {
+    const p = colorir;
+    if (p.startsWith("tag:")) return e.tags.includes(p.slice(4)) ? C.brand : C.st["Fora do foco"];
+    if (p === "area") return paletaArea[areaDe(e)];
+    if (p === "container") return paletaCont[(containerDe(e) || {}).nome || e.tipo];
+    if (p === "obs") return temObs(e) ? C.ok : C.st["Fora do foco"];
+    if (p === "tipo") return paletaTipo[e.tipo] || C.label3;
+    return e.tags.includes("Externo") && !(e.props && e.props.status) ? C.st.Externo : (C.st[statusDe(e)] || C.st.Externo);
+  }
+  const pontos = new Map();
+  function ponto(cor) {
+    if (!pontos.has(cor)) pontos.set(cor, "data:image/svg+xml;utf8," + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="4" fill="${cor}"/></svg>`));
+    return pontos.get(cor);
+  }
+
+  // Tamanho do nó pelo rótulo quebrado em 150 px (o valor "label" do Cytoscape está obsoleto desde a 3.30).
+  const medidor = document.createElement("canvas").getContext("2d");
+  const medidas = new Map();
+  function medir(n) {
+    const fs = n.hasClass("tipo-Sistema") ? 14 : n.hasClass("tipo-Container") ? 13 : 12;
+    const peso = fs > 12 || n.hasClass("tipo-Pessoa") ? 600 : 500;
+    const txt = String(n.data("label") || ""), chave = fs + "|" + peso + "|" + txt;
+    if (!medidas.has(chave)) {
+      medidor.font = `${peso} ${fs}px ${C.fonte}`;
+      const linhas = []; let atual = "";
+      txt.split(/\s+/).forEach(p => { const tenta = atual ? atual + " " + p : p; if (atual && medidor.measureText(tenta).width > 150) { linhas.push(atual); atual = p; } else atual = tenta; });
+      if (atual) linhas.push(atual);
+      const w = Math.max(16, ...linhas.map(l => medidor.measureText(l).width));
+      medidas.set(chave, { w: Math.ceil(w) + 10, h: Math.ceil(Math.max(1, linhas.length) * fs * 1.2) });
+    }
+    return medidas.get(chave);
+  }
+
+  function estilo() {
+    const t = reduzir() ? "0ms" : "160ms";
+    const numero = { "label": "data(ordem)", "font-size": 12, "font-weight": 700, "color": C.brand, "text-rotation": "none",
+      "text-background-color": C.fundo, "text-background-opacity": 1, "text-background-padding": 4, "text-background-shape": "roundrectangle",
+      "text-border-width": 1, "text-border-color": C.brand, "text-border-opacity": 1 };
+    return [
+      { selector: "node", style: {
+        "label": "data(label)", "color": C.label, "font-size": 12, "font-family": C.fonte, "font-weight": 500, "text-wrap": "wrap", "text-max-width": 150,
+        "text-valign": "center", "text-halign": "center", "text-margin-x": 5, "shape": "round-rectangle", "width": n => medir(n).w, "height": n => medir(n).h, "padding": 14,
+        "background-color": C.sup, "border-width": 1, "border-color": C.sep,
+        "background-image": n => ponto(corDoNo(E.get(n.data("eid")))), "background-width": 7, "background-height": 7,
+        "background-position-x": 7, "background-position-y": "50%", "background-clip": "none", "background-fit": "none", "background-image-containment": "over",
+        "transition-property": "opacity, border-width, border-color", "transition-duration": t } },
+      { selector: "node.tipo-Container", style: { "font-size": 13, "font-weight": 600, "padding": 18 } },
+      { selector: "node.tipo-Sistema", style: { "font-size": 14, "font-weight": 600, "padding": 22 } },
+      { selector: "node.tipo-Pessoa", style: { "shape": "ellipse", "padding": 20, "font-weight": 600 } },
+      { selector: "node.dados", style: { "shape": "barrel" } },
+      { selector: "node.externo", style: { "background-color": C.sup2 } },
+      { selector: "node.st-planejado", style: { "border-style": "dashed" } },
+      { selector: "node.st-fora", style: { "opacity": 0.72 } },
+      { selector: "node.grupo", style: { "background-color": C.sup2, "background-opacity": 0.28, "background-image": "none", "border-color": C.sepSuave, "border-width": 1,
+        "text-valign": "top", "text-halign": "center", "text-margin-x": 0, "text-margin-y": -6, "color": C.label3, "font-size": 12, "font-weight": 600, "padding": 20, "shape": "round-rectangle" } },
+      { selector: "edge", style: { "width": 1, "line-color": C.sepFundo, "target-arrow-color": C.sepFundo, "target-arrow-shape": "triangle", "arrow-scale": 0.8,
+        "curve-style": "bezier", "opacity": 0.9, "font-size": 11, "font-family": C.fonte, "color": C.label2f, "text-background-color": C.fundo, "text-background-opacity": 0.92,
+        "text-background-padding": 3, "text-background-shape": "roundrectangle", "text-rotation": "autorotate", "text-wrap": "wrap", "text-max-width": () => direcaoAtual === "TB" ? 180 : 96,
+        "transition-property": "opacity, line-color, width", "transition-duration": t } },
+      { selector: "edge[ordem != '']", style: Object.assign({ "line-color": C.label3, "target-arrow-color": C.label3, "width": 1.4 }, numero) },
+      { selector: "edge.resposta", style: { "line-style": "dashed", "line-dash-pattern": [4, 4] } },
+      { selector: "edge.t-ForaDoFoco", style: { "line-style": "dotted" } },
+      { selector: ".apagado", style: { "opacity": 0.14 } },
+      { selector: "edge.apagado", style: { "opacity": 0.06 } },
+      { selector: "edge.porvir", style: { "opacity": 0.32 } },
+      { selector: "edge.visitado", style: { "line-color": C.brand, "target-arrow-color": C.brand, "opacity": 0.6 } },
+      { selector: "edge.passo", style: { "line-color": C.brand, "target-arrow-color": C.brand, "width": 3, "opacity": 1, "z-index": 99,
+        "color": C.brandInk, "text-background-color": C.brand, "text-border-color": C.brand, "font-size": 13 } },
+      { selector: "node.passo", style: { "border-width": 2, "border-color": C.brand, "z-index": 99 } },
+      { selector: "node.vizinho", style: { "border-color": C.label2 } },
+      { selector: "node.foco", style: { "border-width": 2, "border-color": C.brand, "z-index": 99 } },
+      { selector: "edge.vizinho", style: { "line-color": C.brand, "target-arrow-color": C.brand, "width": 1.6, "opacity": 1, "label": "data(label)", "z-index": 98 } },
+      { selector: "edge.vizinho.entra", style: { "line-color": C.label2f, "target-arrow-color": C.label2f } },
+      { selector: "node.caminho", style: { "border-width": 2, "border-color": C.brand } },
+      { selector: "edge.caminho", style: { "line-color": C.brand, "target-arrow-color": C.brand, "width": 2.4, "opacity": 1, "label": "data(label)", "z-index": 99 } },
+      { selector: "node.realce", style: { "border-width": 2, "border-color": C.warn, "z-index": 90 } },
+      { selector: "edge.realce.semprova", style: { "line-color": C.warn, "target-arrow-color": C.warn, "line-style": "dashed", "line-dash-pattern": [6, 4], "width": 1.8, "opacity": 1, "z-index": 90 } },
+      { selector: "edge.realce.provada", style: { "line-color": C.ok, "target-arrow-color": C.ok, "width": 2.4, "opacity": 1, "z-index": 91 } },
+      { selector: ".escondido", style: { "display": "none" } },
+    ];
+  }
+
+  // Layout automático pelo tipo de visão: vizinhança em círculos em volta da origem; o resto em camadas (dagre),
+  // da esquerda para a direita quando há componentes e de cima para baixo nas visões de contexto e no celular.
+  function layoutAuto() {
+    const v = visaoAtual || {};
+    if (v.chave === "__viz") return "concentric";
+    if (estreito()) return "TB";
+    if (v.tipo === "dinamica") return "LR";
+    return v.elementos && v.elementos.some(id => (E.get(id) || {}).tipo === "Componente") ? "LR" : "TB";
+  }
+  let direcaoAtual = "TB";
+  const optsDagre = dir => ({ name: "dagre", rankDir: dir, nodeSep: 28, rankSep: dir === "TB" ? 80 : 110, edgeSep: 12 });
+  // Zoom com que a visão inteira cabe no canvas depois de um layout de teste (sem animação, sem mexer no enquadre).
+  function zoomQueCabe(dir) {
+    cy.layout(Object.assign({ fit: false, animate: false }, optsDagre(dir))).run();
+    const bb = cy.elements(":visible").boundingBox();
+    return Math.min((cy.width() - 80) / Math.max(1, bb.w), (cy.height() - 80) / Math.max(1, bb.h));
+  }
+  function rodarLayout(animar) {
+    if (!cy) return;
+    let tipo = layoutAuto();
+    if (temDagre && tipo === "LR" && (visaoAtual || {}).tipo === "dinamica" && cy.width() > 0) {
+      const emColunas = zoomQueCabe("LR");
+      if (emColunas < 0.8 && zoomQueCabe("TB") > emColunas) tipo = "TB";
+    }
+    if (tipo !== direcaoAtual) { direcaoAtual = tipo; cy.style().update(); }
+    animar = animar && !reduzir();
+    let opts;
+    if (tipo === "concentric") {
+      const dist = distancias(visaoAtual.origem, alcance.prof, alcance.dir);
+      opts = { name: "concentric", concentric: n => 100 - (dist.has(n.data("eid")) ? dist.get(n.data("eid")) : 50), levelWidth: () => 1, minNodeSpacing: 30 };
+    } else if (temDagre) {
+      opts = optsDagre(tipo);
+    } else {
+      opts = { name: "breadthfirst", directed: true, spacingFactor: 1.2 };
+    }
+    // Os nós sem ligação ficam fora do dagre (ele os empilharia numa coluna e abriria buracos no grafo ligado) e
+    // vão para uma grade depois que o grafo ligado assenta.
+    const grade = opts.name === "dagre" && (visaoAtual || {}).tipo !== "dinamica" && !focoId ? soltosPorPai() : null;
+    let foraDoLayout = cy.collection();
+    if (grade) grade.forEach(lista => lista.forEach(n => { foraDoLayout = foraDoLayout.union(n); }));
+    const lay = cy.elements().not(foraDoLayout).layout(Object.assign({ fit: false, animate: animar, animationDuration: 200, animationEasing: "ease-out-cubic" }, opts));
+    lay.one("layoutstop", () => {
+      if (!cy) return;
+      cy.resize();
+      if (grade) agruparSoltos(grade, foraDoLayout);
+      const alvo = focoId ? cy.elements(".foco, .vizinho, .caminho") : cy.elements(":visible");
+      enquadrarTudo(alvo, focoId ? 70 : 40, false);
+    });
+    lay.run();
+  }
+  // Nó sem nenhuma ligação na visão (biblioteca de módulos independentes): o dagre empilha todos numa coluna só, e
+  // 26 middlewares viram uma tira ilegível. A partir de 4 por pai (cada container tem a sua), eles vão para uma
+  // grade abaixo do grafo ligado, com o número de colunas que deixa a visão inteira caber com o maior zoom.
+  function soltosPorPai() {
+    const porPai = new Map();
+    cy.nodes(":visible").filter(n => !n.data("grupo") && n.connectedEdges(":visible").empty()).forEach(n => {
+      const k = n.parent().nonempty() ? n.parent().id() : "";
+      if (!porPai.has(k)) porPai.set(k, []);
+      porPai.get(k).push(n);
+    });
+    porPai.forEach((lista, pai) => { if (lista.length < 4) porPai.delete(pai); });
+    return porPai.size ? porPai : null;
+  }
+  function agruparSoltos(porPai, foraDoLayout) {
+    const W = Math.max(200, cy.width() - 80), H = Math.max(200, cy.height() - 80), VAO = 56;
+    const ligados = cy.nodes(":visible").filter(n => !n.data("grupo")).not(foraDoLayout);
+    let chao = ligados.nonempty() ? ligados.boundingBox() : null;      // onde cai a grade de um pai sem nó ligado
+    porPai.forEach((lista, pai) => {
+      lista.sort((a, b) => String(a.data("label")).localeCompare(String(b.data("label"))));
+      const irmaos = ligados.filter(n => (n.parent().nonempty() ? n.parent().id() : "") === pai);
+      const cw = Math.max(...lista.map(n => n.outerWidth())) + 28, ch = Math.max(...lista.map(n => n.outerHeight())) + 22;
+      const bb = irmaos.nonempty() ? irmaos.boundingBox() : null;
+      // Empate de zoom (grafo ligado mais largo que a grade): fica a grade mais larga, que é a mais baixa.
+      const opcoes = [];
+      for (let cols = 1; cols <= lista.length; cols++) {
+        const linhas = Math.ceil(lista.length / cols);
+        const w = Math.max(bb ? bb.w : 0, cols * cw), h = (bb ? bb.h + VAO : 0) + linhas * ch;
+        opcoes.push({ cols, zoom: Math.min(W / w, H / h) });
+      }
+      const teto = Math.max(...opcoes.map(o => o.zoom));
+      const melhor = opcoes.filter(o => o.zoom >= teto * 0.99).pop();
+      const base = bb || chao;
+      const x0 = base ? base.x1 : 0, y0 = base ? base.y2 + VAO : 0;
+      lista.forEach((n, i) => n.position({ x: x0 + (i % melhor.cols) * cw + cw / 2, y: y0 + Math.floor(i / melhor.cols) * ch + ch / 2 }));
+      const fim = y0 + Math.ceil(lista.length / melhor.cols) * ch;
+      if (!bb) chao = { x1: x0, y2: fim };
+    });
+  }
+  // Enquadre que não deixa nó debaixo das caixas flutuantes (título, ferramentas, legenda): calcula com a margem
+  // normal e, se alguma caixa cobrir um nó, reserva o lado dela (cima ou baixo) e calcula de novo.
+  function caixasFlutuantes() {
+    const base = $("cy").getBoundingClientRect();
+    return ["tituloVisao", "ferramentas", "legendaCaixa"].map(id => $(id)).filter(el => el && el.offsetParent !== null).map(el => {
+      const r = el.getBoundingClientRect();
+      return { x1: r.left - base.left, y1: r.top - base.top, x2: r.right - base.left, y2: r.bottom - base.top };
+    });
+  }
+  function enquadreSeguro(eles, pad) {
+    if (!cy || !eles || eles.empty()) return null;
+    const w = cy.width(), h = cy.height(), bb = eles.boundingBox();
+    if (!(w > 0 && h > 0)) return null;
+    const m = { l: pad, r: pad, t: pad, b: pad };
+    const calc = () => {
+      const lw = Math.max(40, w - m.l - m.r), lh = Math.max(40, h - m.t - m.b);
+      const zoom = Math.max(cy.minZoom(), Math.min(cy.maxZoom(), lw / Math.max(1, bb.w), lh / Math.max(1, bb.h)));
+      return { zoom, pan: { x: m.l + lw / 2 - zoom * (bb.x1 + bb.w / 2), y: m.t + lh / 2 - zoom * (bb.y1 + bb.h / 2) } };
+    };
+    let v = calc();
+    const nos = eles.nodes().filter(n => !n.data("grupo")).map(n => n.boundingBox());
+    const cobre = c => nos.some(b => b.x1 * v.zoom + v.pan.x < c.x2 && b.x2 * v.zoom + v.pan.x > c.x1 &&
+                                     b.y1 * v.zoom + v.pan.y < c.y2 && b.y2 * v.zoom + v.pan.y > c.y1);
+    let mudou = false;
+    caixasFlutuantes().filter(cobre).forEach(c => {
+      mudou = true;
+      if ((c.y1 + c.y2) / 2 < h / 2) m.t = Math.max(m.t, c.y2 + 12); else m.b = Math.max(m.b, h - c.y1 + 12);
+    });
+    if (mudou) v = calc();
+    return v;
+  }
+  function enquadrarTudo(eles, pad, animar) {
+    if (!cy) return;
+    const v = enquadreSeguro(eles && eles.nonempty() ? eles : cy.elements(":visible"), pad == null ? 40 : pad);
+    if (!v) return;
+    cy.stop(true);
+    if (animar) cy.animate({ zoom: v.zoom, pan: v.pan, duration: dur(200), easing: "ease-out-cubic" });
+    else cy.viewport({ zoom: v.zoom, pan: v.pan });
+  }
+  // Enquadra na parte do canvas que a pessoa vê: no celular, acima da folha do inspetor aberta.
+  function enquadrarVisivel(eles, maxZoom) {
+    if (!cy || !eles || eles.empty()) return;
+    const pad = estreito() ? 32 : 70, w = cy.width();
+    const folhaAberta = estreito() && document.body.classList.contains("com-detalhe");
+    const h = cy.height() - (folhaAberta ? Math.min($("dir").offsetHeight, cy.height() * 0.7) : 0);
+    const topo = estreito() ? $("tituloVisao").offsetTop + $("tituloVisao").offsetHeight : 0;
+    const bb = eles.boundingBox(), alto = Math.max(80, h - topo);
+    const zoom = Math.max(cy.minZoom(), Math.min(maxZoom || 1.6, (w - 2 * pad) / Math.max(1, bb.w), (alto - 2 * pad) / Math.max(1, bb.h)));
+    const pan = { x: w / 2 - zoom * (bb.x1 + bb.w / 2), y: topo + alto / 2 - zoom * (bb.y1 + bb.h / 2) };
+    cy.stop(true);
+    cy.animate({ zoom, pan, duration: dur(200), easing: "ease-out-cubic" });
+  }
+  function enquadrar() { enquadrarTudo(null, 40, true); }
+
+  function criarCy(elems) {
+    if (cy) cy.destroy();
+    cy = cytoscape({ container: $("cy"), elements: elems, style: estilo(), minZoom: 0.05, maxZoom: 3, boxSelectionEnabled: false });
+    $("carregando").hidden = true;
+    cy.on("tap", "node", ev => {
+      const n = ev.target; if (n.data("grupo")) return;
+      if (ev.originalEvent && ev.originalEvent.shiftKey && focoId && focoId !== n.data("eid")) { mostrarCaminho(focoId, n.data("eid")); return; }
+      focar(n.data("eid"), true);
+    });
+    cy.on("tap", "edge", ev => detalhesRelacao(ev.target.data("rid"), ev.target.data("passo")));
+    cy.on("dbltap", "node", ev => { const n = ev.target; if (!n.data("grupo")) abrirVizinhanca(n.data("eid")); });
+    cy.on("tap", ev => { if (ev.target === cy) limparFoco(); });
+    cy.on("mouseover", "edge", ev => { const ed = ev.target; if (!ed.hasClass("apagado")) ed.style("label", (ed.data("ordem") ? ed.data("ordem") + ". " : "") + ed.data("label")); });
+    cy.on("mouseout", "edge", ev => { ev.target.removeStyle("label"); });
+    aplicarFiltros();
+    rodarLayout(false);
+    cy.resize();
+    enquadrarTudo(null, 40, false);
+  }
+
+  // ------------------------------------------------------------ rotas: #visao, #identificador, #fluxo/<chave>/<n>
+  function marcarHash(h) { try { history.replaceState(null, "", location.pathname + location.search + h); } catch (e) { /* file:// sem history */ } }
+  function marcarLista(chave) {
+    document.querySelectorAll("[data-visao]").forEach(b => { const on = b.dataset.visao === chave; b.classList.toggle("ativo", on); if (on) b.setAttribute("aria-current", "true"); else b.removeAttribute("aria-current"); });
+  }
+
+  function abrirVisao(chave, opts) {
+    opts = opts || {};
+    pararFluxo();
+    focoId = null;
+    marcarLista(chave);
+    if (chave === "__tudo") {
+      visaoAtual = { chave, rotular: () => ({ titulo: t("modeloInteiro"), desc: t("modeloInteiroDesc") }), tipo: "estatica", elementos: D.elementos.map(e => e.id) };
+      criarCy(elementosCy(visaoAtual.elementos, null));
+    } else {
+      visaoAtual = D.visoes.find(v => v.chave === chave);
+      if (!visaoAtual) return;
+      const din = visaoAtual.tipo === "dinamica";
+      criarCy(elementosCy(visaoAtual.elementos, visaoAtual.relacoes, din ? visaoAtual : null));
+    }
+    tituloVisao();
+    if (visaoAtual.tipo === "dinamica") iniciarPercurso(visaoAtual, opts.passo || 0);
+    else { marcarHash("#" + encodeURIComponent(chave)); aplicarDestaque(); detalhesVazios(); }
+  }
+
+  // Visões do modelo trazem título e descrição prontos; "Modelo inteiro" e a vizinhança montam os deles (rotular) no idioma atual.
+  function tituloVisao() {
+    const v = visaoAtual; if (!v) return;
+    const r = v.rotular ? v.rotular() : v;
+    const volta = v.chave === "__viz" ? ` · <a href="#" id="voltarVisao">${t("voltar")}</a>` : "";
+    $("tituloVisao").innerHTML = `<b>${esc(r.titulo)}</b><div>${esc(r.desc || "")}${volta}</div>`;
+    const a = $("voltarVisao"); if (a) a.addEventListener("click", ev => { ev.preventDefault(); rotear(true); });
+  }
+
+  function abrirVizinhanca(id) {
+    pararFluxo();
+    const prof = Math.max(alcance.prof, 1), dir = alcance.dir;
+    const ids = [...distancias(id, prof, dir).keys()];
+    const e = E.get(id);
+    const rotular = () => ({ titulo: t("vizinhancaDe", e.nome), desc: t("vizDesc", t("sentidos")[dir], prof >= 99 ? t("fimCadeia") : plural(prof, "pSalto")) });
+    visaoAtual = { chave: "__viz", origem: id, rotular, tipo: "estatica", elementos: ids };
+    marcarLista(null);
+    criarCy(elementosCy(ids, null));
+    tituloVisao();
+    focar(id, false);
+  }
+
+  // ------------------------------------------------------------ foco
+  function distancias(origem, max, direcao) {
+    max = max == null ? 99 : max; direcao = direcao || "ambos";
+    const dist = new Map([[origem, 0]]); let fila = [origem];
+    while (fila.length) {
+      const prox = [];
+      fila.forEach(id => {
+        const d = dist.get(id); if (d >= max) return;
+        const viz = [];
+        if (direcao !== "entrada") (saida.get(id) || []).forEach(r => viz.push(r.para));
+        if (direcao !== "saida") (entrada.get(id) || []).forEach(r => viz.push(r.de));
+        viz.forEach(v => { if (!dist.has(v)) { dist.set(v, d + 1); prox.push(v); } });
+      });
+      fila = prox;
+    }
+    return dist;
+  }
+
+  function focar(id, enquadrarFoco) {
+    if (!cy) return;
+    focoId = id;
+    const no = cy.getElementById("n" + id);
+    limparClasses();
+    let alvo = null;
+    if (no.nonempty()) {
+      const { prof, dir } = alcance;
+      let destacados = no, fronteira = no;
+      for (let i = 0; i < prof && fronteira.nonempty(); i++) {
+        let prox = cy.collection();
+        if (dir !== "entrada") { const out = fronteira.outgoers(); prox = prox.union(out); out.edges().addClass("sai"); }
+        if (dir !== "saida") { const inc = fronteira.incomers(); prox = prox.union(inc); inc.edges().addClass("entra"); }
+        prox = prox.difference(destacados);
+        destacados = destacados.union(prox);
+        fronteira = prox.nodes();
+      }
+      cy.elements().not(destacados).not(".grupo").addClass("apagado");
+      destacados.nodes().addClass("vizinho");
+      destacados.edges().addClass("vizinho");
+      no.removeClass("vizinho").addClass("foco");
+      destacados.nodes().parents().removeClass("apagado");
+      alvo = destacados;
+    }
+    detalhes(id);
+    if (enquadrarFoco && alvo) enquadrarVisivel(alvo);
+  }
+
+  function limparClasses() {
+    if (!cy) return;
+    cy.elements().removeClass("apagado vizinho foco caminho entra sai realce");
+  }
+  // Volta ao estado de base da visão: percurso no passo atual e o destaque ligado (Mudou ou Só no modelo).
+  function estadoBase() {
+    limparClasses();
+    if (fluxo) irPasso(passo, false);
+    aplicarDestaque();
+  }
+  function limparFoco() {
+    focoId = null;
+    estadoBase();
+    detalhesVazios();
+  }
+
+  function mostrarCaminho(a, b) {
+    limparClasses();
+    const alvo = cy.getElementById("n" + b);
+    let res = cy.elements().aStar({ root: cy.getElementById("n" + a), goal: alvo, directed: true });
+    let direcionado = true;
+    if (!res.found) { res = cy.elements().aStar({ root: cy.getElementById("n" + a), goal: alvo, directed: false }); direcionado = false; }
+    if (!res.found) { detalhes(a, `<div class="impacto aviso">${t("semCaminho", esc(E.get(a).nome), esc(E.get(b).nome))}</div>`); reInspetor = () => mostrarCaminho(a, b); return; }
+    cy.elements().not(res.path).not(".grupo").addClass("apagado");
+    res.path.addClass("caminho");
+    const passos = res.path.edges().map(ed => { const r = R.get(ed.data("rid")); return `<li><b>${esc(E.get(r.de).nome)}</b> → <b>${esc(E.get(r.para).nome)}</b><br><span class="vazio">${esc(r.desc)}${r.tech ? " · " + esc(r.tech) : ""}</span></li>`; });
+    detalhes(a, `<div class="impacto">${t("caminhoAte", esc(E.get(b).nome), plural(res.path.edges().length, "pSalto"), t(direcionado ? "setas" : "semSetas"))}<ol>${passos.join("")}</ol></div>`);
+    reInspetor = () => mostrarCaminho(a, b);
+    enquadrarVisivel(res.path);
+  }
+
+  // ------------------------------------------------------------ percurso (visões dinâmicas): tudo desenhado, passo destacado
+  const semProva = f => { const p = provaDe(f.rel); return !!p && p.estado === "modelo"; };
+  const comProva = f => { const p = provaDe(f.rel); return !!p && p.estado === "confirmada"; };
+  function iniciarPercurso(v, n) {
+    fluxo = v; passo = -1;
+    $("rodape").classList.add("visivel");
+    if (cy) { cy.resize(); enquadrarTudo(null, 40, false); }
+    mostrarPercurso();
+    irPasso(Math.max(0, n) - 1, true);
+    aplicarDestaque();
+  }
+  function pararFluxo() { fluxo = null; passo = -1; $("rodape").classList.remove("visivel"); }
+
+  function irPasso(i, mover) {
+    if (!fluxo || !cy) return;
+    passo = Math.max(-1, Math.min(i, fluxo.fluxo.length - 1));
+    cy.batch(() => {
+      cy.nodes().removeClass("passo");
+      cy.edges().removeClass("passo visitado porvir");
+      if (passo >= 0) cy.edges().forEach(ed => { const k = ed.data("passo"); if (k != null) ed.addClass(k === passo ? "passo" : k < passo ? "visitado" : "porvir"); });
+    });
+    const atual = cy.getElementById("p" + passo);
+    if (passo >= 0 && atual.nonempty()) { const nos = atual.connectedNodes(); nos.addClass("passo"); if (mover) enquadrarPasso(nos); }
+    legendaPasso();
+    atualizarPassos();
+    marcarHash("#fluxo/" + encodeURIComponent(fluxo.chave) + (passo >= 0 ? "/" + (passo + 1) : ""));
+  }
+  function enquadrarPasso(nos) {
+    const bb = nos.renderedBoundingBox(), m = 40, w = cy.width(), h = cy.height();
+    const dentro = bb.x1 >= m && bb.y1 >= m && bb.x2 <= w - m && bb.y2 <= h - m;
+    if (dentro && cy.zoom() >= 0.7) return;
+    const mb = nos.boundingBox();
+    const z = Math.min(Math.max(cy.zoom(), 0.85), (w - 2 * m) / Math.max(1, mb.w), (h - 2 * m) / Math.max(1, mb.h));
+    cy.stop(true);
+    cy.animate({ center: { eles: nos }, zoom: z, duration: dur(180), easing: "ease-out-cubic" });
+  }
+  function legendaPasso() {
+    const n = fluxo.fluxo.length;
+    $("passoAnt").disabled = passo < 0;
+    $("passoProx").disabled = passo >= n - 1;
+    if (passo < 0) { $("legendaPasso").innerHTML = t("comecaLegenda", plural(n, "pPasso"), esc(fluxo.desc || fluxo.titulo)); return; }
+    const f = fluxo.fluxo[passo], r = R.get(f.rel);
+    $("legendaPasso").innerHTML = `<b>${passo + 1}/${n}</b> · ${esc(nomeRel(r))}: ${esc(f.desc || r.desc)}${semProva(f) ? ` <span class="selo selo--aviso">${t("seloSemProva")}</span>` : ""}`;
+  }
+  function mostrarPercurso() {
+    if (!fluxo) return;
+    reInspetor = mostrarPercurso;
+    inspetor = "percurso";
+    $("rotInspetor").textContent = t("percurso");
+    const sem = fluxo.fluxo.filter(semProva).length, com = fluxo.fluxo.filter(comProva).length;
+    const itens = fluxo.fluxo.map((f, k) => {
+      const r = R.get(f.rel); if (!r) return "";
+      const selo = semProva(f) ? `<span class="selo selo--aviso">${t("seloSemProva")}</span>` : comProva(f) ? `<span class="selo selo--ok">${t("seloConfirmado")}</span>` : "";
+      return `<li><button type="button" class="passo-item" data-passo="${k}"><span class="passo-num">${esc(f.ordem || k + 1)}</span>` +
+        `<span class="passo-txt"><b>${esc(nomeRel(r))}</b><span>${esc(f.desc || r.desc)}</span>${selo}</span></button></li>`;
+    }).join("");
+    $("detalhes").innerHTML = `
+      <div class="det-nome">${esc(fluxo.titulo)}</div>
+      ${fluxo.desc ? `<div class="det-desc">${esc(fluxo.desc)}</div>` : ""}
+      <div class="percurso-resumo"><span>${plural(fluxo.fluxo.length, "pPasso")}</span>${D.prova ? `<span>${t("confirmadosNoCodigo", com)}</span><span>${t("semProva", sem)}</span>` : ""}</div>
+      <ol class="passos" id="listaPassos" aria-label="${esc(t("passosAria"))}">${itens}</ol>`;
+    $("listaPassos").querySelectorAll("[data-passo]").forEach(b => b.addEventListener("click", () => { focoId = null; limparClasses(); aplicarDestaque(); irPasso(Number(b.dataset.passo), true); }));
+    atualizarPassos();
+  }
+  function atualizarPassos() {
+    if (inspetor !== "percurso") return;
+    const lista = $("listaPassos"); if (!lista) return;
+    lista.querySelectorAll("[data-passo]").forEach(b => {
+      const k = Number(b.dataset.passo);
+      b.classList.toggle("atual", k === passo);
+      b.classList.toggle("visto", k < passo);
+      if (k === passo) { b.setAttribute("aria-current", "step"); b.scrollIntoView({ block: "nearest", behavior: reduzir() ? "auto" : "smooth" }); }
+      else b.removeAttribute("aria-current");
+    });
+  }
+  async function copiarLink() {
+    try { await navigator.clipboard.writeText(location.href); aviso(t("linkCopiado")); }
+    catch (e) { aviso(t("linkCopiar")); }
+  }
+  let avisoTimer = null;
+  function aviso(txt) {
+    $("aviso").textContent = txt; $("aviso").hidden = false;
+    clearTimeout(avisoTimer); avisoTimer = setTimeout(() => { $("aviso").hidden = true; }, 2400);
+  }
+
+  // ------------------------------------------------------------ filtros, destaques e legenda
+  function aplicarFiltros() {
+    if (!cy) return;
+    let visiveis = 0, total = 0;
+    cy.nodes().forEach(n => { if (n.data("grupo")) return; total++; const e = E.get(n.data("eid")); const esconde = ocultos.has(statusDe(e)); n.toggleClass("escondido", esconde); if (!esconde) visiveis++; });
+    const vazio = visiveis === 0;
+    $("vazioVisao").hidden = !vazio;
+    $("btnMostrarTodos").hidden = total === 0;
+    if (vazio) $("vazioTexto").textContent = t(total === 0 ? "vazioSemElementos" : "vazioFiltrados");
+  }
+  // Destaques são exclusivos: "mudou" realça os componentes tocados desde o último commit marcado;
+  // "semprova" realça as relações só no modelo (tracejado) e as confirmadas no código (contínuo).
+  function definirDestaque(d) {
+    destaque = destaque === d ? null : d;
+    $("chipMudou").setAttribute("aria-pressed", destaque === "mudou" ? "true" : "false");
+    $("fSoModelo").checked = destaque === "semprova";
+    focoId = null;
+    estadoBase();
+    legenda();
+    if (destaque) { resumoDestaque(); folha(true); } else detalhesVazios();
+    const realce = cy ? cy.elements(".realce") : null;
+    if (realce && realce.nonempty()) enquadrarVisivel(destaque === "mudou" ? realce : realce.union(realce.connectedNodes()), 1.3);
+  }
+  function aplicarDestaque() {
+    if (!cy || !destaque) return 0;
+    let alvo = cy.collection();
+    if (destaque === "mudou") alvo = cy.nodes().filter(n => modulosMudados.has(n.data("eid")));
+    else alvo = cy.edges(".semprova, .provada");
+    if (alvo.empty()) return 0;
+    const junto = destaque === "mudou" ? alvo.union(alvo.edgesWith(alvo)) : alvo.union(alvo.connectedNodes());
+    cy.elements().not(junto).not(".grupo").addClass("apagado");
+    alvo.addClass("realce");
+    return destaque === "mudou" ? alvo.length : alvo.filter(".semprova").length;
+  }
+  function legenda() {
+    const p = colorir; let itens;
+    if (p.startsWith("tag:")) itens = [["var(--brand)", t("marcadoComo", nomeTag(p.slice(4)))], ["var(--status-fora)", t("semMarcador")]];
+    else if (p === "status") itens = STATUS.map(x => [`var(${x[2]})`, rotSt(x[0])]).concat([["var(--label-3)", rotSt("Externo")]]);
+    else if (p === "area") itens = Object.entries(paletaArea).map(([k, c]) => [c, rotTipo(k)]);
+    else if (p === "container") itens = Object.entries(paletaCont).map(([k, c]) => [c, rotTipo(k)]);
+    else if (p === "obs") itens = [["var(--ok)", t("obsSim")], ["var(--status-fora)", t("obsNao")]];
+    else itens = Object.entries(paletaTipo).map(([k, c]) => [c, rotTipo(k)]);
+    let extra = `<div style="margin-top:4px"><span class="anel"></span>${t("legFoco")}</div><div><span class="traco" style="background:var(--brand)"></span>${t("legSaida")}</div><div><span class="traco" style="background:var(--label-2)"></span>${t("legEntrada")}</div>`;
+    if (fluxo) extra += `<div><span class="num-leg">3</span>${t("legOrdem")}</div>`;
+    if (destaque === "semprova") extra += `<div><span class="traco" style="background:var(--ok)"></span>${t("legConfirmada")}</div><div><span class="traco tracejado" style="color:var(--warn)"></span>${t("legSoModelo")}</div>`;
+    if (destaque === "mudou") extra += `<div><span class="anel" style="border-color:var(--warn)"></span>${esc(t("legMudou", curto(MUD.de)))}</div>`;
+    $("legenda").innerHTML = itens.map(([c, k]) => `<div><span class="bolinha" style="background:${c}"></span>${esc(k)}</div>`).join("") + extra;
+  }
+  function definirColorir(v) {
+    colorir = v; $("colorir").value = v; if (cy) cy.style(estilo()); legenda();
+    if (v !== "status" && !estreito()) $("legendaCaixa").open = true;
+  }
+
+  // ------------------------------------------------------------ inspetor
+  function folha(abrir) { document.body.classList.toggle("com-detalhe", !!abrir); }
+  function painel(abrir) { document.body.classList.toggle("com-painel", !!abrir); $("btnPainel").setAttribute("aria-expanded", abrir ? "true" : "false"); }
+  function ligarIr(raizEl) {
+    raizEl.querySelectorAll("[data-ir]").forEach(el => el.addEventListener("click", ev => { ev.preventDefault(); irPara(el.dataset.ir); }));
+    raizEl.querySelectorAll("[data-rel]").forEach(el => el.addEventListener("click", ev => { ev.preventDefault(); irRelacao(el.dataset.rel); }));
+  }
+  function detalhesVazios() {
+    reInspetor = detalhesVazios;
+    if (fluxo) { mostrarPercurso(); return; }
+    if (destaque) { resumoDestaque(); folha(false); return; }
+    inspetor = "vazio";
+    $("rotInspetor").textContent = t("inspetor");
+    folha(false);
+    const cartoes = [];
+    if (MUD) cartoes.push(`<button type="button" class="rel" id="irMudou"><b>${esc(t("oQueMudouDesde", curto(MUD.de)))}</b><div>${plural(MUD.componentesAfetados.length, "pCompTocado")}${MUD.semComponente.length ? ", " + plural(MUD.semComponente.length, "pModSemComp") : ""}</div></button>`);
+    if (D.qualidade || D.prova) cartoes.push(`<button type="button" class="rel" id="irSaude"><b>${t("saudeMapa")}</b><div>${D.qualidade ? t("nota", num(D.qualidade.total)) : ""}${D.qualidade && D.prova ? " · " : ""}${D.prova ? plural(D.prova.resumo.confirmadas, "pRelConfirmada") + " " + t("noCodigo") : ""}</div></button>`);
+    $("detalhes").innerHTML = `<div class="vazio">${t("vazioInspetor")}</div>${cartoes.join("")}`;
+    if ($("irMudou")) $("irMudou").addEventListener("click", () => definirDestaque("mudou"));
+    if ($("irSaude")) $("irSaude").addEventListener("click", painelSaude);
+  }
+
+  function provaHtml(r) {
+    const p = provaDe(r.id); if (!p) return "";
+    return p.estado === "confirmada"
+      ? `<span class="selo selo--ok">${t("provaConfirmada", plural(p.arestas, "pAresta"), esc(t("confianca")[p.confianca] || p.confianca))}</span>`
+      : `<span class="selo selo--aviso">${t("provaSoModelo")}</span>`;
+  }
+
+  function detalhes(id, extra) {
+    const e = E.get(id); if (!e) return;
+    reInspetor = () => detalhes(id);
+    inspetor = "elemento";
+    $("rotInspetor").textContent = t("inspetor");
+    const st = statusDe(e), cont = containerDe(e);
+    const p = Object.assign({}, e.props); delete p["structurizr.dsl.identifier"];
+    const linhas = [];
+    const campo = k => t("campos")[k];
+    if (cont && cont.id !== e.id) linhas.push([campo("container"), `<a href="#" data-ir="${cont.id}">${esc(cont.nome)}</a>`]);
+    if (e.grupo) linhas.push([campo("grupo"), esc(e.grupo)]);
+    if (e.tech) linhas.push([campo("tecnologia"), esc(e.tech)]);
+    if (p.area) linhas.push([campo("area"), esc(rotTipo(areaDe(e)))]);
+    ["codigo", "spec", "guia", "handoff"].forEach(k => {
+      if (!p[k]) return;
+      const lista = caminhos(p[k]);
+      const links = lista.map(c => `<div><code>${esc(c)}</code>${RAIZ ? ` · <a href="${esc(linkVsCode(c))}" title="${esc(t("abrirVsCode"))}">VS Code</a>` : ""}${e.url && k === "codigo" && e.url.endsWith(c) ? ` · <a href="${esc(e.url)}" target="_blank" rel="noopener">GitHub</a>` : ""}</div>`).join("");
+      linhas.push([campo(k), links || esc(p[k])]);
+    });
+    if (p.observabilidade) linhas.push([campo("observabilidade"), p.observabilidade.split(/,\s*/).map(m => `<span class="metrica">${esc(m)}</span>`).join("")]);
+    if (p.metricas) linhas.push([campo("metricas"), p.metricas.split(/,\s*/).map(m => `<span class="metrica">${esc(m)}</span>`).join("")]);
+    Object.keys(p).filter(k => !["status", "area", "codigo", "spec", "guia", "handoff", "observabilidade", "metricas"].includes(k))
+      .forEach(k => linhas.push([esc(k[0].toUpperCase() + k.slice(1)), esc(p[k])]));   // chaves do próprio modelo: conteúdo, sem tradução
+    const tags = e.tags.filter(x => !["Element", "Component", "Container", "Software System", "Person"].includes(x) &&
+      !/^Area/.test(x) && !STATUS_CANON[String(x).replace(/\s/g, "").toLowerCase()]);
+    if (tags.length) linhas.push([campo("marcadores"), tags.map(x => `<span class="tag">${esc(nomeTag(x))}</span>`).join("")]);
+
+    const relItem = (r, outro, seta) => `<button type="button" class="rel" data-ir="${outro.id}"><b>${seta} ${esc(outro.nome)}</b><div>${esc(r.desc)}${r.tech ? " · " + esc(r.tech) : ""}${r.tags.includes("ForaDoFoco") ? t("foraDoFoco") : ""}</div>${provaHtml(r)}</button>`;
+    const relSai = saida.get(id) || [], relEntra = entrada.get(id) || [];
+    const sai = relSai.map(r => relItem(r, E.get(r.para), "→"));
+    const entra = relEntra.map(r => relItem(r, E.get(r.de), "←"));
+    const dependentes = [...distancias(id, 99, "entrada").keys()].filter(x => x !== id);
+    const dependencias = [...distancias(id, 99, "saida").keys()].filter(x => x !== id);
+    const nomes = ids => ids.slice(0, 12).map(x => esc(E.get(x).nome)).join(", ") + (ids.length > 12 ? " " + t("eMais", ids.length - 12) : "");
+    const fonteMet = f => { const rot = esc(f.arquivo.split("/").pop() + " @ " + f.commit); return f.url ? `<a href="${esc(f.url)}" target="_blank" rel="noopener" title="${esc(f.arquivo)} · ${t("campoMet")} ${esc(f.campo)}">${rot} ↗</a>` : `<code title="${esc(f.campo)}">${rot}</code>`; };
+    const mets = (metricasDe.get(id) || []).map(m => `<tr><td>${esc(m.nome)}</td><td><b class="sds-num">${num(m.atual.valor)}</b> ${esc(m.unidade || "")} × ${esc(m.meta ? m.meta.texto : t("semMeta"))}<br><span class="vazio">${esc(m.veredito || "")} · ${esc(m.atual.data || "")} · ${fonteMet(m.atual.fonte)}</span></td></tr>`);
+    const vs = (visoesDo.get(id) || []).map(v => `<button class="item" data-visao-ir="${esc(v.chave)}"><span>${esc(v.titulo)}</span><small>${v.tipo === "dinamica" ? t("tipoFluxo") : t("tipoVisao")}</small></button>`);
+    const adrs = (adrsDo.get(id) || []).map(a => `<li><a href="${esc(linkLeitor(a.ancora))}">${esc(a.titulo)}</a></li>`);
+    const docs = (docsDo.get(id) || []).map(d => `<li><a href="${esc(linkLeitor(d.ancora))}">${esc(d.titulo)}</a><span>${esc(d.arquivo)}</span></li>`);
+    const mem = D.memoria ? ((D.memoria.porElemento || {})[id] || []) : null;
+    const mudou = modulosMudados.get(id);
+    const ident = e.ident ? `<code>${esc(e.ident)}</code>` : t("esteElemento");
+    const voltar = fluxo ? `<button type="button" class="voltar" id="voltarPercurso"><svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3.5 5.5 8l4.5 4.5"/></svg>${t("voltarPercurso")}</button>` : "";
+    const seg = `<div class="seg" role="group" aria-label="${esc(t("alcanceAria"))}">
+        <button type="button" data-alcance="saida" aria-pressed="${alcance.dir === "saida"}">${t("usa", relSai.length)}</button>
+        <button type="button" data-alcance="entrada" aria-pressed="${alcance.dir === "entrada"}">${t("usadoPor", relEntra.length)}</button>
+        <button type="button" data-alcance="cadeia" aria-pressed="${alcance.prof >= 99}">${t("cadeia")}</button></div>`;
+
+    $("detalhes").innerHTML = `${voltar}
+      <div class="det-tipo">${esc(rotTipo(e.tipo))}</div>
+      <div class="det-nome">${esc(e.nome)}</div>
+      <div class="det-cab"><span class="st-badge" style="color:${varStatus(st)}">${esc(rotSt(st))}</span></div>
+      <div class="det-desc">${esc(e.desc)}</div>
+      ${seg}
+      ${mudou ? `<div class="impacto aviso"><b>${esc(t("mudouDesde", curto(MUD.de)))}</b><ul>${mudou.map(m => `<li><code>${esc(m)}</code></li>`).join("")}</ul></div>` : ""}
+      ${extra || ""}
+      <table class="tabela">${linhas.map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join("")}</table>
+      ${mets.length ? `<h2>${t("metricasTitulo", mets.length)}</h2><table class="tabela">${mets.join("")}</table>` : ""}
+      <div class="impacto" title="${esc(t("impactoTitulo"))}"><b>${t("impactoCab")}</b><br>
+        ${t("dependemDele")} <b>${dependentes.length}</b>${dependentes.length ? " (" + nomes(dependentes) + ")" : ""}.<br>
+        ${t("eleDepende")} <b>${dependencias.length}</b>${dependencias.length ? " (" + nomes(dependencias) + ")" : ""}.</div>
+      <div class="det-acoes"><button class="botao" id="btnViz">${t("explorarViz")}</button></div>
+      <h2>${t("decisoes", adrs.length)}</h2>${adrs.length ? `<ul class="ligacoes">${adrs.join("")}</ul>` : `<div class="vazio">${t("nenhumaAdr", ident)}</div>`}
+      <h2>${t("documentos", docs.length)}</h2>${docs.length ? `<ul class="ligacoes">${docs.join("")}</ul>` : `<div class="vazio">${t("nenhumDoc", ident)}</div>`}
+      ${mem ? `<h2>${t("memoria", mem.length)}</h2>${mem.length ? mem.map(l => `<p class="licao"><b>${esc(l.titulo || t("licao"))}${l.invariante ? t("invariante") : ""}</b><span>${esc(l.texto)}</span></p>`).join("") : `<div class="vazio">${t("nenhumaLicao")}</div>`}` : ""}
+      <h2>${t("usa", sai.length)}</h2>${sai.join("") || `<div class="vazio">${t("semSaida")}</div>`}
+      <h2>${t("usadoPor", entra.length)}</h2>${entra.join("") || `<div class="vazio">${t("semEntrada")}</div>`}
+      <h2>${t("apareceEm")}</h2><div class="lista">${vs.join("") || `<div class="vazio">${t("semVisao")}</div>`}</div>`;
+    $("btnViz").addEventListener("click", () => abrirVizinhanca(id));
+    if ($("voltarPercurso")) $("voltarPercurso").addEventListener("click", () => { focoId = null; estadoBase(); mostrarPercurso(); });
+    $("detalhes").querySelectorAll("[data-alcance]").forEach(b => b.addEventListener("click", () => {
+      const a = b.dataset.alcance;
+      if (a === "cadeia") alcance = { dir: alcance.dir, prof: alcance.prof >= 99 ? 1 : 99 };
+      else alcance = { dir: alcance.dir === a ? "ambos" : a, prof: alcance.prof };
+      if (visaoAtual && visaoAtual.chave === "__viz" && visaoAtual.origem === id) abrirVizinhanca(id); else focar(id, true);
+    }));
+    ligarIr($("detalhes"));
+    $("detalhes").querySelectorAll("[data-visao-ir]").forEach(el => el.addEventListener("click", () => { abrirVisao(el.dataset.visaoIr); focar(id, true); }));
+    $("dir").scrollTop = 0;
+    folha(true);
+  }
+
+  function detalhesRelacao(rid, k) {
+    const r = R.get(rid); if (!r) return;
+    if (fluxo && k != null) { focoId = null; limparClasses(); aplicarDestaque(); irPasso(k, false); }
+    reInspetor = () => detalhesRelacao(rid);
+    inspetor = "relacao";
+    $("rotInspetor").textContent = t("ligacao");
+    const p = provaDe(rid), a = E.get(r.de), b = E.get(r.para);
+    let prova;
+    if (!p) prova = `<div class="impacto">${t("provaNaoAplica", !D.prova)}</div>`;
+    else if (p.estado === "confirmada") prova = `<div class="impacto"><b>${t("confirmadaTitulo")}</b><br>${t("confirmadaCorpo", plural(p.arestas, "pAresta"), t(p.tipo === "calls" ? "tipoChamada" : "tipoImport"), esc(t("confianca")[p.confianca] || p.confianca), esc(D.prova.fonte))}</div>`;
+    else prova = `<div class="impacto aviso"><b>${t("soModeloTitulo")}</b><br>${t("soModeloCorpo", esc(D.prova.fonte))}</div>`;
+    $("detalhes").innerHTML = `${fluxo ? `<button type="button" class="voltar" id="voltarPercurso"><svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3.5 5.5 8l4.5 4.5"/></svg>${t("voltarPercurso")}</button>` : ""}
+      <div class="det-tipo">${t("ligacao")}</div>
+      <div class="det-nome">${esc(nomeRel(r))}</div>
+      <div class="det-desc">${esc(r.desc)}${r.tech ? " · " + esc(r.tech) : ""}</div>
+      ${prova}
+      <button type="button" class="rel" data-ir="${a.id}"><b>${esc(t("origem", a.nome))}</b><div>${esc(rotTipo(a.tipo))}</div></button>
+      <button type="button" class="rel" data-ir="${b.id}"><b>${esc(t("destino", b.nome))}</b><div>${esc(rotTipo(b.tipo))}</div></button>`;
+    if ($("voltarPercurso")) $("voltarPercurso").addEventListener("click", () => mostrarPercurso());
+    ligarIr($("detalhes"));
+    $("dir").scrollTop = 0;
+    folha(true);
+  }
+
+  function resumoDestaque() {
+    reInspetor = resumoDestaque;
+    inspetor = "resumo";
+    const voltar = fluxo ? `<button type="button" class="voltar" id="voltarPercurso"><svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3.5 5.5 8l4.5 4.5"/></svg>${t("voltarPercurso")}</button>` : "";
+    const nesta = cy ? (destaque === "mudou" ? cy.nodes(".realce").length : cy.edges(".realce.semprova").length) : 0;
+    const modelo = `<div class="det-acoes"><button class="botao" id="btnVerTudo">${t("verNoModelo")}</button></div>`;
+    let html;
+    if (destaque === "mudou") {
+      $("rotInspetor").textContent = t("oQueMudou");
+      const lista = (tit, xs) => xs.length ? `<h2>${tit} (${xs.length})</h2><ul class="ligacoes">${xs.map(m => `<li><code>${esc(m)}</code></li>`).join("")}</ul>` : "";
+      const comps = MUD.componentesAfetados.map(c => { const e = porIdent.get(c.id); return `<button type="button" class="rel" ${e ? `data-ir="${e.id}"` : "disabled"}><b>${esc(c.nome)}</b><div>${esc(c.container)} · ${(c.modulos || []).map(esc).join(", ")}</div></button>`; });
+      const ate = MUD.ate === MUD.de ? t("ateNaoCommitado") : t("ateCommitEMais", esc(curto(MUD.ate)));
+      html = `<div class="det-nome">${esc(t("mudouDesde", curto(MUD.de)))}</div>
+        <div class="det-desc">${t("mudouDesc", esc(quando(MUD.geradoEm)), ate, t("nestaVisaoMudou", nesta, plural(nesta, "pCompApar")))}</div>
+        ${nesta ? "" : modelo}
+        <h2>${t("compTocadosTitulo", comps.length)}</h2>${comps.join("") || `<div class="vazio">${t("nenhumCompTocado")}</div>`}
+        ${MUD.semComponente.length ? `<div class="impacto aviso">${t("modNovoAviso", plural(MUD.semComponente.length, "pModNovoSem"), t(MUD.semComponente.length === 1 ? "ele" : "eles"))}<ul>${MUD.semComponente.map(m => `<li><code>${esc(m)}</code></li>`).join("")}</ul></div>` : ""}
+        ${lista(t("modNovos"), MUD.modulosNovos)}${lista(t("modMudados"), MUD.modulosMudados)}${lista(t("modRemovidos"), MUD.modulosRemovidos)}`;
+    } else {
+      $("rotInspetor").textContent = t("provaNoCodigo");
+      const so = Object.entries(PROVA).filter(([, p]) => p.estado === "modelo").map(([rid]) => R.get(rid)).filter(Boolean);
+      const ok = Object.entries(PROVA).filter(([, p]) => p.estado === "confirmada").map(([rid]) => R.get(rid)).filter(Boolean);
+      const item = r => `<button type="button" class="rel" data-rel="${esc(r.id)}"><b>${esc(nomeRel(r))}</b><div>${esc(r.desc)}</div>${provaHtml(r)}</button>`;
+      html = `<div class="det-nome">${t("relSoModeloTitulo")}</div>
+        <div class="det-desc">${t("relSoModeloDesc", esc(D.prova.fonte), t("nestaVisaoRel", nesta, plural(nesta, "pApar")))}</div>
+        ${nesta ? "" : modelo}
+        <h2>${t("confirmadasTitulo", ok.length)}</h2>${ok.map(item).join("") || `<div class="vazio">${t("nenhumaConfirmada")}</div>`}
+        <h2>${t("soModeloLista", so.length)}</h2>${so.slice(0, 60).map(item).join("")}${so.length > 60 ? `<div class="vazio">${t("eMaisPonto", so.length - 60)}</div>` : ""}
+        ${D.prova.faltandoNoModelo.length ? `<div class="impacto aviso"><b>${plural(D.prova.faltandoNoModelo.length, "pLigFalta")} ${t("noModelo")}</b><ul>${D.prova.faltandoNoModelo.map(x => `<li><code>${esc(x.de)}</code> → <code>${esc(x.para)}</code> · ${plural(x.arestas, "pAresta")}</li>`).join("")}</ul></div>` : ""}`;
+    }
+    $("detalhes").innerHTML = voltar + html;
+    if ($("voltarPercurso")) $("voltarPercurso").addEventListener("click", () => mostrarPercurso());
+    if ($("btnVerTudo")) $("btnVerTudo").addEventListener("click", () => abrirVisao("__tudo"));
+    ligarIr($("detalhes"));
+    $("dir").scrollTop = 0;
+  }
+
+  function painelSaude() {
+    reInspetor = painelSaude;
+    inspetor = "saude";
+    $("rotInspetor").textContent = t("saudeMapa");
+    const q = D.qualidade, pv = D.prova;
+    const pend = q ? (q.pendencias || []) : [];
+    $("detalhes").innerHTML = `
+      ${q ? `<div class="det-tipo">${t("gate")}</div>
+      <div class="saude-total"><b>${num(q.total)}</b><span class="st-badge" style="color:var(${q.aprovado ? "--ok" : "--warn"})">${t(q.aprovado ? "aprovado" : "reprovado")}</span></div>
+      <div class="det-desc">${t("notaRodada", plural(q.rodadas || 0, "pRodada"), esc(quando(q.geradoEm)))}</div>
+      <h2>${t("pendenciasTitulo", pend.length)}</h2>${pend.length ? `<ul class="ligacoes">${pend.map(x => `<li>${esc(typeof x === "string" ? x : JSON.stringify(x))}</li>`).join("")}</ul>` : `<div class="vazio">${t("semPendencia")}</div>`}` :
+      `<div class="vazio">${t("semNota")}</div>`}
+      ${pv ? `<h2>${t("provaRelacoes")}</h2><button type="button" class="rel" id="irProva"><b>${t("confirmadasSoModelo", pv.resumo.confirmadas, pv.resumo.soModelo)}</b><div>${t("fonteLinha", plural(pv.resumo.faltandoNoModelo, "pLigFalta"), esc(pv.fonte))}</div></button>` : ""}
+      ${MUD ? `<h2>${t("mudancas")}</h2><button type="button" class="rel" id="irMudou"><b>${esc(t("mudouDesde", curto(MUD.de)))}</b><div>${plural(MUD.componentesAfetados.length, "pCompTocado")} · ${plural(MUD.semComponente.length, "pModSemComp")}</div></button>` : ""}`;
+    if ($("irProva")) $("irProva").addEventListener("click", () => { if (destaque !== "semprova") definirDestaque("semprova"); });
+    if ($("irMudou")) $("irMudou").addEventListener("click", () => { if (destaque !== "mudou") definirDestaque("mudou"); });
+    $("dir").scrollTop = 0;
+    folha(true);
+  }
+
+  function irPara(id) {
+    if (cy && cy.getElementById("n" + id).nonempty()) focar(id, true);
+    else abrirVizinhanca(id);
+  }
+  function irRelacao(rid) {
+    const r = R.get(rid); if (!r) return;
+    if (!cy || cy.edges(`[rid = "${rid}"]`).empty()) abrirVizinhanca(r.de);
+    detalhesRelacao(rid);
+  }
+
+  // ------------------------------------------------------------ busca
+  function buscar(txt) {
+    txt = txt.trim().toLowerCase(); if (!txt) return;
+    const achado = D.elementos.find(e => e.nome.toLowerCase() === txt) ||
+      D.elementos.find(e => e.nome.toLowerCase().includes(txt)) ||
+      D.elementos.find(e => Object.values(e.props || {}).some(v => String(v).toLowerCase().includes(txt))) ||
+      D.elementos.find(e => (e.desc || "").toLowerCase().includes(txt));
+    if (achado) irPara(achado.id);
+    else aviso(t("nadaEncontrado", txt));
+  }
+
+  // ------------------------------------------------------------ paleta de comandos (⌘K / Ctrl+K)
+  const norm = s => String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  function comandos() {
+    const acoes = [];
+    COLORIR.forEach(v => acoes.push({ tipo: "Ação", titulo: t("corPor", t("colorir")[v]), fazer: () => definirColorir(v) }));
+    marcadores.forEach(([tag]) => acoes.push({ tipo: "Ação", titulo: t("corPorMarcador", nomeTag(tag)), fazer: () => definirColorir("tag:" + tag) }));
+    acoes.push({ tipo: "Ação", titulo: t("acReorganizar"), fazer: () => rodarLayout(true) });
+    acoes.push({ tipo: "Ação", titulo: t("acEnquadrar"), fazer: enquadrar });
+    if (MUD) acoes.push({ tipo: "Ação", titulo: t("acMudou", destaque !== "mudou", curto(MUD.de)), fazer: () => definirDestaque("mudou") });
+    if (D.prova) acoes.push({ tipo: "Ação", titulo: t("acSoModelo", destaque !== "semprova"), fazer: () => definirDestaque("semprova") });
+    if (D.qualidade || D.prova) acoes.push({ tipo: "Ação", titulo: t("acSaude"), fazer: painelSaude });
+    acoes.push({ tipo: "Ação", titulo: t("acTema"), fazer: () => $("lmTema").click() });
+    acoes.push({ tipo: "Ação", titulo: t("acDocs"), fazer: () => { location.href = linkLeitor(""); } });
+    const visoes = [{ tipo: "Visão", titulo: t("modeloInteiro"), sub: t("nElementos", D.elementos.length), fazer: () => abrirVisao("__tudo") }]
+      .concat(D.visoes.filter(v => v.tipo === "estatica").map(v => ({ tipo: "Visão", titulo: v.titulo, sub: v.desc, fazer: () => abrirVisao(v.chave) })));
+    const fluxos = D.visoes.filter(v => v.tipo === "dinamica").map(v => ({ tipo: "Fluxo", titulo: v.titulo, sub: plural(v.fluxo.length, "pPasso"), fazer: () => abrirVisao(v.chave) }));
+    const elems = D.elementos.map(e => ({ tipo: e.tipo, titulo: e.nome, sub: [(containerDe(e) || {}).nome !== e.nome ? (containerDe(e) || {}).nome : "", e.ident].filter(Boolean).join(" · "), extra: (e.props && e.props.codigo) || "", fazer: () => irPara(e.id) }));
+    return { acoes, visoes, fluxos, elems };
+  }
+  let resultados = [], ativo = 0, focoAntesPaleta = null;
+  function filtrarPaleta(q) {
+    const c = comandos(), t = norm(q.trim());
+    if (!t) resultados = c.acoes.slice(0, 7).concat(c.fluxos.slice(0, 4), c.visoes.slice(0, 5));
+    else {
+      const nota = it => { const a = norm(it.titulo); if (a.startsWith(t)) return 0; if (a.split(/[\s·/-]+/).some(w => w.startsWith(t))) return 1; if (a.includes(t)) return 2; if (norm(it.sub).includes(t) || norm(it.extra).includes(t)) return 3; return 9; };
+      resultados = c.elems.concat(c.visoes, c.fluxos, c.acoes).map(it => [nota(it), it]).filter(x => x[0] < 9).sort((a, b) => a[0] - b[0]).slice(0, 40).map(x => x[1]);
+    }
+    ativo = 0;
+    desenharPaleta(q);
+  }
+  function desenharPaleta(q) {
+    const lista = $("paletaLista");
+    lista.innerHTML = resultados.length ? resultados.map((it, i) => `<li role="option" id="po-${i}" aria-selected="${i === ativo}" data-i="${i}"><span class="p-tit">${esc(it.titulo)}${it.sub ? ` <span class="p-sub">${esc(it.sub)}</span>` : ""}</span><span class="p-tipo">${esc(rotTipo(it.tipo))}</span></li>`).join("")
+      : `<li class="p-vazio" role="presentation">${t("paletaVazia", esc(q))}</li>`;
+    $("paletaBusca").setAttribute("aria-activedescendant", resultados.length ? "po-" + ativo : "");
+    const sel = $("po-" + ativo); if (sel) sel.scrollIntoView({ block: "nearest" });
+  }
+  function abrirPaleta() {
+    if (!$("paleta").hidden) return;
+    focoAntesPaleta = document.activeElement;
+    $("paleta").hidden = false;
+    $("paletaBusca").value = "";
+    filtrarPaleta("");
+    $("paletaBusca").focus();
+  }
+  function fecharPaleta() {
+    if ($("paleta").hidden) return;
+    $("paleta").hidden = true;
+    if (focoAntesPaleta && focoAntesPaleta.focus && document.contains(focoAntesPaleta)) focoAntesPaleta.focus();
+  }
+  function executar(i) { const it = resultados[i]; if (!it) return; fecharPaleta(); painel(false); it.fazer(); }
+  $("paletaBusca").addEventListener("input", ev => filtrarPaleta(ev.target.value));
+  $("paletaBusca").addEventListener("keydown", ev => {
+    if (ev.key === "ArrowDown" || ev.key === "ArrowUp") {
+      ev.preventDefault();
+      if (!resultados.length) return;
+      ativo = (ativo + (ev.key === "ArrowDown" ? 1 : -1) + resultados.length) % resultados.length;
+      desenharPaleta(ev.target.value);
+    } else if (ev.key === "Enter") { ev.preventDefault(); executar(ativo); }
+    else if (ev.key === "Escape") { ev.preventDefault(); ev.stopPropagation(); fecharPaleta(); }
+    else if (ev.key === "Tab") { ev.preventDefault(); }
+  });
+  $("paletaLista").addEventListener("mousedown", ev => ev.preventDefault());
+  $("paletaLista").addEventListener("click", ev => { const li = ev.target.closest("[data-i]"); if (li) executar(Number(li.dataset.i)); });
+  $("paleta").addEventListener("mousedown", ev => { if (ev.target === $("paleta")) fecharPaleta(); });
+  $("btnPaleta").addEventListener("click", abrirPaleta);
+
+  // ------------------------------------------------------------ tema no grafo
+  aoTrocarTema = () => { lerCores(); pontos.clear(); if (cy) cy.style(estilo()); legenda(); };
+
+  // ------------------------------------------------------------ eventos
+  $("busca").addEventListener("keydown", ev => { if (ev.key === "Enter") buscar(ev.target.value); });
+  $("busca").addEventListener("change", ev => buscar(ev.target.value));
+  $("btnPainel").addEventListener("click", () => painel(!document.body.classList.contains("com-painel")));
+  $("veu").addEventListener("click", () => painel(false));
+  $("fecharDetalhe").addEventListener("click", () => { if (fluxo && inspetor !== "percurso") { focoId = null; estadoBase(); mostrarPercurso(); } folha(false); });
+  $("btnMostrarTodos").addEventListener("click", () => { ocultos.clear(); $("filtrosStatus").querySelectorAll("input").forEach(i => { i.checked = true; }); aplicarFiltros(); });
+  $("colorir").addEventListener("change", ev => definirColorir(ev.target.value));
+  $("btnReorganizar").addEventListener("click", () => rodarLayout(true));
+  $("btnEnquadrar").addEventListener("click", enquadrar);
+  $("chipMudou").addEventListener("click", () => definirDestaque("mudou"));
+  $("chipSaude").addEventListener("click", painelSaude);
+  $("fSoModelo").addEventListener("change", () => { painel(false); definirDestaque("semprova"); });
+  $("filtrosStatus").addEventListener("change", ev => { const s = ev.target.dataset.status; if (ev.target.checked) ocultos.delete(s); else ocultos.add(s); aplicarFiltros(); });
+  $("passoAnt").addEventListener("click", () => irPasso(passo - 1, true));
+  $("passoProx").addEventListener("click", () => irPasso(passo + 1, true));
+  $("btnLinkPasso").addEventListener("click", copiarLink);
+  $("btnPassos").addEventListener("click", () => { mostrarPercurso(); folha(!document.body.classList.contains("com-detalhe")); });
+  document.addEventListener("keydown", ev => {
+    if ((ev.metaKey || ev.ctrlKey) && ev.key.toLowerCase() === "k") { ev.preventDefault(); if ($("paleta").hidden) abrirPaleta(); else fecharPaleta(); return; }
+    if (!$("paleta").hidden) return;
+    if (ev.target.matches("input, select, textarea")) { if (ev.key === "Escape") ev.target.blur(); return; }
+    if (ev.metaKey || ev.ctrlKey || ev.altKey) return;
+    if (ev.key === "Escape") { painel(false); if (focoId || inspetor !== "percurso") limparFoco(); else folha(false); }
+    else if (ev.key === "/") { ev.preventDefault(); $("busca").focus(); }
+    else if (ev.key.toLowerCase() === "f" && cy) enquadrar();
+    else if (fluxo && ev.key === "ArrowRight") { ev.preventDefault(); irPasso(passo + 1, true); }
+    else if (fluxo && ev.key === "ArrowLeft") { ev.preventDefault(); irPasso(passo - 1, true); }
+  });
+
+  // #<visão> abre a visão; #fluxo/<chave>/<n> abre o percurso no passo n; #<identificador do DSL> foca o elemento na menor visão estática que o contém.
+  function rotear(forcar) {
+    const h = decodeURIComponent((location.hash || "").slice(1));
+    const m = h.match(/^fluxo\/(.+?)(?:\/(\d+))?$/);
+    if (m && D.visoes.some(v => v.chave === m[1] && v.tipo === "dinamica")) {
+      const n = m[2] ? Number(m[2]) : 0;
+      if (!forcar && fluxo && fluxo.chave === m[1]) irPasso(n - 1, true); else abrirVisao(m[1], { passo: n });
+      return;
+    }
+    const alvo = !D.visoes.some(v => v.chave === h) && h !== "__tudo" ? (porIdent.get(h) || E.get(h)) : null;
+    if (alvo) {
+      const vis = (visoesDo.get(alvo.id) || []).filter(v => v.tipo === "estatica").sort((a, b) => a.elementos.length - b.elementos.length);
+      if (vis.length) { abrirVisao(vis[0].chave); focar(alvo.id, true); } else { abrirVisao(D.visoes.some(v => v.chave === "Containers") ? "Containers" : "__tudo"); abrirVizinhanca(alvo.id); }
+      return;
+    }
+    const padrao = D.visoes.some(v => v.chave === "Containers") ? "Containers" : (D.visoes.find(v => v.tipo === "estatica") || { chave: "__tudo" }).chave;
+    abrirVisao(D.visoes.some(v => v.chave === h) || h === "__tudo" ? h : padrao);
+  }
+  window.addEventListener("hashchange", () => rotear(false));
+
+  lerCores();
+  cabecalho();
+  // A legenda começa fechada: aberta, cobria nós do canto de baixo. Quem abre, encontra aberta na próxima visita.
+  (function () {
+    const caixa = $("legendaCaixa");
+    let aberta = false;
+    try { aberta = localStorage.getItem("lodemap-legenda") === "1"; } catch (e) { /* sem localStorage */ }
+    caixa.open = aberta && !estreito();
+    caixa.addEventListener("toggle", () => {
+      try { localStorage.setItem("lodemap-legenda", caixa.open ? "1" : "0"); } catch (e) { /* file:// sem armazenamento */ }
+    });
+  })();
+  montarListas();
+  legenda();
+  rotear(true);
+})();
+</script>
+</body>
+</html>

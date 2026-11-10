@@ -1,0 +1,28 @@
+{
+  "linguagem": "python",
+  "descricao": "Imports absolutos e relativos, from-import de submodulo, import preguicoso e sob TYPE_CHECKING, nome local igual a modulo da biblioteca padrao (app/types.py), pacote de namespace, import em comentario/string/docstring, importlib e __import__ (dinamicos, fora). Monorepo com varias raizes de codigo: pacote de topo unico (libs/core/mylib) importado de outra raiz resolve; nome de topo ambiguo (dup em libs/a e libs/b) nao gera aresta.",
+  "arestas": [
+    ["main.py", "app/__init__.py"],
+    ["main.py", "app/core.py"],
+    ["main.py", "pkg_ns/mod.py"],
+    ["app/__init__.py", "app/core.py"],
+    ["app/__init__.py", "app/util.py"],
+    ["app/core.py", "app/models/user.py"],
+    ["app/core.py", "app/config.py"],
+    ["app/core.py", "app/util.py"],
+    ["app/util.py", "app/models/user.py"],
+    ["app/config.py", "app/models/user.py"],
+    ["app/models/__init__.py", "app/models/user.py"],
+    ["app/models/user.py", "app/core.py"],
+    ["app/hack.py", "app/irmao.py"],
+    ["scripts/tool.py", "scripts/helper.py"],
+    ["pkg_ns/mod.py", "pkg_ns/other.py"],
+    ["libs/core/mylib/__init__.py", "libs/core/mylib/service.py"],
+    ["apps/web/run.py", "libs/core/mylib/__init__.py"],
+    ["apps/web/run.py", "libs/core/mylib/service.py"]
+  ],
+  "limites": [
+    {"par": ["pkg_ns/other.py", "pkg_ns/json.py"], "tipo": "fp",
+     "motivo": "pasta sem __init__.py: nao ha como saber se a pasta esta no sys.path; o extrator assume que sim"}
+  ]
+}

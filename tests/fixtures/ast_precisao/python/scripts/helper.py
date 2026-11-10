@@ -1,0 +1,2 @@
+def ajuda():
+    return "ok"

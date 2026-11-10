@@ -1,0 +1,14 @@
+{
+  "linguagem": "java",
+  "descricao": "import simples, de classe aninhada, static (membro e curinga), curinga de pacote (conta so o arquivo cujo tipo o codigo usa), mesmo nome simples em dois pacotes (Item), import simples da biblioteca padrao que oculta a classe homonima do curinga (java.util.List x com.shop.util.List), import e nomes em comentario, javadoc, string e text block.",
+  "arestas": [
+    ["src/main/java/com/shop/app/Main.java", "src/main/java/com/shop/model/Order.java"],
+    ["src/main/java/com/shop/app/Main.java", "src/main/java/com/shop/legacy/Item.java"],
+    ["src/main/java/com/shop/app/Main.java", "src/main/java/com/shop/util/Strings.java"],
+    ["src/main/java/com/shop/app/Main.java", "src/main/java/com/shop/model/Constants.java"],
+    ["src/main/java/com/shop/model/Order.java", "src/main/java/com/shop/util/Strings.java"],
+    ["src/main/java/com/shop/service/OrderService.java", "src/main/java/com/shop/model/Status.java"],
+    ["src/main/java/com/shop/service/OrderService.java", "src/main/java/com/shop/util/Dates.java"]
+  ],
+  "limites": []
+}

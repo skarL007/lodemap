@@ -1,0 +1,24 @@
+{
+  "linguagem": "c",
+  "descricao": "#include com aspas (mesma pasta, pasta ancestral, ../, sufixo unico em include/), espaco depois do #, #include <sys> e <header-do-projeto> (angulares nao contam), include inexistente, include por macro, include dentro de #ifdef, #include de .c (unity build), include em comentario, string e raw string C++, bloco #if 0.",
+  "arestas": [
+    ["src/main.c", "src/util.h"],
+    ["src/main.c", "src/core/model.h"],
+    ["src/main.c", "include/api.h"],
+    ["src/main.c", "src/spaced.h"],
+    ["src/main.c", "src/win.h"],
+    ["src/util.c", "src/util.h"],
+    ["src/util.c", "include/shared.h"],
+    ["src/core/model.h", "src/util.h"],
+    ["src/core/model.h", "src/core/types.h"],
+    ["src/app.cpp", "src/util.h"],
+    ["src/app.cpp", "src/core/model.h"],
+    ["src/app.cpp", "include/shop/vec.hpp"],
+    ["src/unity.c", "src/impl.c"],
+    ["include/api.h", "include/shared.h"]
+  ],
+  "limites": [
+    {"par": ["src/main.c", "src/dead.h"], "tipo": "fp",
+     "motivo": "include dentro de #if 0: o extrator nao avalia o preprocessador"}
+  ]
+}

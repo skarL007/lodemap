@@ -1,0 +1,9 @@
+workspace.json
+.structurizr/
+site/
+scripts/__pycache__/
+# Estado local (modo incremental: ultimoCommit e passos; consentimento); cada máquina tem o seu.
+.lodemap/*
+# As decisões do modelo são versionadas: é delas que o renderizar escreve o DSL, e é com a impressão digital guardada
+# nelas que o rascunho sabe o que mudou. Sem o arquivo, outra máquina (ou o CI) trataria todo módulo como novo.
+!.lodemap/decisoes-modelo.json

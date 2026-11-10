@@ -1,0 +1,166 @@
+{
+  "fonte_preco": "https://platform.claude.com/docs/en/about-claude/pricing (conferido em 08/11/2026)",
+  "fonte_tokens": "transcripts dos subagentes do Claude Code de 02/11/2026 (~/.claude/projects/<projeto>/<sessão>/subagents/agent-*.jsonl), usage deduplicado por message.id; recontagem em 08/11/2026 (references/benchmark-e-custo.md, seção 'Revalidação de 08/11/2026'); rodada em fases de 08/11/2026: ~/.claude/projects/<projeto>/<sessão>/subagents/agent-*.jsonl",
+  "precos_usd_por_mtok": {
+    "opus-5.5": {
+      "in": 4.0,
+      "cache_w_5m": 5.0,
+      "cache_w_1h": 8.0,
+      "cache_r": 0.2,
+      "out": 20.0
+    },
+    "sonnet-5.5": {
+      "in": 2.0,
+      "cache_w_5m": 2.5,
+      "cache_w_1h": 4.0,
+      "cache_r": 0.1,
+      "out": 10.0
+    },
+    "haiku-5.5-ate-100k": {
+      "in": 0.1,
+      "cache_w_5m": 0.125,
+      "cache_w_1h": 0.2,
+      "cache_r": 0.01,
+      "out": 0.5
+    },
+    "haiku-5.5-acima-100k": {
+      "in": 0.5,
+      "cache_w_5m": 0.625,
+      "cache_w_1h": 1.0,
+      "cache_r": 0.05,
+      "out": 2.5
+    }
+  },
+  "observacao": "Rodadas feitas pela assinatura do Claude Code; valor = custo equivalente pela API, não uma fatura. Todas as escritas de cache dessas rodadas foram de 1 hora (usage.cache_creation.ephemeral_1h_input_tokens), cobradas a 2x a entrada. Não inclui o orquestrador que despachou o subagente (a sessão-mãe rodava outros trabalhos em paralelo e o custo dele não pôde ser isolado).",
+  "rodadas": [
+    {
+      "id": "primeira-geracao-projeto-a",
+      "rotulo": "1ª geração (projeto A, privado), inclui criar a própria skill",
+      "modelo": "opus-5.5",
+      "chamadas": 200,
+      "minutos": 50,
+      "tokens": {
+        "in": 408,
+        "cache_w_1h": 492388,
+        "cache_r": 67589674,
+        "out": 245733
+      },
+      "nao_registrado": [],
+      "nao_incluido": [
+        "orquestrador"
+      ],
+      "custo_usd": 22.37,
+      "tipo": "medido_pelos_tokens"
+    },
+    {
+      "id": "gate-e-ponte",
+      "rotulo": "Gate de qualidade e ponte com o CodeGraph",
+      "modelo": "sonnet-5.5",
+      "chamadas": 41,
+      "minutos": 11,
+      "tokens": {
+        "in": 86,
+        "cache_w_1h": 175103,
+        "cache_r": 6215934,
+        "out": 72624
+      },
+      "nao_registrado": [],
+      "nao_incluido": [
+        "orquestrador"
+      ],
+      "custo_usd": 2.05,
+      "tipo": "medido_pelos_tokens"
+    },
+    {
+      "id": "mapa-projeto-b",
+      "rotulo": "Mapa completo de um repositório privado de 63 módulos (projeto B), com 6 correções",
+      "modelo": "sonnet-5.5",
+      "chamadas": 93,
+      "minutos": 25,
+      "tokens": {
+        "in": 186,
+        "cache_w_1h": 239572,
+        "cache_r": 17627657,
+        "out": 88498
+      },
+      "contexto_por_chamada": {
+        "primeira": 67143,
+        "mediana": 198422,
+        "ultima": 262846,
+        "chamadas_acima_100k": 87
+      },
+      "nao_registrado": [],
+      "nao_incluido": [
+        "orquestrador"
+      ],
+      "custo_usd": 3.61,
+      "tipo": "medido_pelos_tokens"
+    },
+    {
+      "id": "mapa-projeto-b-fases",
+      "rotulo": "Mapa completo do projeto B (privado, 63 módulos, commit cfeb634) com esqueleto e fases de agente novo",
+      "modelo": "sonnet-5.5",
+      "chamadas": 98,
+      "minutos": 14,
+      "tokens": {
+        "in": 196,
+        "cache_w_1h": 404645,
+        "cache_r": 3864964,
+        "out": 99047
+      },
+      "por_agente": {
+        "A containers": 0.35,
+        "B1 componentes": 0.36,
+        "B2 componentes": 0.38,
+        "B3 componentes": 0.49,
+        "C relacoes": 0.63,
+        "D visoes e gate": 0.45,
+        "metricas": 0.17,
+        "verificador (haiku, faixa ate 100k)": 0.01
+      },
+      "contexto_por_chamada": {
+        "maior": 80170,
+        "chamadas_acima_100k": 0
+      },
+      "qualidade": {
+        "gate_ast": 96.5,
+        "gate_base_mesmo_repo": 95.2,
+        "orfaos": 72.2,
+        "observabilidade": 77.8,
+        "precisao_relacoes": 89.0,
+        "auditoria_amostra": "20 componentes: 18 descricoes corretas, 2 parciais, 0 erradas; status 20/20; 20/20 relacoes confirmadas no codigo"
+      },
+      "nao_registrado": [],
+      "nao_incluido": [
+        "orquestrador",
+        "auditoria independente (US$ 0,56)"
+      ],
+      "custo_usd": 2.84,
+      "tipo": "medido_pelos_tokens",
+      "comparacao": "mesmo repositorio e commit da rodada 'mapa-projeto-b', mas aquela incluiu 6 correcoes da propria skill; nao e um teste controlado"
+    },
+    {
+      "id": "checkpoint-incremental",
+      "rotulo": "Atualização a cada commit sem mudança de estrutura (só scripts)",
+      "modelo": null,
+      "chamadas": 0,
+      "minutos": 0.3,
+      "tokens": {},
+      "nao_registrado": [],
+      "nao_incluido": [],
+      "custo_usd": 0.0,
+      "tipo": "exato_pelos_tokens"
+    }
+  ],
+  "projecao_haiku_mapa_projeto_b": {
+    "por_chamada": 0.17,
+    "metodo": "os tokens da rodada em fases (mapa-projeto-b-fases) no preço do Haiku 5.5; nenhuma chamada passou de 100 mil tokens, então todas ficam na faixa barata. A rodada anterior, de um agente só, projetava US$ 1,26 porque 87 de 93 chamadas passavam de 100 mil. A qualidade do Haiku como modelador não foi medida.",
+    "tipo": "projecao_nao_medida"
+  },
+  "reducao_opus_para_sonnet": {
+    "saida": 0.64,
+    "leitura_cache": 0.74,
+    "custo": 0.84,
+    "aviso": "duas execuções diferentes, em repositórios diferentes (98 e 63 módulos); não é um teste controlado"
+  }
+}

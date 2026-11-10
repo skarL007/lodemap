@@ -1,0 +1,15 @@
+{
+  "linguagem": "kotlin",
+  "descricao": "import de classe, com alias (as), de tipo declarado em arquivo de outro nome (enum/typealias), curinga de pacote com funcao de topo, import de membro de object, funcao de extensao, const val, pacote que nao segue a pasta (misc/Weird.kt), classe Java importada de Kotlin, classe homonima em outro pacote (legacy.Order), import em comentario, string e string crua.",
+  "arestas": [
+    ["src/main/kotlin/shop/app/Main.kt", "src/main/kotlin/shop/model/Order.kt"],
+    ["src/main/kotlin/shop/app/Main.kt", "src/main/kotlin/shop/util/Text.kt"],
+    ["src/main/kotlin/shop/app/Main.kt", "src/main/kotlin/shop/util/Clock.kt"],
+    ["src/main/kotlin/shop/app/Main.kt", "src/main/kotlin/misc/Weird.kt"],
+    ["src/main/kotlin/shop/app/Main.kt", "src/main/kotlin/shop/ext/Strings.kt"],
+    ["src/main/kotlin/shop/app/Main.kt", "src/main/kotlin/shop/config/Config.kt"],
+    ["src/main/kotlin/shop/app/Main.kt", "src/main/java/shop/legacy/Legacy.java"],
+    ["src/main/kotlin/shop/model/Order.kt", "src/main/kotlin/shop/util/Clock.kt"]
+  ],
+  "limites": []
+}

@@ -1,0 +1,54 @@
+version: 2.1
+
+orbs:
+  win: circleci/windows@5.0
+
+# templates/tests are copied into the user's project; only the two files below run standalone from the repo root.
+commands:
+  git-identity:
+    steps:
+      - run:
+          name: Git identity (some tests create commits)
+          command: |
+            git config --global user.email "ci@lodemap.invalid"
+            git config --global user.name "Lodemap CI"
+
+jobs:
+  linux:
+    parameters:
+      python:
+        type: string
+    docker:
+      - image: cimg/python:<< parameters.python >>
+    steps:
+      - checkout
+      - git-identity
+      - run: python -m pip install pytest
+      - run:
+          name: Tests
+          command: python -m pytest -q
+      - run:
+          name: Standalone template tests
+          command: python -m pytest -q templates/tests/test_codegraph_ponte.py templates/tests/test_qualidade.py
+
+  windows:
+    executor: win/default
+    steps:
+      - checkout
+      - git-identity
+      - run: python -m pip install pytest
+      - run:
+          name: Tests
+          command: python -m pytest -q
+      - run:
+          name: Standalone template tests
+          command: python -m pytest -q templates/tests/test_codegraph_ponte.py templates/tests/test_qualidade.py
+
+workflows:
+  tests:
+    jobs:
+      - linux:
+          matrix:
+            parameters:
+              python: ["3.11", "3.12"]
+      - windows

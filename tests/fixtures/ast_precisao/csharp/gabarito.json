@@ -1,0 +1,16 @@
+{
+  "linguagem": "csharp",
+  "descricao": "using de namespace (so conta o arquivo cujo tipo o codigo usa), using static, alias de tipo e de namespace, using dentro do namespace de bloco, namespace de arquivo (;) e aninhado, classe parcial em dois arquivos, using var / using (...) de descarte (nao sao import), using em comentario e em string verbatim, biblioteca externa.",
+  "arestas": [
+    ["Program.cs", "Models/Order.cs"],
+    ["Program.cs", "Models/Customer.cs"],
+    ["Program.cs", "Services/OrderService.cs"],
+    ["Program.cs", "Util/MathX.cs"],
+    ["Services/OrderService.cs", "Models/Order.cs"],
+    ["Services/OrderService.cs", "Models/Ledger.Part1.cs"],
+    ["Services/OrderService.cs", "Models/Ledger.Part2.cs"],
+    ["Services/OrderService.cs", "Util/Strings.cs"],
+    ["Models/Order.cs", "Util/Strings.cs"]
+  ],
+  "limites": []
+}

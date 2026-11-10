@@ -1,0 +1,13 @@
+{
+  "projeto": "{{PROJETO}}",
+  "descricao": "Configuração dos geradores da arquitetura (explorador, leitor, documentos derivados e métricas). Variáveis de ambiente e argumentos têm prioridade.",
+  "idioma": "{{IDIOMA}}",
+  "repo_github": "{{REPO_GITHUB}}",
+  "raiz_codigo": "{{RAIZ_CODIGO}}",
+  "modulos": {{MODULOS_JSON}},
+  "ignorar": {{IGNORAR_JSON}},
+  "metricas": "metricas/metricas.json",
+  "lite": "http://localhost:{{PORTA_LITE}}",
+  "explorador": "http://127.0.0.1:{{PORTA_EXPLORADOR}}",
+  "extensoes": []
+}

@@ -16,11 +16,12 @@ O Lodemap não coleta telemetria de execução.
 
 **Demonstração ao vivo:** o [explorador](https://skarl007.github.io/lodemap/demo/explorador/) e o
 [leitor de docs](https://skarl007.github.io/lodemap/demo/leitor/) de um mapa do [axios](https://github.com/axios/axios)
-(72 módulos, 6 fluxos animados), feito na v1.20.0 e atualizado para a v1.21.1. Páginas estáticas, sem servidor, sem
-requisição externa.
+(72 componentes, 7 fluxos animados) que acompanhou cinco releases reais, da v1.17.0 à v1.21.1: cada release virou uma
+versão do mapa, comparável na linha do tempo. Páginas estáticas, sem servidor, sem requisição externa.
 
-**O mesmo mapa, neste repositório:** [`exemplos/axios/`](exemplos/axios/) guarda as fontes dele (DSL, docs, ADRs,
-métricas, `lodemap.json`), cerca de 300 KB, sem página gerada e sem caminho privado. O
+**O mapa original, neste repositório:** [`exemplos/axios/`](exemplos/axios/) guarda as fontes do primeiro mapa do
+axios, feito na v1.20.0 e atualizado para a v1.21.1, com 6 fluxos (DSL, docs, ADRs, métricas, `lodemap.json`), cerca de
+300 KB, sem página gerada e sem caminho privado. O
 `tests/test_exemplo_axios.py` o regenera de ponta a ponta a partir de uma cópia limpa do axios v1.21.1 com o
 Structurizr CLI de verdade, e depois roda os testes que o mapa entrega e o gate de qualidade. O CI roda esse teste
 em Linux e macOS. Para regenerar você mesmo:
@@ -58,8 +59,10 @@ O primeiro grava `explorador/linha-do-tempo.js` e `.json`; o segundo grava `expl
 associa casos com atributo `file`. Os comandos, a atualização da interface e os backups estão em
 [references/scripts.md](references/scripts.md).
 
-A demo pública acima documenta a atualização v1.20.0 → v1.21.1. Um replay ampliado está em revisão; não há anúncio de
-cinco releases concluídas. O ganho de entendimento humano ainda não foi medido.
+A demo pública acima é o replay das cinco releases, refeito a partir da v1.17.0; o mapa original de `exemplos/axios/`
+segue como teste de ponta a ponta no CI. O ganho de entendimento humano ainda não foi medido: o estudo está
+pré-registrado em [`experimentos/estudo-pessoas/PROTOCOLO.md`](experimentos/estudo-pessoas/PROTOCOLO.md) e a coleta não
+começou.
 
 ### O gate, numa release real
 

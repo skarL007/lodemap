@@ -680,6 +680,8 @@ footer.visivel { display: flex; }
 .tl-versao[aria-pressed="true"] { outline:2px solid var(--brand); outline-offset:-2px; }
 .tl-versao:focus-visible, #timelinePanel button:focus-visible { outline:2px solid var(--focus); outline-offset:2px; }
 .tl-versao span, .tl-versao small, .tl-legenda { color:var(--label-2); font-size:var(--text-xs); }
+.tl-versao span { white-space:nowrap; }
+.tl-versao .tl-mapa { color:var(--label-3); }
 #tlDica { color:var(--label-2); font-size:var(--text-xs); }
 .tl-zero { opacity:.6; } .tl-legenda { display:flex; flex-wrap:wrap; gap:12px; }
 .tl-corpo { display:grid; grid-template-columns:minmax(0,1fr) minmax(180px,260px); min-height:260px; flex:1; gap:8px; }
@@ -1246,10 +1248,10 @@ footer.visivel { display: flex; }
       { selector: "node.grupo", style: { "background-color": C.sup2, "background-opacity": 0.28, "background-image": "none", "border-color": C.sepSuave, "border-width": 1,
         "text-valign": "top", "text-halign": "center", "text-margin-x": 0, "text-margin-y": -6, "color": C.label3, "font-size": 12, "font-weight": 600, "padding": 20, "shape": "round-rectangle" } },
       { selector: "edge", style: { "width": 1, "line-color": C.sepFundo, "target-arrow-color": C.sepFundo, "target-arrow-shape": "triangle", "arrow-scale": 0.8,
-        "curve-style": "bezier", "opacity": 0.9, "font-size": 11, "font-family": C.fonte, "color": C.label2f, "text-background-color": C.fundo, "text-background-opacity": 0.92,
-        "text-background-padding": 3, "text-background-shape": "roundrectangle", "text-rotation": "autorotate", "text-wrap": "wrap", "text-max-width": () => direcaoAtual === "TB" ? 180 : 96,
+        "curve-style": "bezier", "opacity": 0.9, "font-size": 11, "font-family": C.fonte, "color": C.label2f, "text-background-color": C.fundo, "text-background-opacity": 1,
+        "text-background-padding": 3, "text-background-shape": "roundrectangle", "text-rotation": "none", "text-wrap": "wrap", "min-zoomed-font-size": 8, "text-max-width": () => direcaoAtual === "TB" ? 180 : 96,
         "transition-property": "opacity, line-color, width", "transition-duration": t } },
-      { selector: "edge[ordem != '']", style: Object.assign({ "line-color": C.label3, "target-arrow-color": C.label3, "width": 1.4 }, numero) },
+      { selector: "edge[ordem != '']", style: Object.assign({ "line-color": C.label3, "target-arrow-color": C.label3, "width": 1.4, "min-zoomed-font-size": 0 }, numero) },
       { selector: "edge.resposta", style: { "line-style": "dashed", "line-dash-pattern": [4, 4] } },
       { selector: "edge.t-ForaDoFoco", style: { "line-style": "dotted" } },
       { selector: ".apagado", style: { "opacity": 0.14 } },
@@ -1283,7 +1285,7 @@ footer.visivel { display: flex; }
     return v.elementos && v.elementos.some(id => (E.get(id) || {}).tipo === "Componente") ? "LR" : "TB";
   }
   let direcaoAtual = "TB";
-  const optsDagre = dir => ({ name: "dagre", rankDir: dir, nodeSep: 28, rankSep: dir === "TB" ? 80 : 110, edgeSep: 12 });
+  const optsDagre = dir => ({ name: "dagre", rankDir: dir, nodeSep: 28, rankSep: dir === "TB" ? (estreito() ? 56 : 80) : 110, edgeSep: 12 });
   // Zoom com que a visão inteira cabe no canvas depois de um layout de teste (sem animação, sem mexer no enquadre).
   function zoomQueCabe(dir) {
     cy.layout(Object.assign({ fit: false, animate: false }, optsDagre(dir))).run();
@@ -1318,10 +1320,46 @@ footer.visivel { display: flex; }
       if (!cy) return;
       cy.resize();
       if (grade) agruparSoltos(grade, foraDoLayout);
+      else if (opts.name === "dagre") fileirasNoCelular();
       const alvo = focoId ? cy.elements(".foco, .vizinho, .caminho") : cy.elements(":visible");
       enquadrarTudo(alvo, focoId ? 70 : 40, false);
     });
     lay.run();
+  }
+  // No celular, um nível do dagre com 4 nós lado a lado faz o grafo inteiro passar de 600 px de largura e cair para zoom 0,5
+  // (texto de 6 px). Numa visão pequena, o nível largo quebra em fileiras que cabem na largura da tela no zoom legível, e
+  // os níveis se centram: o grafo vira uma coluna que cabe inteira, com texto de 10 px ou mais.
+  function fileirasNoCelular() {
+    if (!estreito() || direcaoAtual !== "TB" || !cy || !(cy.width() > 0)) return;
+    const nos = cy.nodes(":visible").filter(n => !n.data("grupo"));
+    if (nos.length < 3 || nos.length > 12) return;
+    const recuo = cy.nodes(":parent").nonempty() ? 60 : 0;          // o retângulo do grupo (container) acrescenta margem dos dois lados
+    const lim = Math.max(160, (cy.width() - 32) / zoomLegivel() - recuo), bb = nos.boundingBox();
+    if (bb.w <= lim) return;
+    const GX = 24, GY = 20, ENTRE = 56, cx0 = bb.x1 + bb.w / 2;
+    const niveis = [];
+    nos.sort((a, b) => a.position("y") - b.position("y")).forEach(n => {
+      const y = n.position("y"), u = niveis[niveis.length - 1];
+      if (u && Math.abs(u.y - y) < 2) u.nos.push(n); else niveis.push({ y, nos: [n] });
+    });
+    let y = bb.y1;
+    niveis.forEach(nv => {
+      nv.nos.sort((a, b) => a.position("x") - b.position("x"));
+      const filas = []; let fila = [], larg = 0;
+      nv.nos.forEach(n => {
+        const wn = n.outerWidth();
+        if (fila.length && larg + GX + wn > lim) { filas.push(fila); fila = []; larg = 0; }
+        larg += (fila.length ? GX : 0) + wn; fila.push(n);
+      });
+      filas.push(fila);
+      filas.forEach(f => {
+        const total = f.reduce((s, n) => s + n.outerWidth(), 0) + GX * (f.length - 1), alt = Math.max(...f.map(n => n.outerHeight()));
+        let x = cx0 - total / 2;
+        f.forEach(n => { n.position({ x: x + n.outerWidth() / 2, y: y + alt / 2 }); x += n.outerWidth() + GX; });
+        y += alt + GY;
+      });
+      y += ENTRE - GY;
+    });
   }
   // Nó sem nenhuma ligação na visão (biblioteca de módulos independentes): o dagre empilha todos numa coluna só, e
   // 26 middlewares viram uma tira ilegível. A partir de 4 por pai (cada container tem a sua), eles vão para uma
@@ -1371,12 +1409,23 @@ footer.visivel { display: flex; }
     });
   }
   // Zoom abaixo do qual o texto dos nós (12 px) deixa de ser legível: o enquadre para aqui e o resto se alcança arrastando.
-  const ZOOM_LEGIVEL = 0.75;
+  // No celular o piso é mais alto (texto de 10 px ou mais): a tela é pequena e o texto não tem para onde crescer.
+  const zoomLegivel = () => estreito() ? 0.85 : 0.75;
+  // Margens do canvas que a pessoa não enxerga: no celular, o cartão de título e a ferramentas em cima, a Legenda embaixo e,
+  // com ela aberta, a folha do inspetor. Os nós ficam na faixa livre entre elas, centrados.
+  function margensLivres(pad) {
+    const m = { l: pad, r: pad, t: pad, b: pad };
+    if (!cy || !estreito()) return m;
+    const h = cy.height();
+    caixasFlutuantes().forEach(c => { if ((c.y1 + c.y2) / 2 < h / 2) m.t = Math.max(m.t, c.y2 + 10); else m.b = Math.max(m.b, h - c.y1 + 10); });
+    if (document.body.classList.contains("com-detalhe")) m.b = Math.max(m.b, Math.min($("dir").offsetHeight, h * 0.7) + 10);
+    return m;
+  }
   function enquadreSeguro(eles, pad) {
     if (!cy || !eles || eles.empty()) return null;
     const w = cy.width(), h = cy.height(), bb = eles.boundingBox();
     if (!(w > 0 && h > 0)) return null;
-    const m = { l: pad, r: pad, t: pad, b: pad };
+    const m = margensLivres(Math.min(pad, estreito() ? 16 : pad));
     const nos = eles.nodes().filter(n => !n.data("grupo")).map(n => n.boundingBox());
     // Eixo que não cabe: a janela do tamanho da tela (no zoom legível) começa onde ela pega mais nós, e o resto se alcança arrastando.
     const janela = (zoom, lw, lh, fx, fy) => {
@@ -1392,9 +1441,9 @@ footer.visivel { display: flex; }
     const calc = () => {
       const lw = Math.max(40, w - m.l - m.r), lh = Math.max(40, h - m.t - m.b);
       const ajuste = Math.min(lw / Math.max(1, bb.w), lh / Math.max(1, bb.h));
-      const zoom = Math.max(cy.minZoom(), Math.min(cy.maxZoom(), Math.max(ajuste, ZOOM_LEGIVEL)));
+      const zoom = Math.max(cy.minZoom(), Math.min(cy.maxZoom(), Math.max(ajuste, zoomLegivel())));
       const fx = bb.w * zoom <= lw, fy = bb.h * zoom <= lh, j = fx && fy ? null : janela(zoom, lw, lh, fx, fy);
-      return { zoom, recortado: ajuste < ZOOM_LEGIVEL, pan: {
+      return { zoom, recortado: ajuste < zoomLegivel(), pan: {
         x: fx ? m.l + (lw - bb.w * zoom) / 2 - zoom * bb.x1 : m.l - zoom * j.x0,
         y: fy ? m.t + (lh - bb.h * zoom) / 2 - zoom * bb.y1 : m.t - zoom * j.y0 } };
     };
@@ -1422,22 +1471,30 @@ footer.visivel { display: flex; }
     else cy.viewport({ zoom: v.zoom, pan: v.pan });
   }
   // Enquadra na parte do canvas que a pessoa vê: no celular, acima da folha do inspetor aberta.
+  // A área que cabe no enquadre é a que a pessoa enxerga: no celular desconta o cartão de título, a Legenda e a folha do
+  // inspetor (margensLivres); no desktop o inspetor é uma coluna da grade, então o canvas já termina onde ele começa.
+  // O retângulo do grupo (container) entra no enquadre quando isso não derruba o zoom abaixo do legível: sem ele a borda do
+  // grupo sai cortada na beira do canvas, rente ao inspetor.
   function enquadrarVisivel(eles, maxZoom) {
     if (!cy || !eles || eles.empty()) return;
-    const pad = estreito() ? 32 : 70, w = cy.width();
-    const folhaAberta = estreito() && document.body.classList.contains("com-detalhe");
-    const h = cy.height() - (folhaAberta ? Math.min($("dir").offsetHeight, cy.height() * 0.7) : 0);
-    const topo = estreito() ? $("tituloVisao").offsetTop + $("tituloVisao").offsetHeight : 0;
-    const bb = eles.boundingBox(), alto = Math.max(80, h - topo);
-    const zoom = Math.max(cy.minZoom(), Math.min(maxZoom || 1.6, (w - 2 * pad) / Math.max(1, bb.w), (alto - 2 * pad) / Math.max(1, bb.h)));
+    const pad = estreito() ? 24 : 70, w = cy.width(), m = margensLivres(0);
+    const topo = m.t, alto = Math.max(80, cy.height() - m.t - m.b);
+    const encaixa = bb => Math.min((w - 2 * pad) / Math.max(1, bb.w), (alto - 2 * pad) / Math.max(1, bb.h));
+    let bb = eles.boundingBox();
+    const comGrupo = eles.union(eles.nodes().parents()).boundingBox();
+    if (encaixa(comGrupo) >= Math.max(zoomLegivel(), encaixa(bb) * 0.5)) bb = comGrupo;
+    let zoom = Math.max(cy.minZoom(), Math.min(maxZoom || 1.6, encaixa(bb)));
+    // Celular: vizinhança larga demais não vira texto de 3 px; fica no zoom legível, centrada no nó do foco, e o resto se arrasta.
+    if (estreito() && zoom < zoomLegivel()) { zoom = zoomLegivel(); const f = eles.nodes(".foco, .passo"); if (f.nonempty()) bb = f.boundingBox(); }
     const pan = { x: w / 2 - zoom * (bb.x1 + bb.w / 2), y: topo + alto / 2 - zoom * (bb.y1 + bb.h / 2) };
     cy.stop(true);
     cy.animate({ zoom, pan, duration: dur(200), easing: "ease-out-cubic" });
   }
   function enquadrar() { enquadrarTudo(null, 40, true); }
 
-  // Rótulos de ligação que cairiam um sobre o outro (ou sobre um nó que não é ponta da ligação) não se atropelam: fica o
-  // mais curto e os demais aparecem ao passar o mouse. Refeito quando o zoom para, porque a sobreposição depende dele.
+  // Rótulos de ligação (horizontais, com fundo) que cairiam um sobre o outro, sobre um nó que não é ponta da ligação ou
+  // sobre mais de um quarto de uma das pontas não se atropelam: fica o mais curto e os demais aparecem ao passar o mouse.
+  // Refeito quando o zoom para, porque a sobreposição depende dele.
   let rotulosTimer = 0;
   function rotulosSemColisao() {
     if (!cy) return;
@@ -1446,13 +1503,14 @@ footer.visivel { display: flex; }
     if (eds.length < 2) return;
     const so = { includeNodes: false, includeEdges: false, includeLabels: true, includeOverlays: false };
     const bate = (a, b) => a.x1 < b.x2 && a.x2 > b.x1 && a.y1 < b.y2 && a.y2 > b.y1;
+    const parte = (a, b) => Math.max(0, Math.min(a.x2, b.x2) - Math.max(a.x1, b.x1)) * Math.max(0, Math.min(a.y2, b.y2) - Math.max(a.y1, b.y1)) / Math.max(1, (a.x2 - a.x1) * (a.y2 - a.y1));
     const nos = cy.nodes(":visible").filter(n => !n.data("grupo")).map(n => ({ id: n.id(), b: n.boundingBox({ includeLabels: false, includeOverlays: false }) }));
     const mantidos = [];
     eds.sort((a, b) => String(a.data("label")).length - String(b.data("label")).length).forEach(ed => {
       const b = ed.boundingBox(so);
       if (!(b.w > 0 && b.h > 0)) return;
       const pontas = [ed.source().id(), ed.target().id()];
-      if (mantidos.some(m => bate(m, b)) || nos.some(n => !pontas.includes(n.id) && bate(n.b, b))) ed.addClass("sem-rotulo"); else mantidos.push(b);
+      if (mantidos.some(m => bate(m, b)) || nos.some(n => pontas.includes(n.id) ? parte(b, n.b) > 0.25 : bate(n.b, b))) ed.addClass("sem-rotulo"); else mantidos.push(b);
     });
   }
   function agendarRotulos() { clearTimeout(rotulosTimer); rotulosTimer = setTimeout(rotulosSemColisao, 160); }
@@ -1473,8 +1531,8 @@ footer.visivel { display: flex; }
     cy.on("dbltap", "node", ev => { const n = ev.target; if (!n.data("grupo")) abrirVizinhanca(n.data("eid")); });
     cy.on("tap", ev => { if (ev.target === cy) limparFoco(); });
     cy.on("zoom", agendarRotulos);
-    cy.on("mouseover", "edge", ev => { const ed = ev.target; if (!ed.hasClass("apagado")) ed.style("label", (ed.data("ordem") ? ed.data("ordem") + ". " : "") + ed.data("label")); });
-    cy.on("mouseout", "edge", ev => { ev.target.removeStyle("label"); });
+    cy.on("mouseover", "edge", ev => { const ed = ev.target; if (!ed.hasClass("apagado")) ed.style({ "label": (ed.data("ordem") ? ed.data("ordem") + ". " : "") + ed.data("label"), "min-zoomed-font-size": 0 }); });
+    cy.on("mouseout", "edge", ev => { ev.target.removeStyle("label min-zoomed-font-size"); });
     aplicarFiltros();
     rodarLayout(false);
     cy.resize();
@@ -1662,13 +1720,14 @@ footer.visivel { display: flex; }
     marcarHash("#fluxo/" + encodeURIComponent(fluxo.chave) + (passo >= 0 ? "/" + (passo + 1) : ""));
   }
   function enquadrarPasso(nos) {
-    const bb = nos.renderedBoundingBox(), m = 40, w = cy.width(), h = cy.height();
-    const dentro = bb.x1 >= m && bb.y1 >= m && bb.x2 <= w - m && bb.y2 <= h - m;
+    const bb = nos.renderedBoundingBox(), l = margensLivres(40), w = cy.width(), h = cy.height();
+    const dentro = bb.x1 >= l.l && bb.y1 >= l.t && bb.x2 <= w - l.r && bb.y2 <= h - l.b;
     if (dentro && cy.zoom() >= 0.7) return;
     const mb = nos.boundingBox();
-    const z = Math.min(Math.max(cy.zoom(), 0.85), (w - 2 * m) / Math.max(1, mb.w), (h - 2 * m) / Math.max(1, mb.h));
+    const z = Math.min(Math.max(cy.zoom(), 0.85), (w - l.l - l.r) / Math.max(1, mb.w), (h - l.t - l.b) / Math.max(1, mb.h));
+    const pan = { x: l.l + (w - l.l - l.r) / 2 - z * (mb.x1 + mb.w / 2), y: l.t + (h - l.t - l.b) / 2 - z * (mb.y1 + mb.h / 2) };
     cy.stop(true);
-    cy.animate({ center: { eles: nos }, zoom: z, duration: dur(180), easing: "ease-out-cubic" });
+    cy.animate({ zoom: z, pan, duration: dur(180), easing: "ease-out-cubic" });
   }
   function legendaPasso() {
     const n = fluxo.fluxo.length;

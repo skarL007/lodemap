@@ -55,6 +55,11 @@ Todas as mudanças relevantes do Lodemap. As datas são de quando a mudança ent
 - **Pipeline em Linux e macOS no CI:** o `.circleci/preparar_pipeline.sh` baixa o Structurizr CLI fixado
   (v2025.11.09, sha256 conferido) e o axios v1.21.1 (commit conferido); os novos jobs `pipeline-linux` e
   `pipeline-macos` rodam o teste do exemplo, e o macOS também roda a suíte completa.
+- **Polimento do explorador e da linha do tempo:** no celular, uma visão pequena quebra os níveis largos em fileiras e
+  se enquadra na faixa livre entre o cartão de título e a Legenda, com texto de 10 px ou mais. Rótulos de ligação
+  ficam horizontais, com fundo, somem abaixo de um zoom ilegível (o mouse os mostra) e não cobrem outros nós; o foco
+  enquadra o grupo inteiro quando isso mantém o texto legível. A linha do tempo mostra a data da release (`data_tag`,
+  o commit marcado pela tag) com a data do mapa em segundo plano; arquivos antigos sem `data_tag` seguem iguais.
 
 ## 0.1.0 (primeira versão pública)
 

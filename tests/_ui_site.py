@@ -80,6 +80,7 @@ def workspace(grande: int = 60) -> dict:
                 [liga(plugins[i], nucleo[i % 10], "usa") for i in range(0, grande, 3)]
     pessoa = {"id": "1", "name": "Pessoa", "description": "Quem usa.", "tags": "Element,Person",
               "properties": {"structurizr.dsl.identifier": "pessoa"}, "relationships": []}
+    rels_hub = [liga(adaptadores[i], nucleo[0], "usa") for i in range(1, 5)]       # 4 pontas num mesmo nível: grafo largo no celular
     r_usa = liga(pessoa, adaptadores[0], "usa")
     sistema = {"id": "2", "name": "Sistema de teste", "description": "O sistema.", "tags": "Element,Software System",
                "properties": {"structurizr.dsl.identifier": "sistema"}, "relationships": [],
@@ -106,6 +107,8 @@ def workspace(grande: int = 60) -> dict:
                             "relationships": []}],
         "componentViews": [
             {"key": "Nucleo", "title": "Núcleo: componentes", "elements": ids(nucleo), "relationships": rels_nucleo},
+            {"key": "Hub", "title": "Hub: adaptadores", "elements": ids(adaptadores[1:5], nucleo[:2]),
+             "relationships": rels_hub + [rels_nucleo[0]]},
             {"key": "Plugins", "title": "Plugins: componentes", "elements": ids(plugins, nucleo),
              "relationships": rels_plug},
             {"key": "Tudo", "title": "Tudo junto", "elements": ids(todos), "relationships": rels_nucleo + rels_adapt + rels_plug}],
@@ -146,14 +149,15 @@ def _snapshot(ws: dict, ate: int) -> dict:
 
 def linha_do_tempo_js(ws: dict) -> str:
     """`linha-do-tempo.js` mínimo: três versões em que o núcleo cresce de 4 para 6 e depois 10 componentes."""
-    marcos = [(4, "2026-11-01", "v0.1"), (6, "2026-11-05", "v0.2"), (10, "2026-11-09", "v0.3")]
+    # As três versões do mapa saem no mesmo dia (como no demo); a data da release (`data_tag`) é que as distingue.
+    marcos = [(4, "2026-11-10", "v0.1", "2026-10-01"), (6, "2026-11-10", "v0.2", "2026-10-15"), (10, "2026-11-10", "v0.3", "2026-11-05")]
     versoes, antes = [], None
-    for i, (n, data, tag) in enumerate(marcos):
+    for i, (n, data, tag, data_tag) in enumerate(marcos):
         snap = _snapshot(ws, n)
         novos = [e for k, e in snap["elementos"].items() if antes is None or k not in antes["elementos"]]
         novas = [r for r in snap["relacoes"] if antes is None or r not in antes["relacoes"]]
         versoes.append({"sha": f"a{i}bcdef", "sha_completo": f"a{i}bcdef" + "0" * 33, "data": data, "assunto": f"versão {tag}",
-                        "tag": tag, "tag_distancia": 0, "commitado": True, "dados": True, "erro": None, "inicial": antes is None,
+                        "tag": tag, "tag_distancia": 0, "data_tag": data_tag, "commitado": True, "dados": True, "erro": None, "inicial": antes is None,
                         "base": versoes[-1]["sha"] if versoes else "", "idioma": "pt", "mudou_idioma": None,
                         "componentes": {"adicionados": novos, "removidos": [], "alterados": []},
                         "relacoes": {"novas": novas, "removidas": []}, "fluxos": {"adicionados": [], "removidos": [], "alterados": []},

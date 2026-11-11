@@ -23,7 +23,8 @@
       tlNaoCommit: 'Não commitado', tlTrabMin: 'trabalho', tlAlteracoes: n => n + (n === 1 ? ' alteração' : ' alterações'),
       tlSemDesc: 'Sem descrição nesta versão.', tlHistorico: 'Histórico do componente', tlSemHist: 'Sem alterações registradas.',
       tlEntrou: 'entrou', tlSaiu: 'saiu', tlMudou: 'mudou',
-      tlDica: 'Zoom mínimo legível: arraste o grafo para ver o resto.'
+      tlDica: 'Zoom mínimo legível: arraste o grafo para ver o resto.',
+      tlRelease: 'release', tlMapa: 'mapa'
     });
     Object.assign(I.dicionario.en, {
       tlTitulo: 'Timeline', tlAria: 'Architecture timeline', tlSair: 'Back to the map',
@@ -40,7 +41,8 @@
       tlNaoCommit: 'Uncommitted', tlTrabMin: 'work', tlAlteracoes: n => n + (n === 1 ? ' change' : ' changes'),
       tlSemDesc: 'No description in this version.', tlHistorico: 'Component history', tlSemHist: 'No changes recorded.',
       tlEntrou: 'added', tlSaiu: 'removed', tlMudou: 'changed',
-      tlDica: 'Minimum readable zoom: drag the graph to see the rest.'
+      tlDica: 'Minimum readable zoom: drag the graph to see the rest.',
+      tlRelease: 'release', tlMapa: 'map'
     });
   }
   const t = (k, ...a) => I ? I.t(k, ...a) : k;
@@ -83,11 +85,17 @@
     });
   }
   const nomeVersao = v => v.tag || v.sha || t('tlTrabalho');
+  // `data` é a do commit do mapa (várias versões podem sair no mesmo dia); `data_tag`, a do commit que a tag marca, é a da
+  // release e vem na frente. Arquivos antigos, ou versões sem tag, não têm `data_tag`: ficam só com a data do mapa.
+  const dataDe = v => v.data_tag || v.data || '';
+  const datasHtml = v => v.data_tag
+    ? `<span>${esc(t('tlRelease'))} ${esc(v.data_tag)}</span><span class="tl-mapa">${esc(t('tlMapa'))} ${esc(v.data || '')}</span>`
+    : `<span>${esc(v.data || '')}</span>`;
   function historico(id) {
     const tipos = { adicionados: 'tlEntrou', removidos: 'tlSaiu', alterados: 'tlMudou' };
     return versoes.map(v => {
       const k = v.dados && Object.keys(tipos).find(c => ((v.componentes || {})[c] || []).some(e => e.ident === id));
-      return k ? `<li>${esc(v.data || t('tlNaoCommit'))} · ${esc(v.tag || v.sha || t('tlTrabMin'))} — ${esc(t(tipos[k]))}</li>` : '';
+      return k ? `<li>${esc(dataDe(v) || t('tlNaoCommit'))} · ${esc(v.tag || v.sha || t('tlTrabMin'))} — ${esc(t(tipos[k]))}</li>` : '';
     }).join('');
   }
   function inspecionar(id, elements) {
@@ -196,7 +204,7 @@
   }
 
   function montarTrilho() {
-    trilho.innerHTML = versoes.map((v, i) => `<button type="button" class="tl-versao${v.resumo && !v.resumo.total ? ' tl-zero' : ''}" aria-pressed="false" data-tl="${i}"><b>${esc(v.tag || v.sha || t('tlTrab'))}</b><span>${esc(v.data || '')}</span><small>${v.mudou_idioma ? esc(t('tlTraducao')) : v.resumo ? esc(t('tlAlteracoes', v.resumo.total)) : esc(t('tlIndisp'))}</small></button>`).join('');
+    trilho.innerHTML = versoes.map((v, i) => `<button type="button" class="tl-versao${v.resumo && !v.resumo.total ? ' tl-zero' : ''}" aria-pressed="false" data-tl="${i}"><b>${esc(v.tag || v.sha || t('tlTrab'))}</b>${datasHtml(v)}<small>${v.mudou_idioma ? esc(t('tlTraducao')) : v.resumo ? esc(t('tlAlteracoes', v.resumo.total)) : esc(t('tlIndisp'))}</small></button>`).join('');
     trilho.querySelectorAll('button').forEach(b => b.addEventListener('click', () => { parar(); selecionar(Number(b.dataset.tl)); }));
   }
   async function abrir() {

@@ -5,11 +5,13 @@ Todas as mudanças relevantes do Lodemap. As datas são de quando a mudança ent
 ## Unreleased
 
 - **Explorador: fluxo largo no desktop.** Quando o fluxo é mais largo que a tela no zoom mínimo, a janela escolhe a
-  posição horizontal que deixa mais nós inteiros e menos nós cortados, mantendo o nó do passo 1 à vista; antes ela
-  começava na borda do passo 1 e cortava os nós à esquerda. Medido na demo do axios (fluxo de 14 passos, nós de
-  componente na tela): 1440x900, de 3 para 2 nós cortados; 1280x800, de 4 para 2; 1920x1080 e celular sem mudança.
-  O mapa sintético dos testes não reproduz o caso (o zoom cabe), então não há teste automático dele ainda.
-
+  posição horizontal que deixa mais nós inteiros e menos nós cortados, mantendo o nó do passo 1 à vista e preferindo a
+  borda esquerda limpa; os cortes contam contra o que o canvas mostra de fato (inclusive as margens laterais e a faixa sob
+  a Legenda), não só contra a área livre. Antes a janela começava na borda do passo 1 e cortava os nós à esquerda.
+  Medido na demo do axios (fluxo de 14 passos, nós de componente cortados pela borda do canvas): 1440x900, de 3 para 1
+  (o único que sobra é o último passo, abaixo da dobra); 1280x800, de 4 para 2; 1920x1080 e celular sem mudança. Teste
+  novo `test_desktop_fluxo_largo_nao_corta_no_na_borda_esquerda` (cadeia em pé sobre um leque de 6 nós), que falha nas
+  duas versões anteriores do explorador.
 - **Explorador: polimento 4 (celular, foco e linha do tempo):**
   - Fluxo longo (3 ou mais passos) no celular vira uma coluna única, no zoom legível, com o passo 1 à vista e livre do
     título e da Legenda; o resto se alcança arrastando.

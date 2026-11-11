@@ -1558,15 +1558,24 @@ footer.visivel { display: flex; }
     const janelaDoFluxo = (zoom, lw, lh, fx, fy) => {
       const W = lw / zoom, H = lh / zoom, y0 = fy ? bb.y1 : ancora.y1 - 8;
       if (fx) return { x0: bb.x1, y0 };
-      const faixa = nos.filter(b => fy || (b.y2 > y0 && b.y1 < y0 + H));
+      // nós que aparecem na tela, mesmo pela metade sob a Legenda: a faixa vai até a borda do canvas, não só até a área livre
+      const faixa = nos.filter(b => fy || (b.y2 > y0 && b.y1 < y0 + (h - m.t) / zoom));
       const cands = new Set([ancora.x1 - 8, ancora.x2 - W + 8]);
-      faixa.forEach(b => { cands.add(b.x1 - 8); cands.add(b.x2 - W + 8); });
+      // o canvas mostra também as margens (m.l, m.r): um nó que sobra nelas aparece cortado pela borda da tela
+      const ml = m.l / zoom, V = w / zoom;
+      faixa.forEach(b => {
+        cands.add(b.x1 - 8); cands.add(b.x2 - W + 8);
+        cands.add(b.x1 - 4 + ml); cands.add(b.x2 + 2 + ml);                    // nó inteiro, ou fora, na borda esquerda da tela
+        cands.add(b.x2 + 4 + ml - V); cands.add(b.x1 - 2 + ml - V);            // idem na borda direita
+      });
       let melhor = null;
       cands.forEach(x0 => {
         if (x0 > ancora.x1 || x0 + W < ancora.x2) return;
+        const v0 = x0 - ml, v1 = v0 + V;
         const inteiros = faixa.filter(b => b.x1 >= x0 && b.x2 <= x0 + W).length;
-        const cortados = faixa.filter(b => b.x1 < x0 + W && b.x2 > x0 && !(b.x1 >= x0 && b.x2 <= x0 + W)).length;
-        const nota = inteiros - 1.5 * cortados, dist = Math.abs(x0 - (ancora.x1 - 8));
+        const cortados = faixa.filter(b => b.x1 < v1 && b.x2 > v0 && !(b.x1 >= v0 && b.x2 <= v1)).length;
+        const esq = faixa.filter(b => b.x1 < v0 && b.x2 > v0).length;    // corte na borda esquerda, onde a leitura começa
+        const nota = inteiros - 1.5 * cortados - 0.5 * esq, dist = Math.abs(x0 - (ancora.x1 - 8));
         if (!melhor || nota > melhor.nota || (nota === melhor.nota && dist < melhor.dist)) melhor = { x0, nota, dist };
       });
       return { x0: melhor ? melhor.x0 : ancora.x1 - 8, y0 };

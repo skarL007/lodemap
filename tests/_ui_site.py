@@ -170,8 +170,8 @@ def linha_do_tempo_js(ws: dict) -> str:
     return "window.LODEMAP_LINHA_DO_TEMPO = " + json.dumps(dados, ensure_ascii=False) + ";\n"
 
 
-def construir(destino: Path, grande: int = 60) -> Path:
-    """Gera `destino/{explorador,leitor}` e devolve `destino`."""
+def construir(destino: Path, grande: int = 60, ajuste=None) -> Path:
+    """Gera `destino/{explorador,leitor}` e devolve `destino`; `ajuste(ws)` altera o workspace antes de gerar."""
     destino.mkdir(parents=True, exist_ok=True)
     (destino / "lodemap.json").write_text(json.dumps({"projeto": "Mapa de teste", "idioma": "pt"}), encoding="utf-8")
     (destino / "adrs").mkdir(exist_ok=True)
@@ -179,7 +179,10 @@ def construir(destino: Path, grande: int = 60) -> Path:
     (destino / "adrs" / "0001-camadas-do-nucleo.md").write_text(ADR, encoding="utf-8")
     (destino / "docs" / "01-visao.md").write_text(DOC, encoding="utf-8")
     ws = destino / "workspace.json"
-    ws.write_text(json.dumps(workspace(grande)), encoding="utf-8")
+    dados_ws = workspace(grande)
+    if ajuste:
+        ajuste(dados_ws)
+    ws.write_text(json.dumps(dados_ws), encoding="utf-8")
     env = {k: v for k, v in os.environ.items() if k != "LODEMAP_IDIOMA"}
     for pasta, gerador in (("explorador", "gerar_explorador.py"), ("leitor", "gerar_leitor.py")):
         shutil.copytree(MODELO / pasta, destino / pasta, dirs_exist_ok=True)

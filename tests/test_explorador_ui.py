@@ -525,3 +525,47 @@ def test_lang_en_traduz_linha_do_tempo_saude_e_painel_do_no(navegador, site, lar
     assert "Back to the map" in texto
     assert not [e for e in erros if "local.json" not in e and "404" not in e], erros
     ctx.close()
+
+
+def _leque_centralizado(ws: dict) -> None:
+    """Fluxo como o do axios: uma cadeia de 6 nós em pé, centralizada sobre um leque de 6 nós de nome longo; em pé é o
+    melhor encaixe e ainda assim não cabe na tela do desktop no zoom mínimo."""
+    plugins = ws["model"]["softwareSystems"][0]["containers"][2]["components"]
+    rid = iter(range(9000, 9100))
+
+    def liga(a, b):
+        r = {"id": str(next(rid)), "sourceId": a["id"], "destinationId": b["id"], "description": "chama", "technology": "chamada",
+             "tags": "Relationship"}
+        a["relationships"].append(r)
+        return r["id"]
+
+    cadeia, fileira = plugins[0:6], plugins[6:12]
+    rels = [liga(a, b) for a, b in zip(cadeia, cadeia[1:])] + [liga(cadeia[-1], f) for f in fileira]
+    ws["views"]["dynamicViews"].append({"key": "FluxoLeque", "title": "Fluxo leque", "description": "Percurso em leque.",
+                                        "elements": [{"id": e["id"]} for e in cadeia + fileira],
+                                        "relationships": [{"id": r, "order": str(i + 1), "description": f"passo {i + 1}"}
+                                                          for i, r in enumerate(rels)]})
+
+
+@pytest.fixture(scope="module")
+def site_leque(tmp_path_factory):
+    from _ui_site import construir
+    return construir(tmp_path_factory.mktemp("site-leque"), ajuste=_leque_centralizado)
+
+
+@pytest.mark.parametrize("largura,altura", [(1440, 900), (1280, 800)])
+def test_desktop_fluxo_largo_nao_corta_no_na_borda_esquerda(navegador, site_leque, largura, altura):
+    """Fluxo mais largo que a tela no zoom mínimo: a janela começa num nó inteiro, não no meio de um, e o passo 1 fica à vista."""
+    ctx, pg, erros = abrir(navegador, site_leque / "explorador" / "index.html", largura, altura, "dark")
+    _pronto(pg)
+    _abrir_visao(pg, "Fluxo leque")
+    q = _quadro(pg)
+    t = q["tela"]
+    assert q["zoom"] <= 0.751, q["zoom"]                                     # o caso: parou no zoom mínimo, não cabe
+    na_faixa = [n for n in q["nos"] if n["y2"] > t["y1"] and n["y1"] < t["y2"]]
+    cortados = [n["nome"] for n in na_faixa if n["x1"] < t["x1"] - 1 < n["x2"] - 2]
+    assert not cortados, (q["zoom"], cortados)
+    topo = next(n for n in q["nos"] if n["nome"].startswith("Plugin 01"))
+    assert topo["x1"] >= t["x1"] - 1 and topo["x2"] <= t["x2"] + 1, topo
+    assert not [e for e in erros if "local.json" not in e and "404" not in e], erros
+    ctx.close()

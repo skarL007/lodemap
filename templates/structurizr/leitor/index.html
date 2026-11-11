@@ -469,9 +469,13 @@ mark { background: var(--warn-tint); color: inherit; border-radius: 2px; box-sha
   .so-movel { display: inline-flex; }
   .busca kbd { display: none; }
   .layout { display: block; }
+  /* Fechada, a gaveta sai da ordem de foco (visibility) e não projeta sombra na borda da tela. */
   .lateral { position: fixed; z-index: var(--z-drawer); top: 0; left: 0; bottom: 0; width: min(320px, 86vw); height: auto;
-             transform: translateX(-100%); transition: transform var(--dur) var(--ease-out); box-shadow: var(--shadow-2); }
-  .lateral.aberta { transform: none; }
+             transform: translateX(-100%); visibility: hidden; box-shadow: none;
+             transition: transform var(--dur) var(--ease-out), visibility 0s linear var(--dur), box-shadow var(--dur) var(--ease-out); }
+  .lateral.aberta { transform: none; visibility: visible; box-shadow: var(--shadow-2);
+                    transition: transform var(--dur) var(--ease-out), visibility 0s, box-shadow var(--dur) var(--ease-out); }
+  .nav-item { min-height: 44px; align-items: center; }
   .veu { display: block; position: fixed; inset: 0; z-index: calc(var(--z-drawer) - 1); background: rgba(0, 0, 0, 0.4); }
   .veu[hidden] { display: none; }
   .conteudo { padding: var(--space-6) var(--space-4) var(--space-8); }
@@ -676,7 +680,7 @@ mark { background: var(--warn-tint); color: inherit; border-radius: 2px; box-sha
       elemUm: "{0} elemento do mapa", elemN: "{0} elementos do mapa",
       erroPagTitulo: "Esta página não existe", erroPagTexto: "Não encontrei <code>{0}</code>. O documento pode ter mudado de nome ou a decisão ainda não foi registrada.",
       voltar: "Voltar para a visão geral",
-      buscaCurta: "Digite pelo menos duas letras.", buscaNada: "Nada encontrado para “{0}”. Tente um termo mais curto ou o identificador do elemento (por exemplo <code>orqEscala</code>).",
+      buscaCurta: "Digite pelo menos duas letras.", buscaNada: "Nada encontrado para “{0}”. Tente um termo mais curto ou o identificador do elemento{1}.", buscaExemplo: " (por exemplo <code>{0}</code>)",
       trechoUm: "{0} trecho", trechoN: "{0} trechos", buscaDicas: " · ↑ ↓ para escolher, Enter para abrir",
       diagrama: "Diagrama Mermaid", tamanhoReal: "Tamanho real", verCodigo: "Ver código", telaCheia: "Tela cheia",
       semDiagrama: "o leitor embutido não desenha diagramas do tipo {0}", diagFalha: "Não foi possível desenhar este diagrama ({0}). O texto dele está logo abaixo.",
@@ -719,7 +723,7 @@ mark { background: var(--warn-tint); color: inherit; border-radius: 2px; box-sha
       elemUm: "{0} element on the map", elemN: "{0} elements on the map",
       erroPagTitulo: "This page does not exist", erroPagTexto: "I could not find <code>{0}</code>. The document may have been renamed or the decision may not have been recorded yet.",
       voltar: "Back to the overview",
-      buscaCurta: "Type at least two letters.", buscaNada: "Nothing found for “{0}”. Try a shorter term or the element identifier (for example <code>orqEscala</code>).",
+      buscaCurta: "Type at least two letters.", buscaNada: "Nothing found for “{0}”. Try a shorter term or the element identifier{1}.", buscaExemplo: " (for example <code>{0}</code>)",
       trechoUm: "{0} match", trechoN: "{0} matches", buscaDicas: " · ↑ ↓ to choose, Enter to open",
       diagrama: "Mermaid diagram", tamanhoReal: "Actual size", verCodigo: "View code", telaCheia: "Fullscreen",
       semDiagrama: "the built-in reader does not draw {0} diagrams", diagFalha: "This diagram could not be drawn ({0}). Its source is just below.",
@@ -1155,10 +1159,15 @@ mark { background: var(--warn-tint); color: inherit; border-radius: 2px; box-sha
   }
   function fecharGaveta() {
     if (!lateral.classList.contains("aberta")) return;
+    // O foco que estava num link da gaveta volta ao botão: a gaveta fechada fica fora da ordem de foco.
+    var estavaDentro = lateral.contains(document.activeElement);
     lateral.classList.remove("aberta"); $("veu").hidden = true; $("btnSumario").setAttribute("aria-expanded", "false");
+    if (estavaDentro) $("btnSumario").focus();
   }
   $("btnSumario").addEventListener("click", function () { lateral.classList.contains("aberta") ? fecharGaveta() : abrirGaveta(); });
   $("veu").addEventListener("click", fecharGaveta);
+  // Tocar num item do sumário fecha a gaveta mesmo quando o link aponta para a página em que já se está (sem hashchange).
+  lateral.addEventListener("click", function (ev) { if (ev.target.closest("a.nav-item")) fecharGaveta(); });
 
   // ------------------------------------------------------------ busca
   function norm(s) { return String(s).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase(); }
@@ -1214,6 +1223,15 @@ mark { background: var(--warn-tint); color: inherit; border-radius: 2px; box-sha
     res.sort(function (a, b) { return b.pontos - a.pontos; });
     return res;
   }
+  // Identificador real do mapa para a dica da busca vazia: o primeiro elemento citado por um ADR que existe no modelo.
+  // Sem nenhum, a dica fica sem exemplo, em vez de citar um nome que o mapa não tem.
+  function exemploIdent() {
+    for (var i = 0; i < D.adrs.length; i++) {
+      var els = D.adrs[i].elementos || [];
+      for (var j = 0; j < els.length; j++) if (els[j].existe && els[j].ident) return t("buscaExemplo", esc(els[j].ident));
+    }
+    return "";
+  }
   function mostrarResultados() {
     var q = campo.value.trim();
     if (!q) { fecharResultados(); return; }
@@ -1223,7 +1241,7 @@ mark { background: var(--warn-tint); color: inherit; border-radius: 2px; box-sha
     if (!termos.length) {
       h.push('<div class="res-vazio">' + esc(t("buscaCurta")) + "</div>");
     } else if (!res.length) {
-      h.push('<div class="res-vazio">' + t("buscaNada", esc(q)) + "</div>");
+      h.push('<div class="res-vazio">' + t("buscaNada", esc(q), exemploIdent()) + "</div>");
     } else {
       res.slice(0, 12).forEach(function (r, i) {
         var b = r.x.b, mesmo = b.alvo === b.pagina;

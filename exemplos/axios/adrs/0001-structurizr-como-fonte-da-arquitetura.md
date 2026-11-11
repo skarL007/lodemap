@@ -8,9 +8,7 @@ decisores: [dono]
 elementos: [sistema]
 substitui: []
 substituida_por: []
-evidencia:
-  - workspace.dsl
-  - scripts/atualizar.ps1
+evidencia: []
 ---
 
 # Structurizr como fonte da arquitetura
@@ -23,7 +21,7 @@ A arquitetura precisa ser estudada, alterada e conferida contra o código, sem d
 
 A arquitetura vive no Structurizr (modelo C4 em DSL), com um componente por módulo real, status por cor, propriedades
 de código e de observabilidade e visões por área, por fluxo e por status. Explorador, leitor de documentação,
-documentos derivados e métricas são gerados do próprio modelo por `scripts/atualizar.ps1`.
+documentos derivados e métricas são gerados do próprio modelo pelo atualizador do Lodemap (`scripts/atualizar.ps1`).
 
 ## Alternativas
 

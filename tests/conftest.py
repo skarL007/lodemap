@@ -31,3 +31,8 @@ def _idioma_pt(monkeypatch):
     monkeypatch.setenv("LODEMAP_IDIOMA", "pt")
     from lodemap import idioma
     idioma.usar_mapa(None)
+
+
+# Fixtures de sessão do Playwright vivem aqui, uma única vez: importadas em dois módulos, cada um criaria o seu
+# `sync_playwright()` e o segundo falharia com "Sync API inside the asyncio loop".
+from _ui_site import navegador, site  # noqa: E402,F401

@@ -1,0 +1,177 @@
+"""Explorador no navegador (Playwright), sobre um mapa sintético gerado pelos geradores reais (`_ui_site.py`)."""
+from __future__ import annotations
+
+import pytest
+
+from _ui_site import abrir
+
+
+def _pronto(pg):
+    pg.wait_for_function("window.cytoscape && document.querySelector('#cy canvas') && !document.getElementById('carregando').offsetParent")
+    pg.wait_for_timeout(500)
+
+
+def _sem_overflow(pg):
+    return not pg.evaluate("document.documentElement.scrollWidth > innerWidth")
+
+
+@pytest.mark.parametrize("largura,altura,toque", [(375, 812, True), (1440, 900, False)])
+def test_aviso_da_saude_cabe_na_tela_some_sozinho_e_a_ressalva_fica_na_legenda(navegador, site, largura, altura, toque):
+    ctx, pg, erros = abrir(navegador, site / "explorador" / "index.html", largura, altura, "dark", toque)
+    _pronto(pg)
+    if toque:
+        pg.tap("#btnPainel")
+        pg.wait_for_timeout(400)
+    pg.click("text=Saúde dos componentes")
+    pg.wait_for_selector("#aviso:not([hidden])")
+    caixa = pg.evaluate("(() => { const b = document.getElementById('aviso').getBoundingClientRect(); return [b.left, b.right, innerWidth]; })()")
+    assert caixa[0] >= 0 and caixa[1] <= caixa[2], caixa
+    pg.wait_for_function("document.getElementById('aviso').hidden", timeout=9000)       # item 5: o aviso não fica para sempre
+    pg.evaluate("document.getElementById('legendaCaixa').open = true")
+    assert "não execução" in pg.inner_text("#legenda")                                  # a ressalva continua na Legenda
+    assert _sem_overflow(pg)
+    assert not [e for e in erros if "local.json" not in e and "404" not in e], erros
+    ctx.close()
+
+
+def _visao(pg) -> str:
+    return pg.evaluate("document.querySelector('#listaVisoes .item.ativo').innerText")
+
+
+def test_trocar_de_visao_empilha_historico_e_voltar_volta_a_visao_anterior(navegador, site):
+    ctx, pg, erros = abrir(navegador, site / "explorador" / "index.html", 1440, 900, "dark")
+    _pronto(pg)
+    inicio = pg.evaluate("history.length")
+    pg.click("#listaVisoes .item >> nth=1")
+    pg.wait_for_function("document.querySelector('#listaVisoes .item.ativo') && document.querySelector('#listaVisoes .item.ativo').innerText !== ''")
+    primeira, hash1 = _visao(pg), pg.evaluate("location.hash")
+    pg.click("#listaVisoes .item >> nth=2")
+    pg.wait_for_function("h => location.hash !== h", arg=hash1)
+    segunda, hash2 = _visao(pg), pg.evaluate("location.hash")
+    assert primeira != segunda and pg.evaluate("history.length") >= inicio + 2
+    pg.go_back()
+    pg.wait_for_function("h => location.hash === h", arg=hash1)
+    pg.wait_for_function("p => document.querySelector('#listaVisoes .item.ativo').innerText === p", arg=primeira)
+    pg.go_forward()
+    pg.wait_for_function("h => location.hash === h", arg=hash2)
+    pg.wait_for_function("p => document.querySelector('#listaVisoes .item.ativo').innerText === p", arg=segunda)
+    assert not [e for e in erros if "local.json" not in e and "404" not in e], erros
+    ctx.close()
+
+
+def test_linha_do_tempo_tem_rota_propria_e_fecha_ao_escolher_visao_ou_esc(navegador, site):
+    ctx, pg, erros = abrir(navegador, site / "explorador" / "index.html", 1440, 900, "dark")
+    _pronto(pg)
+    painel = "document.getElementById('timelinePanel').hidden"
+    pg.click("#tlAbrir")
+    pg.wait_for_selector("#tlTrilho button")
+    assert pg.evaluate("location.hash") == "#linha-do-tempo" and not pg.evaluate(painel)
+    pg.reload()                                              # a rota reabre o painel
+    pg.wait_for_selector("#tlTrilho button")
+    assert not pg.evaluate(painel)
+    pg.click("#listaVisoes .item >> nth=1")                  # escolher visão fecha o painel
+    pg.wait_for_function(painel)
+    assert pg.evaluate("location.hash") != "#linha-do-tempo"
+    pg.go_back()                                             # Voltar devolve o painel
+    pg.wait_for_function("!" + painel)
+    pg.keyboard.press("Escape")                              # Esc fecha o painel e devolve o hash do mapa
+    pg.wait_for_function(painel)
+    assert pg.evaluate("location.hash") != "#linha-do-tempo"
+    assert _sem_overflow(pg)
+    assert not [e for e in erros if "local.json" not in e and "404" not in e], erros
+    ctx.close()
+
+
+@pytest.mark.parametrize("largura,altura,toque,tema", [(375, 812, True, "light"), (1440, 900, False, "dark")])
+def test_linha_do_tempo_grafo_legivel_dagre_e_cores_seguem_o_tema(navegador, site, largura, altura, toque, tema):
+    ctx, pg, erros = abrir(navegador, site / "explorador" / "index.html", largura, altura, tema, toque)
+    pg.goto((site / "explorador" / "index.html").as_uri() + "#linha-do-tempo")
+    pg.reload()
+    pg.wait_for_selector("#tlTrilho button")
+    pg.wait_for_timeout(800)
+    assert _sem_overflow(pg)
+    assert pg.evaluate("document.querySelector('#tlGrafo canvas') !== null")
+    assert "linha-do-tempo" in pg.evaluate("location.hash")
+    assert not [e for e in erros if "local.json" not in e and "404" not in e], erros
+    ctx.close()
+
+
+def test_mapa_grande_para_no_zoom_legivel_e_avisa_que_o_resto_se_alcanca_arrastando(navegador, site):
+    ctx, pg, erros = abrir(navegador, site / "explorador" / "index.html", 375, 812, "light", True)
+    _pronto(pg)
+    pg.evaluate("document.querySelector('#listaVisoes .item').click()")      # "Modelo inteiro": dezenas de componentes
+    pg.wait_for_selector("#aviso:not([hidden])")
+    assert "mínimo legível" in pg.inner_text("#aviso")
+    caixa = pg.evaluate("(() => { const b = document.getElementById('aviso').getBoundingClientRect(); return [b.left, b.right, innerWidth]; })()")
+    assert caixa[0] >= 0 and caixa[1] <= caixa[2], caixa
+    assert _sem_overflow(pg)
+    assert not [e for e in erros if "local.json" not in e and "404" not in e], erros
+    ctx.close()
+
+
+def test_inspetor_da_ligacao_nao_repete_o_rotulo_e_deixa_as_pontas_acima_da_folha(navegador, site):
+    ctx, pg, erros = abrir(navegador, site / "explorador" / "index.html", 375, 812, "dark", True)
+    _pronto(pg)
+    pg.evaluate("[...document.querySelectorAll('#listaVisoes .item')].find(b => b.textContent.includes('Núcleo: componentes')).click()")   # visão com ligações
+    pg.wait_for_timeout(600)
+    pg.evaluate("(() => { const cy = document.getElementById('cy')._cyreg.cy; cy.edges(':visible')[0].emit('tap'); })()")
+    pg.wait_for_function("document.getElementById('rotInspetor').textContent === 'Ligação'")
+    pg.wait_for_timeout(600)
+    assert pg.evaluate("[...document.querySelectorAll('#dir .det-tipo')].filter(e => e.textContent.trim() === 'Ligação').length") == 1
+    r = pg.evaluate("""(() => { const cy = document.getElementById('cy')._cyreg.cy, topo = document.getElementById('dir').getBoundingClientRect().top;
+        const base = document.getElementById('cy').getBoundingClientRect().top;
+        return { pontas: cy.edges(':visible')[0].connectedNodes().map(n => n.renderedBoundingBox().y2 + base), topo }; })()""")
+    assert all(y <= r["topo"] for y in r["pontas"]), r                                 # as duas pontas ficam acima da folha
+    assert not [e for e in erros if "local.json" not in e and "404" not in e], erros
+    ctx.close()
+
+
+def test_rotulos_de_ligacao_do_foco_nao_se_sobrepoem(navegador, site):
+    ctx, pg, erros = abrir(navegador, site / "explorador" / "index.html", 1440, 900, "dark")
+    _pronto(pg)
+    pg.click("#listaVisoes .item:has-text('Tudo junto')")
+    pg.wait_for_timeout(600)
+    pg.evaluate("(() => { const cy = document.getElementById('cy')._cyreg.cy; cy.nodes().filter(n => n.data('label') === 'Núcleo 01')[0].emit('tap'); })()")
+    pg.wait_for_timeout(1500)
+    r = pg.evaluate("""(() => { const cy = document.getElementById('cy')._cyreg.cy;
+        const so = { includeNodes: false, includeEdges: false, includeLabels: true, includeOverlays: false };
+        const eds = cy.edges('.vizinho, .caminho'), com = eds.filter(e => !e.hasClass('sem-rotulo')), bs = com.map(e => e.boundingBox(so));
+        let sobre = 0;
+        for (let i = 0; i < bs.length; i++) for (let j = i + 1; j < bs.length; j++) {
+          const a = bs[i], b = bs[j]; if (a.x1 < b.x2 && a.x2 > b.x1 && a.y1 < b.y2 && a.y2 > b.y1) sobre++; }
+        return { arestas: eds.length, comRotulo: com.length, sobre }; })()""")
+    assert r["arestas"] >= 2 and r["comRotulo"] >= 1 and r["sobre"] == 0, r
+    assert not [e for e in erros if "local.json" not in e and "404" not in e], erros
+    ctx.close()
+
+
+def test_toque_sem_atalho_de_teclado_e_legenda_com_alvo_de_44px(navegador, site):
+    ctx, pg, erros = abrir(navegador, site / "explorador" / "index.html", 375, 812, "light", True)
+    _pronto(pg)
+    assert not pg.is_visible("#kbdPaleta")                                        # "Ctrl K" não aparece no toque
+    assert pg.is_visible("#btnPaleta")                                            # a paleta continua ao alcance
+    assert pg.evaluate("document.querySelector('#legendaCaixa summary').getBoundingClientRect().height") >= 44
+    assert _sem_overflow(pg)
+    ctx.close()
+    ctx, pg, _ = abrir(navegador, site / "explorador" / "index.html", 1440, 900, "light")
+    _pronto(pg)
+    assert pg.is_visible("#kbdPaleta")                                            # no desktop o atalho continua
+    ctx.close()
+
+
+@pytest.mark.parametrize("lang,saude,tl_botao,tl_painel", [("en", "Health · evidence", "Timeline", "Back to the map"),
+                                                          ("pt", "Saúde · evidências", "Linha do tempo", "Voltar ao mapa")])
+def test_saude_e_linha_do_tempo_seguem_o_idioma_da_pagina(navegador, site, lang, saude, tl_botao, tl_painel):
+    ctx, pg, erros = abrir(navegador, site / "explorador" / "index.html", 1440, 900, "dark")
+    pg.goto((site / "explorador" / "index.html").as_uri() + f"?lang={lang}")
+    _pronto(pg)
+    pg.click("[data-i18n=saudeBotao]")                       # carrega as evidências
+    pg.wait_for_selector("#aviso:not([hidden])")
+    pg.evaluate("location.hash = '#nucleo01'")
+    pg.wait_for_function("document.getElementById('detalhes').innerText.toLowerCase().includes('%s')" % saude.lower())
+    assert pg.inner_text("#tlAbrir") == tl_botao
+    pg.click("#tlAbrir")
+    pg.wait_for_selector("#tlTrilho button")
+    assert tl_painel in pg.inner_text("#timelinePanel")
+    assert not [e for e in erros if "local.json" not in e and "404" not in e], erros
+    ctx.close()

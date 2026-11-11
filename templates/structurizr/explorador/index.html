@@ -47,6 +47,10 @@ window.LODEMAP_I18N = {
     erroCytoscape: "Não consegui carregar explorador/vendor/cytoscape.min.js. Copie a pasta vendor/ do template da skill para explorador/ e tente de novo.",
     status: { Pronto: "Pronto", "Em andamento": "Em andamento", Aguardando: "Aguardando", Planejado: "Planejado", "Fora do foco": "Fora do foco", Externo: "Externo" },
     tipos: { Pessoa: "Pessoa", Sistema: "Sistema", Container: "Container", Componente: "Componente", "Ação": "Ação", "Visão": "Visão", Fluxo: "Fluxo" },
+    saudeBotao: "Saúde dos componentes", saudeOpcao: "Saúde", saudeIndisponivel: "Evidências indisponíveis. Gere evidencias.js para este mapa.",
+    saudeAviso: "Saúde: referências estáticas, não execução. Árvore de trabalho não verificada.",
+    zoomLegivel: "O zoom parou no mínimo legível. Arraste para ver o resto ou afaste com a roda ou o gesto de pinça.",
+    legSaude: ["Teste referencia código", "Sem referência encontrada", "Desconhecido"],
     confianca: { alta: "alta", media: "média", baixa: "baixa" },
     pComponente: ["componente", "componentes"], pPendencia: ["pendência", "pendências"], pPasso: ["passo", "passos"], pSalto: ["salto", "saltos"],
     pRelConfirmada: ["relação confirmada", "relações confirmadas"], pAresta: ["aresta", "arestas"], pRodada: ["rodada", "rodadas"],
@@ -146,6 +150,10 @@ window.LODEMAP_I18N = {
     erroCytoscape: "Could not load explorador/vendor/cytoscape.min.js. Copy the vendor/ folder from the skill template into explorador/ and try again.",
     status: { Pronto: "Done", "Em andamento": "In progress", Aguardando: "Waiting", Planejado: "Planned", "Fora do foco": "Out of focus", Externo: "External" },
     tipos: { Pessoa: "Person", Sistema: "System", Container: "Container", Componente: "Component", "Ação": "Action", "Visão": "View", Fluxo: "Flow" },
+    saudeBotao: "Component health", saudeOpcao: "Health", saudeIndisponivel: "Evidence unavailable. Generate evidencias.js for this map.",
+    saudeAviso: "Health: static references, not execution. Working tree not verified.",
+    zoomLegivel: "Zoom stopped at the minimum readable level. Drag to see the rest, or zoom out with the wheel or a pinch.",
+    legSaude: ["A test references the code", "No reference found", "Unknown"],
     confianca: { alta: "high", media: "medium", baixa: "low" },
     pComponente: ["component", "components"], pPendencia: ["pending item", "pending items"], pPasso: ["step", "steps"], pSalto: ["hop", "hops"],
     pRelConfirmada: ["confirmed relation", "confirmed relations"], pAresta: ["edge", "edges"], pRodada: ["round", "rounds"],
@@ -512,6 +520,11 @@ kbd { font: var(--weight-medium) 11px / 1 var(--font-mono); padding: 2px 5px; wh
 #ferramentas .botao { border-color: transparent; }
 #legendaCaixa { left: var(--space-3); bottom: var(--space-3); max-width: 280px; padding: var(--space-2) var(--space-3); font-size: var(--text-xs); }
 #legendaCaixa summary { cursor: pointer; color: var(--label-2); font-weight: var(--weight-medium); border-radius: 4px; }
+@media (hover: none) and (pointer: coarse) {
+  #kbdPaleta { display: none; }                                  /* atalho de teclado não faz sentido no toque */
+  #btnPaleta { height: 32px; min-width: 32px; justify-content: center; }
+  #btnPaleta::after { content: "⋯"; color: var(--label-2); font-size: var(--text-lg); line-height: 1; }
+}
 #legenda { display: flex; flex-direction: column; gap: var(--space-1); margin-top: var(--space-2); max-height: 36vh; overflow: auto; color: var(--label-2); }
 #legenda div { display: flex; align-items: center; gap: var(--space-2); }
 .traco { display: inline-block; flex: none; width: 16px; height: 2px; border-radius: 1px; }
@@ -519,7 +532,7 @@ kbd { font: var(--weight-medium) 11px / 1 var(--font-mono); padding: 2px 5px; wh
 .anel { display: inline-block; flex: none; width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--brand); }
 .num-leg { display: inline-grid; place-content: center; flex: none; min-width: 16px; height: 16px; padding: 0 3px; border: 1px solid var(--brand); border-radius: 4px;
   color: var(--brand); font: var(--weight-semibold) 10px / 1 var(--font-sans); }
-#aviso { left: 50%; bottom: var(--space-4); transform: translateX(-50%); padding: var(--space-2) var(--space-4); font-size: var(--text-sm); white-space: nowrap; }
+#aviso { left: 50%; bottom: var(--space-4); transform: translateX(-50%); width: max-content; max-width: min(560px, calc(100% - 2 * var(--space-3))); padding: var(--space-2) var(--space-4); font-size: var(--text-sm); text-align: center; text-wrap: balance; }
 #carregando { position: absolute; inset: 0; display: grid; place-content: center; gap: var(--space-4); padding: var(--space-6); }
 #carregando .sds-skeleton { width: min(520px, 70vw); height: 44px; }
 #carregando .sds-skeleton:nth-child(2) { width: min(360px, 52vw); justify-self: center; }
@@ -636,7 +649,10 @@ footer.visivel { display: flex; }
   .lm-idioma { order: 8; }
   .acoes:not(:has(.chip:not([hidden]))) { display: none; }
   #tituloVisao { max-width: calc(100% - 104px); }
-  #legendaCaixa { max-width: calc(100% - 24px); }
+  #aviso { bottom: calc(var(--space-3) + 44px); }   /* acima da Legenda recolhida */
+  #legendaCaixa { max-width: calc(100% - 24px); padding-block: 0; }
+  #legendaCaixa summary { padding-block: 13px; }                  /* alvo de toque de 44 px */
+  #legendaCaixa[open] { padding-bottom: var(--space-2); }
   footer { padding: var(--space-2) var(--space-3); }
   #legendaPasso { font-size: var(--text-xs); }
   #btnLinkPasso .rot { display: none; }
@@ -664,11 +680,12 @@ footer.visivel { display: flex; }
 .tl-versao[aria-pressed="true"] { outline:2px solid var(--brand); outline-offset:-2px; }
 .tl-versao:focus-visible, #timelinePanel button:focus-visible { outline:2px solid var(--focus); outline-offset:2px; }
 .tl-versao span, .tl-versao small, .tl-legenda { color:var(--label-2); font-size:var(--text-xs); }
+#tlDica { color:var(--label-2); font-size:var(--text-xs); }
 .tl-zero { opacity:.6; } .tl-legenda { display:flex; flex-wrap:wrap; gap:12px; }
 .tl-corpo { display:grid; grid-template-columns:minmax(0,1fr) minmax(180px,260px); min-height:260px; flex:1; gap:8px; }
 #tlGrafo, #tlInspetor { min-width:0; border:1px solid var(--separator); background:var(--surface); }
 #tlGrafo { min-height:240px; } #tlInspetor { overflow:auto; padding:12px; font-size:var(--text-sm); overflow-wrap:anywhere; }
-@media(max-width:900px) { #timelinePanel { padding:8px; } .tl-corpo { grid-template-columns:1fr; grid-template-rows:minmax(220px,1fr) auto; } #tlInspetor { max-height:140px; } }
+@media(max-width:900px) { #timelinePanel { padding:8px; } #timelinePanel > * { flex-shrink:0; } .tl-corpo { grid-template-columns:1fr; grid-template-rows:320px auto; min-height:0; } #tlGrafo { min-height:0; } #tlInspetor { max-height:140px; } }
 </style>
 </head>
 <body class="sds" data-lm-pagina="mapa">
@@ -929,7 +946,10 @@ footer.visivel { display: flex; }
     } catch (e) { /* navegador antigo */ }
     aplicarEstatico();
     if (!falha) redesenharTexto();
+    document.dispatchEvent(new CustomEvent("lm:idioma"));
   }
+  // Para os módulos carregados depois (linha-do-tempo-ui.js): mesmo dicionário, mesmo data-i18n, mesmo idioma.
+  window.LodemapIdioma = { t: (k, ...a) => t(k, ...a), aplicar: () => aplicarEstatico(), dicionario: T };
   // Redesenha só o texto montado em JS; o grafo, o foco e o percurso ficam onde estão.
   function redesenharTexto() {
     cabecalho();
@@ -1063,7 +1083,12 @@ footer.visivel { display: flex; }
   let cy = null, visaoAtual = null, focoId = null, fluxo = null, passo = -1, destaque = null, colorir = "status";
   let alcance = { dir: "ambos", prof: 1 };
   let inspetor = "vazio";
+  let saudeAtiva = false;
   const ocultos = new Set();
+  // A opção "Saúde" do seletor só existe depois de carregadas as evidências; cabecalho() a refaz ao trocar o idioma.
+  function opcaoSaude() {
+    if (saudeAtiva && !$("colorir").querySelector('[value="saude"]')) $("colorir").insertAdjacentHTML("beforeend", `<option value="saude">${esc(t("saudeOpcao"))}</option>`);
+  }
 
   // ------------------------------------------------------------ cabeçalho e barra lateral
   const marcadores = (() => {
@@ -1081,6 +1106,7 @@ footer.visivel { display: flex; }
     $("filtrosStatus").innerHTML = STATUS.map(x => `<label><input type="checkbox" data-status="${x[0]}"${ocultos.has(x[0]) ? "" : " checked"}><span class="bolinha" style="background:var(${x[2]})"></span>${esc(rotSt(x[0]))}<small>${n[x[0]] || 0}</small></label>`).join("");
     $("colorir").innerHTML = `<optgroup label="${esc(t("grupoAtributo"))}">${COLORIR.map(v => `<option value="${v}">${esc(t("colorir")[v])}</option>`).join("")}</optgroup>` +
       (marcadores.length ? `<optgroup label="${esc(t("grupoMarcador"))}">${marcadores.map(([tag, c]) => `<option value="tag:${esc(tag)}">${esc(nomeTag(tag))} (${c})</option>`).join("")}</optgroup>` : "");
+    opcaoSaude();
     $("colorir").value = colorir;
     if (D.prova) {
       $("blocoProva").hidden = false;
@@ -1242,6 +1268,7 @@ footer.visivel { display: flex; }
       { selector: "node.realce", style: { "border-width": 2, "border-color": C.warn, "z-index": 90 } },
       { selector: "edge.realce.semprova", style: { "line-color": C.warn, "target-arrow-color": C.warn, "line-style": "dashed", "line-dash-pattern": [6, 4], "width": 1.8, "opacity": 1, "z-index": 90 } },
       { selector: "edge.realce.provada", style: { "line-color": C.ok, "target-arrow-color": C.ok, "width": 2.4, "opacity": 1, "z-index": 91 } },
+      { selector: "edge.sem-rotulo", style: { "label": "" } },
       { selector: ".escondido", style: { "display": "none" } },
     ];
   }
@@ -1343,18 +1370,35 @@ footer.visivel { display: flex; }
       return { x1: r.left - base.left, y1: r.top - base.top, x2: r.right - base.left, y2: r.bottom - base.top };
     });
   }
+  // Zoom abaixo do qual o texto dos nós (12 px) deixa de ser legível: o enquadre para aqui e o resto se alcança arrastando.
+  const ZOOM_LEGIVEL = 0.75;
   function enquadreSeguro(eles, pad) {
     if (!cy || !eles || eles.empty()) return null;
     const w = cy.width(), h = cy.height(), bb = eles.boundingBox();
     if (!(w > 0 && h > 0)) return null;
     const m = { l: pad, r: pad, t: pad, b: pad };
+    const nos = eles.nodes().filter(n => !n.data("grupo")).map(n => n.boundingBox());
+    // Eixo que não cabe: a janela do tamanho da tela (no zoom legível) começa onde ela pega mais nós, e o resto se alcança arrastando.
+    const janela = (zoom, lw, lh, fx, fy) => {
+      const W = lw / zoom, H = lh / zoom;
+      let melhor = -1, x0 = bb.x1, y0 = bb.y1;
+      nos.forEach(a => {
+        const cx = fx ? bb.x1 : a.x1 - 8, cy0 = fy ? bb.y1 : a.y1 - 8;
+        const n = nos.reduce((k, b) => k + (b.x1 >= cx && b.x2 <= cx + W && b.y1 >= cy0 && b.y2 <= cy0 + H ? 1 : 0), 0);
+        if (n > melhor) { melhor = n; x0 = cx; y0 = cy0; }
+      });
+      return { x0, y0 };
+    };
     const calc = () => {
       const lw = Math.max(40, w - m.l - m.r), lh = Math.max(40, h - m.t - m.b);
-      const zoom = Math.max(cy.minZoom(), Math.min(cy.maxZoom(), lw / Math.max(1, bb.w), lh / Math.max(1, bb.h)));
-      return { zoom, pan: { x: m.l + lw / 2 - zoom * (bb.x1 + bb.w / 2), y: m.t + lh / 2 - zoom * (bb.y1 + bb.h / 2) } };
+      const ajuste = Math.min(lw / Math.max(1, bb.w), lh / Math.max(1, bb.h));
+      const zoom = Math.max(cy.minZoom(), Math.min(cy.maxZoom(), Math.max(ajuste, ZOOM_LEGIVEL)));
+      const fx = bb.w * zoom <= lw, fy = bb.h * zoom <= lh, j = fx && fy ? null : janela(zoom, lw, lh, fx, fy);
+      return { zoom, recortado: ajuste < ZOOM_LEGIVEL, pan: {
+        x: fx ? m.l + (lw - bb.w * zoom) / 2 - zoom * bb.x1 : m.l - zoom * j.x0,
+        y: fy ? m.t + (lh - bb.h * zoom) / 2 - zoom * bb.y1 : m.t - zoom * j.y0 } };
     };
     let v = calc();
-    const nos = eles.nodes().filter(n => !n.data("grupo")).map(n => n.boundingBox());
     const cobre = c => nos.some(b => b.x1 * v.zoom + v.pan.x < c.x2 && b.x2 * v.zoom + v.pan.x > c.x1 &&
                                      b.y1 * v.zoom + v.pan.y < c.y2 && b.y2 * v.zoom + v.pan.y > c.y1);
     let mudou = false;
@@ -1365,10 +1409,14 @@ footer.visivel { display: flex; }
     if (mudou) v = calc();
     return v;
   }
-  function enquadrarTudo(eles, pad, animar) {
+  function enquadrarTudo(eles, pad, animar, calado) {
     if (!cy) return;
     const v = enquadreSeguro(eles && eles.nonempty() ? eles : cy.elements(":visible"), pad == null ? 40 : pad);
     if (!v) return;
+    if (!calado) {
+      if (v.recortado) aviso(t("zoomLegivel"), 5000);
+      else if ($("aviso").textContent === t("zoomLegivel")) $("aviso").hidden = true;       // não deixa o aviso de uma visão anterior
+    }
     cy.stop(true);
     if (animar) cy.animate({ zoom: v.zoom, pan: v.pan, duration: dur(200), easing: "ease-out-cubic" });
     else cy.viewport({ zoom: v.zoom, pan: v.pan });
@@ -1388,6 +1436,27 @@ footer.visivel { display: flex; }
   }
   function enquadrar() { enquadrarTudo(null, 40, true); }
 
+  // Rótulos de ligação que cairiam um sobre o outro (ou sobre um nó que não é ponta da ligação) não se atropelam: fica o
+  // mais curto e os demais aparecem ao passar o mouse. Refeito quando o zoom para, porque a sobreposição depende dele.
+  let rotulosTimer = 0;
+  function rotulosSemColisao() {
+    if (!cy) return;
+    const eds = cy.edges(".vizinho, .caminho");
+    cy.edges(".sem-rotulo").removeClass("sem-rotulo");
+    if (eds.length < 2) return;
+    const so = { includeNodes: false, includeEdges: false, includeLabels: true, includeOverlays: false };
+    const bate = (a, b) => a.x1 < b.x2 && a.x2 > b.x1 && a.y1 < b.y2 && a.y2 > b.y1;
+    const nos = cy.nodes(":visible").filter(n => !n.data("grupo")).map(n => ({ id: n.id(), b: n.boundingBox({ includeLabels: false, includeOverlays: false }) }));
+    const mantidos = [];
+    eds.sort((a, b) => String(a.data("label")).length - String(b.data("label")).length).forEach(ed => {
+      const b = ed.boundingBox(so);
+      if (!(b.w > 0 && b.h > 0)) return;
+      const pontas = [ed.source().id(), ed.target().id()];
+      if (mantidos.some(m => bate(m, b)) || nos.some(n => !pontas.includes(n.id) && bate(n.b, b))) ed.addClass("sem-rotulo"); else mantidos.push(b);
+    });
+  }
+  function agendarRotulos() { clearTimeout(rotulosTimer); rotulosTimer = setTimeout(rotulosSemColisao, 160); }
+
   function criarCy(elems) {
     if (cy) cy.destroy();
     cy = cytoscape({ container: $("cy"), elements: elems, style: estilo(), minZoom: 0.05, maxZoom: 3, boxSelectionEnabled: false });
@@ -1397,9 +1466,13 @@ footer.visivel { display: flex; }
       if (ev.originalEvent && ev.originalEvent.shiftKey && focoId && focoId !== n.data("eid")) { mostrarCaminho(focoId, n.data("eid")); return; }
       focar(n.data("eid"), true);
     });
-    cy.on("tap", "edge", ev => detalhesRelacao(ev.target.data("rid"), ev.target.data("passo")));
+    cy.on("tap", "edge", ev => {
+      detalhesRelacao(ev.target.data("rid"), ev.target.data("passo"));
+      if (estreito() && !fluxo) enquadrarVisivel(ev.target.union(ev.target.connectedNodes()), 1.3);   // a folha do inspetor cobre metade da tela
+    });
     cy.on("dbltap", "node", ev => { const n = ev.target; if (!n.data("grupo")) abrirVizinhanca(n.data("eid")); });
     cy.on("tap", ev => { if (ev.target === cy) limparFoco(); });
+    cy.on("zoom", agendarRotulos);
     cy.on("mouseover", "edge", ev => { const ed = ev.target; if (!ed.hasClass("apagado")) ed.style("label", (ed.data("ordem") ? ed.data("ordem") + ". " : "") + ed.data("label")); });
     cy.on("mouseout", "edge", ev => { ev.target.removeStyle("label"); });
     aplicarFiltros();
@@ -1409,13 +1482,28 @@ footer.visivel { display: flex; }
   }
 
   // ------------------------------------------------------------ rotas: #visao, #identificador, #fluxo/<chave>/<n>
-  function marcarHash(h) { try { history.replaceState(null, "", location.pathname + location.search + h); } catch (e) { /* file:// sem history */ } }
+  // Mudar de visão ou de fluxo cria uma entrada no histórico (Voltar volta à visão anterior); andar pelos passos de um
+  // fluxo só troca o hash da entrada atual. Rotas vindas do próprio navegador (hash digitado, Voltar, Avançar) nunca
+  // empilham: o navegador já fez a entrada, o mapa só a acompanha.
+  const HASH_TL = "#linha-do-tempo";
+  let pushPendente = false, emRota = false, ultimaRota = "", hashMapa = "";
+  function marcarHash(h, empilhar) {
+    const push = (empilhar || pushPendente) && !emRota; pushPendente = false;
+    if (h !== HASH_TL) hashMapa = h;
+    const url = location.pathname + location.search + h;
+    try {
+      if (push && decodeURIComponent(location.hash) !== decodeURIComponent(h)) history.pushState(null, "", url);
+      else history.replaceState(null, "", url);
+    } catch (e) { /* file:// sem history */ }
+    ultimaRota = location.hash;
+  }
   function marcarLista(chave) {
     document.querySelectorAll("[data-visao]").forEach(b => { const on = b.dataset.visao === chave; b.classList.toggle("ativo", on); if (on) b.setAttribute("aria-current", "true"); else b.removeAttribute("aria-current"); });
   }
 
   function abrirVisao(chave, opts) {
     opts = opts || {};
+    fecharTL(true);
     pararFluxo();
     focoId = null;
     marcarLista(chave);
@@ -1429,9 +1517,21 @@ footer.visivel { display: flex; }
       criarCy(elementosCy(visaoAtual.elementos, visaoAtual.relacoes, din ? visaoAtual : null));
     }
     tituloVisao();
+    pushPendente = true;
     if (visaoAtual.tipo === "dinamica") iniciarPercurso(visaoAtual, opts.passo || 0);
-    else { marcarHash("#" + encodeURIComponent(chave)); aplicarDestaque(); detalhesVazios(); }
+    else { if (!opts.semHash) marcarHash("#" + encodeURIComponent(chave)); aplicarDestaque(); detalhesVazios(); }
+    pushPendente = false;
   }
+  // A Linha do tempo (linha-do-tempo-ui.js) cobre o mapa: escolher visão, fluxo ou elemento fecha o painel.
+  // O hash do painel (#linha-do-tempo) dá a ele uma rota própria; ao fechar, volta o hash do mapa por baixo.
+  function fecharTL(semHash) {
+    const tl = window.LodemapLinhaDoTempo;
+    if (!tl || !tl.aberto()) return false;
+    tl.fechar();
+    if (!semHash && location.hash === HASH_TL && !emRota) marcarHash(hashMapa || "#" + encodeURIComponent(visaoAtual ? visaoAtual.chave : ""), true);
+    return true;
+  }
+  window.LodemapRota = { fecharTL, empilhar: h => marcarHash(h, true), aberto: () => !!(window.LodemapLinhaDoTempo && window.LodemapLinhaDoTempo.aberto()) };
 
   // Visões do modelo trazem título e descrição prontos; "Modelo inteiro" e a vizinhança montam os deles (rotular) no idioma atual.
   function tituloVisao() {
@@ -1499,6 +1599,7 @@ footer.visivel { display: flex; }
     }
     detalhes(id);
     if (enquadrarFoco && alvo) enquadrarVisivel(alvo);
+    agendarRotulos();
   }
 
   function limparClasses() {
@@ -1530,6 +1631,7 @@ footer.visivel { display: flex; }
     detalhes(a, `<div class="impacto">${t("caminhoAte", esc(E.get(b).nome), plural(res.path.edges().length, "pSalto"), t(direcionado ? "setas" : "semSetas"))}<ol>${passos.join("")}</ol></div>`);
     reInspetor = () => mostrarCaminho(a, b);
     enquadrarVisivel(res.path);
+    agendarRotulos();
   }
 
   // ------------------------------------------------------------ percurso (visões dinâmicas): tudo desenhado, passo destacado
@@ -1538,7 +1640,7 @@ footer.visivel { display: flex; }
   function iniciarPercurso(v, n) {
     fluxo = v; passo = -1;
     $("rodape").classList.add("visivel");
-    if (cy) { cy.resize(); enquadrarTudo(null, 40, false); }
+    if (cy) { cy.resize(); enquadrarTudo(null, 40, false, true); }
     mostrarPercurso();
     irPasso(Math.max(0, n) - 1, true);
     aplicarDestaque();
@@ -1612,9 +1714,9 @@ footer.visivel { display: flex; }
     catch (e) { aviso(t("linkCopiar")); }
   }
   let avisoTimer = null;
-  function aviso(txt) {
+  function aviso(txt, ms) {
     $("aviso").textContent = txt; $("aviso").hidden = false;
-    clearTimeout(avisoTimer); avisoTimer = setTimeout(() => { $("aviso").hidden = true; }, 2400);
+    clearTimeout(avisoTimer); avisoTimer = setTimeout(() => { $("aviso").hidden = true; }, ms || 2400);
   }
 
   // ------------------------------------------------------------ filtros, destaques e legenda
@@ -1655,12 +1757,13 @@ footer.visivel { display: flex; }
     const p = colorir; let itens;
     if (p.startsWith("tag:")) itens = [["var(--brand)", t("marcadoComo", nomeTag(p.slice(4)))], ["var(--status-fora)", t("semMarcador")]];
     else if (p === "status") itens = STATUS.map(x => [`var(${x[2]})`, rotSt(x[0])]).concat([["var(--label-3)", rotSt("Externo")]]);
-    else if (p === "saude") itens = [["var(--ok)", "Teste referencia código"], ["var(--warn)", "Sem referência encontrada"], ["var(--label-3)", "Desconhecido"]];
+    else if (p === "saude") itens = [["var(--ok)", t("legSaude")[0]], ["var(--warn)", t("legSaude")[1]], ["var(--label-3)", t("legSaude")[2]]];
     else if (p === "area") itens = Object.entries(paletaArea).map(([k, c]) => [c, rotTipo(k)]);
     else if (p === "container") itens = Object.entries(paletaCont).map(([k, c]) => [c, rotTipo(k)]);
     else if (p === "obs") itens = [["var(--ok)", t("obsSim")], ["var(--status-fora)", t("obsNao")]];
     else itens = Object.entries(paletaTipo).map(([k, c]) => [c, rotTipo(k)]);
     let extra = `<div style="margin-top:4px"><span class="anel"></span>${t("legFoco")}</div><div><span class="traco" style="background:var(--brand)"></span>${t("legSaida")}</div><div><span class="traco" style="background:var(--label-2)"></span>${t("legEntrada")}</div>`;
+    if (p === "saude") extra = `<div class="vazio">${esc(t("saudeAviso"))}</div>` + extra;
     if (fluxo) extra += `<div><span class="num-leg">3</span>${t("legOrdem")}</div>`;
     if (destaque === "semprova") extra += `<div><span class="traco" style="background:var(--ok)"></span>${t("legConfirmada")}</div><div><span class="traco tracejado" style="color:var(--warn)"></span>${t("legSoModelo")}</div>`;
     if (destaque === "mudou") extra += `<div><span class="anel" style="border-color:var(--warn)"></span>${esc(t("legMudou", curto(MUD.de)))}</div>`;
@@ -1793,7 +1896,6 @@ footer.visivel { display: flex; }
     else if (p.estado === "confirmada") prova = `<div class="impacto"><b>${t("confirmadaTitulo")}</b><br>${t("confirmadaCorpo", plural(p.arestas, "pAresta"), t(p.tipo === "calls" ? "tipoChamada" : "tipoImport"), esc(t("confianca")[p.confianca] || p.confianca), esc(D.prova.fonte))}</div>`;
     else prova = `<div class="impacto aviso"><b>${t("soModeloTitulo")}</b><br>${t("soModeloCorpo", esc(D.prova.fonte))}</div>`;
     $("detalhes").innerHTML = `${fluxo ? `<button type="button" class="voltar" id="voltarPercurso"><svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3.5 5.5 8l4.5 4.5"/></svg>${t("voltarPercurso")}</button>` : ""}
-      <div class="det-tipo">${t("ligacao")}</div>
       <div class="det-nome">${esc(nomeRel(r))}</div>
       <div class="det-desc">${esc(r.desc)}${r.tech ? " · " + esc(r.tech) : ""}</div>
       ${prova}
@@ -1863,6 +1965,7 @@ footer.visivel { display: flex; }
   }
 
   function irPara(id) {
+    fecharTL();
     if (cy && cy.getElementById("n" + id).nonempty()) focar(id, true);
     else abrirVizinhanca(id);
   }
@@ -1961,17 +2064,19 @@ footer.visivel { display: flex; }
   $("fecharDetalhe").addEventListener("click", () => { if (fluxo && inspetor !== "percurso") { focoId = null; estadoBase(); mostrarPercurso(); } folha(false); });
   $("btnMostrarTodos").addEventListener("click", () => { ocultos.clear(); $("filtrosStatus").querySelectorAll("input").forEach(i => { i.checked = true; }); aplicarFiltros(); });
   $("colorir").addEventListener("change", ev => definirColorir(ev.target.value));
-  const saudeBtn = document.createElement("button"); saudeBtn.className="item"; saudeBtn.textContent="Saúde dos componentes";
+  const saudeBtn = document.createElement("button"); saudeBtn.className = "item"; saudeBtn.dataset.i18n = "saudeBotao"; saudeBtn.textContent = t("saudeBotao");
   $("esq").insertBefore(saudeBtn, $("esq").firstChild);
   saudeBtn.addEventListener("click", async () => {
     painel(false);
-    const dados=await window.LodemapSaude.carregar();
-    if (!dados) { $("aviso").textContent="Evidências indisponíveis. Gere evidencias.js para este mapa."; $("aviso").hidden=false; return; }
-    const vs=window.LODEMAP_LINHA_DO_TEMPO && window.LODEMAP_LINHA_DO_TEMPO.versoes;
-    window.LodemapSaude.referencia(vs && vs.length ? vs[vs.length-1].sha_completo : null);
-    if (!$('colorir').querySelector('[value="saude"]')) $('colorir').insertAdjacentHTML('beforeend', '<option value="saude">Saúde</option>');
-    definirColorir('saude');
-    $("aviso").textContent="Saúde: referências estáticas, não execução. Árvore de trabalho não verificada."; $("aviso").hidden=false;
+    const dados = await window.LodemapSaude.carregar();
+    if (!dados) { aviso(t("saudeIndisponivel"), 6000); return; }
+    const vs = window.LODEMAP_LINHA_DO_TEMPO && window.LODEMAP_LINHA_DO_TEMPO.versoes;
+    window.LodemapSaude.referencia(vs && vs.length ? vs[vs.length - 1].sha_completo : null);
+    saudeAtiva = true;
+    opcaoSaude();
+    definirColorir("saude");
+    // O aviso some sozinho; a mesma ressalva fica na Legenda enquanto a cor por saúde estiver ligada.
+    aviso(t("saudeAviso"), 6000);
   });
   $("btnReorganizar").addEventListener("click", () => rodarLayout(true));
   $("btnEnquadrar").addEventListener("click", enquadrar);
@@ -1988,7 +2093,7 @@ footer.visivel { display: flex; }
     if (!$("paleta").hidden) return;
     if (ev.target.matches("input, select, textarea")) { if (ev.key === "Escape") ev.target.blur(); return; }
     if (ev.metaKey || ev.ctrlKey || ev.altKey) return;
-    if (ev.key === "Escape") { painel(false); if (focoId || inspetor !== "percurso") limparFoco(); else folha(false); }
+    if (ev.key === "Escape") { if (fecharTL()) return; painel(false); if (focoId || inspetor !== "percurso") limparFoco(); else folha(false); }
     else if (ev.key === "/") { ev.preventDefault(); $("busca").focus(); }
     else if (ev.key.toLowerCase() === "f" && cy) enquadrar();
     else if (fluxo && ev.key === "ArrowRight") { ev.preventDefault(); irPasso(passo + 1, true); }
@@ -1997,7 +2102,20 @@ footer.visivel { display: flex; }
 
   // #<visão> abre a visão; #fluxo/<chave>/<n> abre o percurso no passo n; #<identificador do DSL> foca o elemento na menor visão estática que o contém.
   function rotear(forcar) {
+    const atual = location.hash;
+    if (!forcar && atual === ultimaRota) return;     // hashchange e popstate chegam juntos: só o primeiro vale
+    ultimaRota = atual; emRota = true;
+    try { aplicarRota(forcar); } finally { emRota = false; }
+  }
+  function aplicarRota(forcar) {
     const h = decodeURIComponent((location.hash || "").slice(1));
+    const padrao = D.visoes.some(v => v.chave === "Containers") ? "Containers" : (D.visoes.find(v => v.tipo === "estatica") || { chave: "__tudo" }).chave;
+    if ("#" + h === HASH_TL) {                       // o painel abre por cima do mapa; sem mapa ainda, abre o padrão sem mexer no hash
+      if (!cy) abrirVisao(padrao, { semHash: true });
+      if (window.LodemapLinhaDoTempo) window.LodemapLinhaDoTempo.abrir();
+      return;
+    }
+    if (window.LodemapLinhaDoTempo && window.LodemapLinhaDoTempo.aberto()) window.LodemapLinhaDoTempo.fechar();
     const m = h.match(/^fluxo\/(.+?)(?:\/(\d+))?$/);
     if (m && D.visoes.some(v => v.chave === m[1] && v.tipo === "dinamica")) {
       const n = m[2] ? Number(m[2]) : 0;
@@ -2010,10 +2128,12 @@ footer.visivel { display: flex; }
       if (vis.length) { abrirVisao(vis[0].chave); focar(alvo.id, true); } else { abrirVisao(D.visoes.some(v => v.chave === "Containers") ? "Containers" : "__tudo"); abrirVizinhanca(alvo.id); }
       return;
     }
-    const padrao = D.visoes.some(v => v.chave === "Containers") ? "Containers" : (D.visoes.find(v => v.tipo === "estatica") || { chave: "__tudo" }).chave;
-    abrirVisao(D.visoes.some(v => v.chave === h) || h === "__tudo" ? h : padrao);
+    const chave = D.visoes.some(v => v.chave === h) || h === "__tudo" ? h : padrao;
+    if (!forcar && visaoAtual && visaoAtual.chave === chave && !fluxo) return;   // Voltar para a visão em que já se está
+    abrirVisao(chave);
   }
   window.addEventListener("hashchange", () => rotear(false));
+  window.addEventListener("popstate", () => rotear(false));
 
   lerCores();
   cabecalho();

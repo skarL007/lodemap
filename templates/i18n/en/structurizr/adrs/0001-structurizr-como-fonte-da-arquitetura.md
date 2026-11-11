@@ -8,9 +8,7 @@ decisores: [owner]
 elementos: [sistema]
 substitui: []
 substituida_por: []
-evidencia:
-  - workspace.dsl
-  - scripts/atualizar.ps1
+evidencia: []
 ---
 
 # Structurizr as the source of the architecture
@@ -23,7 +21,7 @@ The architecture has to be studied, changed and checked against the code, withou
 
 The architecture lives in Structurizr (a C4 model in DSL), with one component per real module, status by color, code and
 observability properties, and views by area, by flow and by status. The explorer, the docs reader, the derived documents
-and the metrics are generated from the model itself by `scripts/atualizar.ps1`.
+and the metrics are generated from the model itself by the Lodemap updater (`scripts/atualizar.ps1`).
 
 ## Alternatives
 

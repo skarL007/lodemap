@@ -20,6 +20,7 @@ import html
 import json
 import os
 import re
+import subprocess
 import sys
 import unicodedata
 from datetime import datetime
@@ -585,15 +586,55 @@ def _resumo_adr(corpo_html: str) -> str:
     return _resumo(m.group(1)) if m else _resumo(corpo_html)
 
 
-def _evidencia(item: str, cfg: dict) -> dict:
+def _git(base: Path, *args: str) -> str:
+    try:
+        r = subprocess.run(["git", "-C", str(base), *args], capture_output=True, text=True, encoding="utf-8", timeout=10)
+    except (OSError, subprocess.SubprocessError):
+        return ""
+    return r.stdout.strip() if r.returncode == 0 else ""
+
+
+def _norm_repo(url: str) -> str:
+    u = re.sub(r"^git@([^:]+):", lambda m: "https://" + m.group(1) + "/", url.strip()).lower().rstrip("/")
+    return re.sub(r"\.git$", "", u)
+
+
+def _repo_mapeado(base: Path, cfg: dict) -> dict:
+    """O que se sabe do repositório mapeado: caminhos do inventário e, se a pasta é um clone dele (origin igual a
+    `repo_github`), a raiz do clone. Uma evidência só vira link se o caminho existe de fato no repositório mapeado."""
+    caminhos: set[str] = set()
+    inv = base / "inventario.json"
+    if inv.is_file():
+        try:
+            caminhos = {m["caminho"] for m in json.loads(inv.read_text(encoding="utf-8-sig")).get("modulos", []) if m.get("caminho")}
+        except (ValueError, AttributeError, TypeError):
+            caminhos = set()
+    raiz = None
+    repo = cfg.get("repo_github") or ""
+    topo = _git(base, "rev-parse", "--show-toplevel") if repo else ""
+    if topo and _norm_repo(_git(base, "remote", "get-url", "origin")) == _norm_repo(repo):
+        raiz = Path(topo)
+    return {"caminhos": caminhos, "raiz": raiz, "base": base}
+
+
+def _evidencia(item: str, cfg: dict, mapeado: dict | None = None) -> dict:
     if re.match(r"^https?://", item):
         return {"texto": item, "url": item}
     repo = (cfg.get("repo_github") or "").rstrip("/")
     ramo = cfg.get("ramo") or "main"
     caminho = re.sub(r"\s*\([^)]*\)\s*$", "", item.split("#", 1)[0]).strip()
-    if repo and not caminho.startswith(("/", "\\")) and ":" not in caminho:
-        return {"texto": item, "url": f"{repo}/blob/{ramo}/{caminho}"}
-    return {"texto": item, "url": ""}
+    if not repo or not caminho or caminho.startswith(("/", "\\")) or ":" in caminho:
+        return {"texto": item, "url": ""}
+    m = mapeado or {"caminhos": set(), "raiz": None, "base": None}
+    rel = None
+    if caminho in m["caminhos"]:
+        rel = caminho
+    elif m["raiz"] is not None:
+        for cand in (m["raiz"] / caminho, m["base"] / caminho):          # relativo à raiz do repositório ou à pasta do mapa
+            if cand.is_file():
+                rel = cand.resolve().relative_to(m["raiz"].resolve()).as_posix()
+                break
+    return {"texto": item, "url": f"{repo}/blob/{ramo}/{rel}" if rel else ""}
 
 
 def montar(ws: dict, base: Path, cfg: dict) -> dict:
@@ -627,6 +668,7 @@ def montar(ws: dict, base: Path, cfg: dict) -> dict:
         busca += _secoes_busca(ancora, titulo, corpo_sem_h1, dict((k, t) for k, t, _ in secoes_leitor)[docs[-1]["secao"]], docs[-1]["secao"])
 
     erros = validar_adrs(adrs, set(elementos) if elementos else None, idioma)
+    mapeado = _repo_mapeado(base, cfg)
     lista_adrs = []
     for a in adrs:
         ident = a["id"] or a["id_arquivo"]
@@ -642,7 +684,7 @@ def montar(ws: dict, base: Path, cfg: dict) -> dict:
             "elementos": [{"ident": e, "nome": elementos.get(e, {}).get("nome", e), "tipo": elementos.get(e, {}).get("tipo", ""),
                            "existe": e in elementos} for e in a["elementos"]],
             "substitui": a["substitui"], "substituidaPor": a["substituida_por"], "aliases": a["aliases"],
-            "evidencia": [_evidencia(x, cfg) for x in a["evidencia"]],
+            "evidencia": [_evidencia(x, cfg, mapeado) for x in a["evidencia"]],
             "resumo": _resumo_adr(corpo), "html": corpo, "toc": ctx.toc,
         })
         secoes = _secoes_busca(ancora, f"ADR {ident} · {titulo}", corpo, secoes_leitor[3][1], "decisoes")

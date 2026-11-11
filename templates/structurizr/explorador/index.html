@@ -1552,13 +1552,30 @@ footer.visivel { display: flex; }
       });
       return { x0, y0 };
     };
-    // Fluxo longo: o recorte começa no primeiro passo (acima do primeiro nó, livre do cartão de título), não onde cabem mais nós.
-    const janelaDoFluxo = (fx, fy) => ({ x0: fx ? bb.x1 : ancora.x1 - 8, y0: fy ? bb.y1 : ancora.y1 - 8 });
+    // Fluxo longo: o recorte começa no primeiro passo (acima do primeiro nó, livre do cartão de título). Na largura, entre as
+    // janelas que contêm o primeiro passo, fica a que mostra mais nós inteiros e corta menos nós na beira: um nó pela metade
+    // ("ha de", "s de posta") lê pior do que um nó fora da tela, que a pessoa alcança arrastando.
+    const janelaDoFluxo = (zoom, lw, lh, fx, fy) => {
+      const W = lw / zoom, H = lh / zoom, y0 = fy ? bb.y1 : ancora.y1 - 8;
+      if (fx) return { x0: bb.x1, y0 };
+      const faixa = nos.filter(b => fy || (b.y2 > y0 && b.y1 < y0 + H));
+      const cands = new Set([ancora.x1 - 8, ancora.x2 - W + 8]);
+      faixa.forEach(b => { cands.add(b.x1 - 8); cands.add(b.x2 - W + 8); });
+      let melhor = null;
+      cands.forEach(x0 => {
+        if (x0 > ancora.x1 || x0 + W < ancora.x2) return;
+        const inteiros = faixa.filter(b => b.x1 >= x0 && b.x2 <= x0 + W).length;
+        const cortados = faixa.filter(b => b.x1 < x0 + W && b.x2 > x0 && !(b.x1 >= x0 && b.x2 <= x0 + W)).length;
+        const nota = inteiros - 1.5 * cortados, dist = Math.abs(x0 - (ancora.x1 - 8));
+        if (!melhor || nota > melhor.nota || (nota === melhor.nota && dist < melhor.dist)) melhor = { x0, nota, dist };
+      });
+      return { x0: melhor ? melhor.x0 : ancora.x1 - 8, y0 };
+    };
     const calc = () => {
       const lw = Math.max(40, w - m.l - m.r), lh = Math.max(40, h - m.t - m.b);
       const ajuste = Math.min(lw / Math.max(1, bb.w), lh / Math.max(1, bb.h));
       const zoom = Math.max(cy.minZoom(), Math.min(cy.maxZoom(), Math.max(ajuste, zoomLegivel())));
-      const fx = bb.w * zoom <= lw, fy = bb.h * zoom <= lh, j = fx && fy ? null : ancora ? janelaDoFluxo(fx, fy) : janela(zoom, lw, lh, fx, fy);
+      const fx = bb.w * zoom <= lw, fy = bb.h * zoom <= lh, j = fx && fy ? null : ancora ? janelaDoFluxo(zoom, lw, lh, fx, fy) : janela(zoom, lw, lh, fx, fy);
       return { zoom, recortado: ajuste < zoomLegivel(), pan: {
         x: fx ? m.l + (lw - bb.w * zoom) / 2 - zoom * bb.x1 : m.l - zoom * j.x0,
         y: fy ? m.t + (lh - bb.h * zoom) / 2 - zoom * bb.y1 : m.t - zoom * j.y0 } };

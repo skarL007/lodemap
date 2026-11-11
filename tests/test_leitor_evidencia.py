@@ -61,3 +61,13 @@ def test_url_completa_continua_link_e_o_adr_do_modelo_nao_cita_arquivos_do_templ
                 *(ROOT / "exemplos" / "axios" / "adrs").glob("0001-*.md")]:
         meta, _ = gl.ler_frontmatter(adr.read_text(encoding="utf-8"))
         assert not meta.get("evidencia"), adr
+
+
+def test_formas_do_remoto_que_apontam_para_o_mesmo_repositorio():
+    # `url.insteadOf` (o checkout do CircleCI reescreve https://github.com para ssh://git@github.com) não pode
+    # desligar os links: todas estas formas são o mesmo repositório.
+    for u in ("https://github.com/exemplo/mapa.git", "git@github.com:exemplo/mapa.git",
+              "ssh://git@github.com/exemplo/mapa.git", "ssh://git@github.com:22/Exemplo/Mapa/",
+              "git+ssh://git@github.com/exemplo/mapa"):
+        assert gl._norm_repo(u) == gl._norm_repo(REPO), u
+    assert gl._norm_repo("ssh://git@github.com/outro/mapa.git") != gl._norm_repo(REPO)

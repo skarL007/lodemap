@@ -595,8 +595,14 @@ def _git(base: Path, *args: str) -> str:
 
 
 def _norm_repo(url: str) -> str:
-    u = re.sub(r"^git@([^:]+):", lambda m: "https://" + m.group(1) + "/", url.strip()).lower().rstrip("/")
-    return re.sub(r"\.git$", "", u)
+    """Forma comparável do remoto: `git@host:dono/repo`, `ssh://git@host[:porta]/dono/repo` (o que `url.insteadOf`
+    produz, por exemplo no checkout do CircleCI) e `https://host/dono/repo` viram `host/dono/repo`."""
+    u = url.strip().lower()
+    u = re.sub(r"^git@([^:/]+):", r"\1/", u)
+    u = re.sub(r"^[a-z+]+://", "", u)
+    u = re.sub(r"^[^@/]+@", "", u)
+    u = re.sub(r"^([^/:]+):\d+/", r"\1/", u)
+    return re.sub(r"\.git$", "", u.rstrip("/"))
 
 
 def _repo_mapeado(base: Path, cfg: dict) -> dict:

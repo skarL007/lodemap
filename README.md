@@ -3,6 +3,10 @@
 **Veja como seu sistema funciona e como sua arquitetura vem mudando. Fluxos, linha do tempo do Git e evidências
 locais, em um mapa que vive no seu repositório.**
 
+[![Vídeo de lançamento do Lodemap (48 s, com som): os 14 passos de uma requisição do axios, as cinco releases e o teste que falha quando o mapa fica para trás](assets/video-capa.jpg)](https://skarl007.github.io/lodemap/#video)
+
+**Versão atual:** [v0.1.0](https://github.com/skarL007/lodemap/releases/tag/v0.1.0) · **Página e vídeo:** [skarl007.github.io/lodemap](https://skarl007.github.io/lodemap/) · **Demo:** [mapa do axios](https://skarl007.github.io/lodemap/demo/explorador/)
+
 O Lodemap oferece observabilidade da arquitetura para pessoas: quem conversa com quem, por onde passa cada fluxo,
 o que mudou entre versões do mapa e quais evidências locais estão ligadas a cada componente. O modelo C4 em
 [Structurizr DSL](https://docs.structurizr.com/dsl) fica ao lado do código; scripts geram o explorador interativo,

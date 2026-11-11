@@ -520,10 +520,15 @@ kbd { font: var(--weight-medium) 11px / 1 var(--font-mono); padding: 2px 5px; wh
 #ferramentas .botao { border-color: transparent; }
 #legendaCaixa { left: var(--space-3); bottom: var(--space-3); max-width: 280px; padding: var(--space-2) var(--space-3); font-size: var(--text-xs); }
 #legendaCaixa summary { cursor: pointer; color: var(--label-2); font-weight: var(--weight-medium); border-radius: 4px; }
-@media (hover: none) and (pointer: coarse) {
-  #kbdPaleta { display: none; }                                  /* atalho de teclado não faz sentido no toque */
+@media (hover: none) and (pointer: coarse), (max-width: 720px) {
+  #kbdPaleta { display: none; }                                  /* atalho de teclado não faz sentido no toque nem numa janela estreita */
   #btnPaleta { height: 32px; min-width: 32px; justify-content: center; }
   #btnPaleta::after { content: "⋯"; color: var(--label-2); font-size: var(--text-lg); line-height: 1; }
+}
+@media (hover: none) and (pointer: coarse) {
+  #legendaCaixa { padding-block: 0; }
+  #legendaCaixa summary { padding-block: 13px; }                 /* alvo de toque de 44 px também no tablet, acima de 900 px */
+  #legendaCaixa[open] { padding-bottom: var(--space-2); }
 }
 #legenda { display: flex; flex-direction: column; gap: var(--space-1); margin-top: var(--space-2); max-height: 36vh; overflow: auto; color: var(--label-2); }
 #legenda div { display: flex; align-items: center; gap: var(--space-2); }
@@ -1263,10 +1268,10 @@ footer.visivel { display: flex; }
       { selector: "node.passo", style: { "border-width": 2, "border-color": C.brand, "z-index": 99 } },
       { selector: "node.vizinho", style: { "border-color": C.label2 } },
       { selector: "node.foco", style: { "border-width": 2, "border-color": C.brand, "z-index": 99 } },
-      { selector: "edge.vizinho", style: { "line-color": C.brand, "target-arrow-color": C.brand, "width": 1.6, "opacity": 1, "label": "data(label)", "z-index": 98 } },
+      { selector: "edge.vizinho", style: { "line-color": C.brand, "target-arrow-color": C.brand, "width": 1.6, "opacity": 1, "label": "data(label)", "font-size": 12, "z-index": 98 } },
       { selector: "edge.vizinho.entra", style: { "line-color": C.label2f, "target-arrow-color": C.label2f } },
       { selector: "node.caminho", style: { "border-width": 2, "border-color": C.brand } },
-      { selector: "edge.caminho", style: { "line-color": C.brand, "target-arrow-color": C.brand, "width": 2.4, "opacity": 1, "label": "data(label)", "z-index": 99 } },
+      { selector: "edge.caminho", style: { "line-color": C.brand, "target-arrow-color": C.brand, "width": 2.4, "opacity": 1, "label": "data(label)", "font-size": 12, "z-index": 99 } },
       { selector: "node.realce", style: { "border-width": 2, "border-color": C.warn, "z-index": 90 } },
       { selector: "edge.realce.semprova", style: { "line-color": C.warn, "target-arrow-color": C.warn, "line-style": "dashed", "line-dash-pattern": [6, 4], "width": 1.8, "opacity": 1, "z-index": 90 } },
       { selector: "edge.realce.provada", style: { "line-color": C.ok, "target-arrow-color": C.ok, "width": 2.4, "opacity": 1, "z-index": 91 } },
@@ -1320,9 +1325,10 @@ footer.visivel { display: flex; }
       if (!cy) return;
       cy.resize();
       if (grade) agruparSoltos(grade, foraDoLayout);
-      else if (opts.name === "dagre") fileirasNoCelular();
+      else if (opts.name === "dagre" && !colunaDoFluxo()) fileirasNoCelular();
+      desviarArestas(cy, estreito() ? { w: cy.width(), zoom: zoomLegivel() } : null);
       const alvo = focoId ? cy.elements(".foco, .vizinho, .caminho") : cy.elements(":visible");
-      enquadrarTudo(alvo, focoId ? 70 : 40, false);
+      enquadrarTudo(alvo, focoId ? 70 : 40, false, false, ancoraDoFluxo());
     });
     lay.run();
   }
@@ -1360,6 +1366,110 @@ footer.visivel { display: flex; }
       });
       y += ENTRE - GY;
     });
+  }
+  // No celular um fluxo vira uma coluna na ordem dos passos (cada nó onde aparece pela primeira vez), com os nós de um mesmo grupo
+  // juntos: cabe na largura da tela no zoom legível, o passo 1 fica no alto e o resto se alcança rolando. A ligação que pula
+  // nós ganha uma barriga ao lado (desviarArestas) em vez de atravessá-los.
+  function colunaDoFluxo() {
+    if (!estreito() || !cy || (visaoAtual || {}).tipo !== "dinamica" || !(cy.width() > 0)) return false;
+    const nos = cy.nodes(":visible").filter(n => !n.data("grupo"));
+    if (nos.length < 3) return false;
+    const seq = new Map();
+    cy.edges().filter(e => e.data("passo") != null).sort((a, b) => a.data("passo") - b.data("passo")).forEach(e => {
+      [e.source(), e.target()].forEach(n => { if (!seq.has(n.id())) seq.set(n.id(), seq.size); });
+    });
+    const proprio = n => seq.has(n.id()) ? seq.get(n.id()) : 1e6;
+    const grupo = n => { const p = n.parent(); return p.nonempty() ? p : null; };
+    const chave = n => { const p = grupo(n); return p ? Math.min(...p.children().filter(c => !c.hasClass("escondido")).map(proprio)) : proprio(n); };
+    const lista = nos.toArray().sort((a, b) => chave(a) - chave(b) || String(grupo(a) ? grupo(a).id() : "").localeCompare(String(grupo(b) ? grupo(b).id() : "")) || proprio(a) - proprio(b));
+    const bb = nos.boundingBox({ includeLabels: false, includeOverlays: false }), cx0 = bb.x1 + bb.w / 2, ENTRE = 52, GRUPO = 36;
+    let y = bb.y1, antes;
+    lista.forEach(n => {
+      const g = grupo(n) ? grupo(n).id() : "";
+      if (antes !== undefined) y += ENTRE + (g !== antes ? GRUPO : 0);
+      n.position({ x: cx0, y: y + n.outerHeight() / 2 });
+      y += n.outerHeight(); antes = g;
+    });
+    return true;
+  }
+  // Segmento p-q contra o retângulo b (Liang-Barsky).
+  function segmentoBate(p, q, b) {
+    let t0 = 0, t1 = 1; const dx = q.x - p.x, dy = q.y - p.y;
+    for (const [d, e] of [[-dx, p.x - b.x1], [dx, b.x2 - p.x], [-dy, p.y - b.y1], [dy, b.y2 - p.y]]) {
+      if (d === 0) { if (e < 0) return false; continue; }
+      const r = e / d;
+      if (d < 0) { if (r > t1) return false; if (r > t0) t0 = r; } else { if (r < t0) return false; if (r < t1) t1 = r; }
+    }
+    return t0 < t1;
+  }
+  // Pontos da curva de um só vão que o Cytoscape desenha com ponto de controle no meio da corda, à distância c dela.
+  function curvaDaAresta(p, q, c) {
+    const L = Math.hypot(q.x - p.x, q.y - p.y) || 1, nx = -(q.y - p.y) / L, ny = (q.x - p.x) / L;
+    const m = { x: (p.x + q.x) / 2 + nx * c, y: (p.y + q.y) / 2 + ny * c }, pts = [];
+    for (let k = 0; k <= 20; k++) { const u = k / 20, a = (1 - u) * (1 - u), b = 2 * (1 - u) * u, d = u * u; pts.push({ x: a * p.x + b * m.x + d * q.x, y: a * p.y + b * m.y + d * q.y }); }
+    return pts;
+  }
+  // O Cytoscape liga os centros em linha reta, e depois do layout (e, no celular, das fileiras) uma ligação pode passar por trás
+  // de um nó que não é ponta dela. Essa ligação ganha uma barriga para o lado que pede menos desvio, só a que precisa; as
+  // paralelas (mesmo par de nós) se afastam entre si. Sem lado que livre o nó, a ligação fica reta.
+  const SENTIDO_CY = 1;     // sinal da normal do Cytoscape em control-point-distances, medido no navegador
+  function desviarArestas(g, tela) {
+    if (!g) return;
+    g.edges().removeStyle("curve-style control-point-distances control-point-weights");
+    const nos = g.nodes(":visible").filter(n => !n.data("grupo")).map(n => ({ id: n.id(), b: n.boundingBox({ includeLabels: false, includeOverlays: false }), c: n.position() }));
+    // `tela` ({ w, zoom }, no celular): a barriga pode usar o vão que sobra dos lados do grafo, dentro da largura da tela no zoom legível.
+    const largo = tela && nos.length ? Math.max(...nos.map(n => n.b.x2)) - Math.min(...nos.map(n => n.b.x1)) : 0;
+    const FOLGA = 10, PASSO = 44, LIMITE = 600, FORA = largo ? Math.max(36, (tela.w / tela.zoom - largo) / 2 - 8) : 36;
+    // A barriga não pode empurrar o grafo para fora do retângulo dos nós (mais FORA): senão o enquadre cresce por causa dela.
+    const area = nos.length ? { x1: Math.min(...nos.map(n => n.b.x1)) - FORA, y1: Math.min(...nos.map(n => n.b.y1)) - FORA, x2: Math.max(...nos.map(n => n.b.x2)) + FORA, y2: Math.max(...nos.map(n => n.b.y2)) + FORA } : null;
+    const dentro = pts => !area || pts.every(a => a.x >= area.x1 && a.x <= area.x2 && a.y >= area.y1 && a.y <= area.y2);
+    const livre = (pts, s, t) => dentro(pts) && !nos.some(n => n.id !== s && n.id !== t && pts.some((a, i) => i + 1 < pts.length && segmentoBate(a, pts[i + 1], { x1: n.b.x1 - 2, y1: n.b.y1 - 2, x2: n.b.x2 + 2, y2: n.b.y2 + 2 })));
+    const grupos = new Map();
+    g.edges(":visible").forEach(ed => {
+      if (ed.source().id() === ed.target().id()) return;
+      const k = [ed.source().id(), ed.target().id()].sort().join("|");
+      if (!grupos.has(k)) grupos.set(k, []);
+      grupos.get(k).push(ed);
+    });
+    const usados = { 1: 0, "-1": 0 };
+    grupos.forEach(lista => {
+      const ed0 = lista[0], s = ed0.source(), t = ed0.target(), p = s.position(), q = t.position();
+      const L = Math.hypot(q.x - p.x, q.y - p.y); if (L < 1) return;
+      const nx = -(q.y - p.y) / L, ny = (q.x - p.x) / L;
+      const alvos = nos.filter(n => n.id !== s.id() && n.id !== t.id() && segmentoBate(p, q, n.b));
+      if (!alvos.length) return;
+      // Distância do retângulo à corda, com sinal, e posição dele ao longo da corda (0 a 1): quanto mais perto de uma ponta,
+      // mais a curva precisa se abrir para já ter saído do caminho ali.
+      const precisa = lado => Math.max(...alvos.map(n => {
+        const cantos = [[n.b.x1, n.b.y1], [n.b.x2, n.b.y1], [n.b.x1, n.b.y2], [n.b.x2, n.b.y2]].map(([x, y]) => (x - p.x) * nx + (y - p.y) * ny);
+        const u = Math.min(0.85, Math.max(0.15, ((n.c.x - p.x) * (q.x - p.x) + (n.c.y - p.y) * (q.y - p.y)) / (L * L)));
+        return ((lado > 0 ? Math.max(...cantos) : -Math.min(...cantos)) + FOLGA) / (2 * u * (1 - u));
+      }));
+      const lados = [precisa(1), precisa(-1)].map((c, i) => ({ lado: i ? -1 : 1, c })).sort((a, b) => a.c - b.c);
+      if (Math.abs(lados[0].c - lados[1].c) < 12 && usados[lados[0].lado] > usados[lados[1].lado]) lados.reverse();   // empate: o lado menos usado
+      for (const { lado, c } of lados) {
+        for (let f = 1; f <= 2.4; f += 0.4) {
+          const dist = lado * Math.min(LIMITE, c * f);
+          if (Math.abs(dist) / 2 > 0.55 * L + 40) break;       // barriga maior que a própria ligação não ajuda a ler: fica reta
+          if (!livre(curvaDaAresta(p, q, dist), s.id(), t.id())) continue;
+          usados[lado] += 1;
+          lista.forEach((ed, i) => {
+            // A normal do Cytoscape aponta para o lado oposto ao do meu cálculo quando a aresta vai do segundo para o primeiro nó do par.
+            const sinal = ed.source().id() === s.id() ? 1 : -1;
+            const extra = (i - (lista.length - 1) / 2) * PASSO * lado;
+            ed.style({ "curve-style": "unbundled-bezier", "control-point-weights": [0.5], "control-point-distances": [sinal * (dist + extra) * SENTIDO_CY] });
+          });
+          return;
+        }
+      }
+    });
+  }
+  window.LodemapDesvio = { desviar: desviarArestas };       // a Linha do tempo usa o mesmo desvio
+  // Primeiro e segundo nó do primeiro passo de um fluxo: o enquadre de um fluxo longo (que não cabe no zoom legível) começa neles.
+  function ancoraDoFluxo() {
+    if (!cy || (visaoAtual || {}).tipo !== "dinamica") return null;
+    const passos = cy.edges().filter(ed => ed.data("passo") != null).sort((a, b) => a.data("passo") - b.data("passo"));
+    return passos.nonempty() ? passos[0].connectedNodes().boundingBox() : null;
   }
   // Nó sem nenhuma ligação na visão (biblioteca de módulos independentes): o dagre empilha todos numa coluna só, e
   // 26 middlewares viram uma tira ilegível. A partir de 4 por pai (cada container tem a sua), eles vão para uma
@@ -1411,6 +1521,8 @@ footer.visivel { display: flex; }
   // Zoom abaixo do qual o texto dos nós (12 px) deixa de ser legível: o enquadre para aqui e o resto se alcança arrastando.
   // No celular o piso é mais alto (texto de 10 px ou mais): a tela é pequena e o texto não tem para onde crescer.
   const zoomLegivel = () => estreito() ? 0.85 : 0.75;
+  // Foco no nó: texto de nó e de rótulo de ligação (12 px nos dois, no foco) de 10 px ou mais.
+  const zoomFoco = () => estreito() ? 0.85 : 0.834;
   // Margens do canvas que a pessoa não enxerga: no celular, o cartão de título e a ferramentas em cima, a Legenda embaixo e,
   // com ela aberta, a folha do inspetor. Os nós ficam na faixa livre entre elas, centrados.
   function margensLivres(pad) {
@@ -1421,9 +1533,11 @@ footer.visivel { display: flex; }
     if (document.body.classList.contains("com-detalhe")) m.b = Math.max(m.b, Math.min($("dir").offsetHeight, h * 0.7) + 10);
     return m;
   }
-  function enquadreSeguro(eles, pad) {
+  function enquadreSeguro(eles, pad, ancora) {
     if (!cy || !eles || eles.empty()) return null;
-    const w = cy.width(), h = cy.height(), bb = eles.boundingBox();
+    const w = cy.width(), h = cy.height();
+    // Fluxo (com âncora): o retângulo é o dos nós; a curva de uma ligação que se abre ou o rótulo de um passo não o empurram.
+    const bb = ancora ? eles.nodes().boundingBox({ includeLabels: false, includeOverlays: false }) : eles.boundingBox();
     if (!(w > 0 && h > 0)) return null;
     const m = margensLivres(Math.min(pad, estreito() ? 16 : pad));
     const nos = eles.nodes().filter(n => !n.data("grupo")).map(n => n.boundingBox());
@@ -1438,11 +1552,13 @@ footer.visivel { display: flex; }
       });
       return { x0, y0 };
     };
+    // Fluxo longo: o recorte começa no primeiro passo (acima do primeiro nó, livre do cartão de título), não onde cabem mais nós.
+    const janelaDoFluxo = (fx, fy) => ({ x0: fx ? bb.x1 : ancora.x1 - 8, y0: fy ? bb.y1 : ancora.y1 - 8 });
     const calc = () => {
       const lw = Math.max(40, w - m.l - m.r), lh = Math.max(40, h - m.t - m.b);
       const ajuste = Math.min(lw / Math.max(1, bb.w), lh / Math.max(1, bb.h));
       const zoom = Math.max(cy.minZoom(), Math.min(cy.maxZoom(), Math.max(ajuste, zoomLegivel())));
-      const fx = bb.w * zoom <= lw, fy = bb.h * zoom <= lh, j = fx && fy ? null : janela(zoom, lw, lh, fx, fy);
+      const fx = bb.w * zoom <= lw, fy = bb.h * zoom <= lh, j = fx && fy ? null : ancora ? janelaDoFluxo(fx, fy) : janela(zoom, lw, lh, fx, fy);
       return { zoom, recortado: ajuste < zoomLegivel(), pan: {
         x: fx ? m.l + (lw - bb.w * zoom) / 2 - zoom * bb.x1 : m.l - zoom * j.x0,
         y: fy ? m.t + (lh - bb.h * zoom) / 2 - zoom * bb.y1 : m.t - zoom * j.y0 } };
@@ -1458,9 +1574,9 @@ footer.visivel { display: flex; }
     if (mudou) v = calc();
     return v;
   }
-  function enquadrarTudo(eles, pad, animar, calado) {
+  function enquadrarTudo(eles, pad, animar, calado, ancora) {
     if (!cy) return;
-    const v = enquadreSeguro(eles && eles.nonempty() ? eles : cy.elements(":visible"), pad == null ? 40 : pad);
+    const v = enquadreSeguro(eles && eles.nonempty() ? eles : cy.elements(":visible"), pad == null ? 40 : pad, ancora);
     if (!v) return;
     if (!calado) {
       if (v.recortado) aviso(t("zoomLegivel"), 5000);
@@ -1484,11 +1600,37 @@ footer.visivel { display: flex; }
     const comGrupo = eles.union(eles.nodes().parents()).boundingBox();
     if (encaixa(comGrupo) >= Math.max(zoomLegivel(), encaixa(bb) * 0.5)) bb = comGrupo;
     let zoom = Math.max(cy.minZoom(), Math.min(maxZoom || 1.6, encaixa(bb)));
-    // Celular: vizinhança larga demais não vira texto de 3 px; fica no zoom legível, centrada no nó do foco, e o resto se arrasta.
-    if (estreito() && zoom < zoomLegivel()) { zoom = zoomLegivel(); const f = eles.nodes(".foco, .passo"); if (f.nonempty()) bb = f.boundingBox(); }
+    // Vizinhança larga demais não vira texto de 3 px: fica no zoom legível do foco e o resto se arrasta. A janela da área livre
+    // nesse zoom contém o nó do foco e o maior número de vizinhos inteiros (no celular, acima da folha do inspetor).
+    const f = eles.nodes(".foco, .passo"), piso = zoomFoco();
+    if (zoom < piso && (estreito() || f.nonempty())) {
+      zoom = piso;
+      if (f.nonempty()) {
+        const mg = estreito() ? 8 : pad;
+        bb = melhorJanela(eles.nodes().filter(n => !n.data("grupo")).map(n => n.boundingBox({ includeLabels: false, includeOverlays: false })), f.boundingBox(), (w - 2 * mg) / zoom, (alto - 2 * mg) / zoom);
+      }
+    }
     const pan = { x: w / 2 - zoom * (bb.x1 + bb.w / 2), y: topo + alto / 2 - zoom * (bb.y1 + bb.h / 2) };
     cy.stop(true);
     cy.animate({ zoom, pan, duration: dur(200), easing: "ease-out-cubic" });
+  }
+  // Retângulo (dos nós contidos) da janela W x H que contém o retângulo obrig e o maior número de caixas inteiras; no empate,
+  // a mais perto de obrig. Se obrig não cabe na janela, devolve obrig.
+  function melhorJanela(caixas, obrig, W, H) {
+    if (obrig.w > W || obrig.h > H) return obrig;
+    const xs = new Set([obrig.x1 - 4, obrig.x2 - W + 4]), ys = new Set([obrig.y1 - 4, obrig.y2 - H + 4]);
+    caixas.forEach(b => { xs.add(b.x1 - 4); xs.add(b.x2 - W + 4); ys.add(b.y1 - 4); ys.add(b.y2 - H + 4); });
+    const ox = obrig.x1 + obrig.w / 2, oy = obrig.y1 + obrig.h / 2;
+    let melhor = null;
+    xs.forEach(x0 => ys.forEach(y0 => {
+      if (x0 > obrig.x1 || y0 > obrig.y1 || x0 + W < obrig.x2 || y0 + H < obrig.y2) return;
+      const dentro = caixas.filter(b => b.x1 >= x0 && b.y1 >= y0 && b.x2 <= x0 + W && b.y2 <= y0 + H);
+      const x1 = Math.min(obrig.x1, ...dentro.map(b => b.x1)), y1 = Math.min(obrig.y1, ...dentro.map(b => b.y1));
+      const x2 = Math.max(obrig.x2, ...dentro.map(b => b.x2)), y2 = Math.max(obrig.y2, ...dentro.map(b => b.y2));
+      const dist = Math.hypot((x1 + x2) / 2 - ox, (y1 + y2) / 2 - oy), n = dentro.length;
+      if (!melhor || n > melhor.n || (n === melhor.n && dist < melhor.dist)) melhor = { n, dist, x1, y1, x2, y2 };
+    }));
+    return melhor ? { x1: melhor.x1, y1: melhor.y1, x2: melhor.x2, y2: melhor.y2, w: melhor.x2 - melhor.x1, h: melhor.y2 - melhor.y1 } : obrig;
   }
   function enquadrar() { enquadrarTudo(null, 40, true); }
 
@@ -1698,7 +1840,7 @@ footer.visivel { display: flex; }
   function iniciarPercurso(v, n) {
     fluxo = v; passo = -1;
     $("rodape").classList.add("visivel");
-    if (cy) { cy.resize(); enquadrarTudo(null, 40, false, true); }
+    if (cy) { cy.resize(); enquadrarTudo(null, 40, false, true, ancoraDoFluxo()); }
     mostrarPercurso();
     irPasso(Math.max(0, n) - 1, true);
     aplicarDestaque();

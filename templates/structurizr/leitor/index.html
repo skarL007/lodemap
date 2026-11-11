@@ -492,6 +492,9 @@ mark { background: var(--warn-tint); color: inherit; border-radius: 2px; box-sha
   .passos { grid-template-columns: 1fr; }
   .passos .prox { grid-column: 1; }
 }
+@media (hover: none) and (pointer: coarse) {
+  .nav-item { min-height: 44px; align-items: center; }            /* alvo de toque de 44 px também no tablet, acima de 899 px */
+}
 @media print {
   .lm-barra, .lateral, .nesta, .passos, .toc-movel { display: none !important; }
   .layout { display: block; }

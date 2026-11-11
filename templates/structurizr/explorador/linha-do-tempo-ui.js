@@ -5,7 +5,7 @@
   'use strict';
   const centro = document.getElementById('centro'), esq = document.getElementById('esq');
   if (!centro || !esq) return;
-  const HASH = '#linha-do-tempo', ZOOM_LEGIVEL = 1, MARGEM = 24, FONTE = 12, MAX_TEXTO = 150, PAD = 10;
+  const HASH = '#linha-do-tempo', MARGEM = 24, FONTE = 12, MAX_TEXTO = 150, PAD = 10;
   const I = window.LodemapIdioma, rota = window.LodemapRota || {};
   if (I && I.dicionario) {
     Object.assign(I.dicionario.pt, {
@@ -69,7 +69,8 @@
   const $ = id => sec.querySelector('#' + id);
   const trilho = $('tlTrilho'), estado = $('tlEstado'), inspe = $('tlInspetor'), filtro = $('tlVisao'), escolha = $('tlComponentes');
   const CONTROLES = ['tlVisao', 'tlComponentes', 'tlMais', 'tlMenos', 'tlEnquadrar'];
-  let versoes = [], atual = 0, cy = null, timer = null, carregado = false, inspecionado = '', chaveAtual = null;
+  let versoes = [], atual = 0, cy = null, timer = null, carregado = false, inspecionado = '', chaveAtual = null, medida = '';
+  const medidaDoGrafo = () => $('tlGrafo').clientWidth + 'x' + $('tlGrafo').clientHeight;
 
   function textoFixo() {
     if (I) I.aplicar();
@@ -133,23 +134,42 @@
       { selector: 'edge.rel-saiu', style: { width: 2, 'line-style': 'dashed', 'line-color': c('--err'), 'target-arrow-color': c('--err') } },
       { selector: 'edge.rel-resposta', style: { 'line-style': 'dashed' } }];
   }
+  // Piso de zoom do mapa principal no celular (texto de 10 px ou mais); a área do grafo é pequena, então o mesmo piso vale na janela larga.
+  const estreito = () => matchMedia('(max-width: 900px)').matches;
+  const zoomLegivel = () => 0.85;
   // Enquadra o grafo; se o zoom caísse abaixo do legível, fica no mínimo legível e o resto se alcança arrastando.
   // O recorte começa no que mudou naquela versão (entrou, saiu, mudou); sem mudança, no canto de cima.
   function enquadrar() {
     if (!cy) return;
     cy.resize(); cy.fit(undefined, MARGEM);
-    const corte = cy.zoom() < ZOOM_LEGIVEL;
+    const corte = cy.zoom() < zoomLegivel();
     if (corte) {
-      const mudou = cy.nodes('.entrou, .saiu, .mudou'), alvo = (mudou.nonempty() ? mudou : cy.nodes()).boundingBox(), z = ZOOM_LEGIVEL;
-      const eixo = (ini, tam, area) => tam * z <= area - 2 * MARGEM ? (area - tam * z) / 2 - ini * z : MARGEM - ini * z;
-      cy.zoom(z); cy.pan({ x: eixo(alvo.x1, alvo.w, cy.width()), y: eixo(alvo.y1, alvo.h, cy.height()) });
+      // A janela do tamanho da área, no zoom legível, que começa onde pega mais nós que mudaram (e, no empate, mais nós).
+      const z = zoomLegivel(), W = (cy.width() - 2 * MARGEM) / z, H = (cy.height() - 2 * MARGEM) / z;
+      const mudou = new Set(cy.nodes('.entrou, .saiu, .mudou').map(n => n.id()));
+      const caixas = cy.nodes().map(n => ({ m: mudou.has(n.id()), b: n.boundingBox({ includeLabels: false }) }));
+      let melhor = null;
+      caixas.forEach(a => {
+        const x0 = a.b.x1 - 8, y0 = a.b.y1 - 8;
+        const dentro = caixas.filter(c => c.b.x1 >= x0 && c.b.y1 >= y0 && c.b.x2 <= x0 + W && c.b.y2 <= y0 + H);
+        const nota = dentro.filter(c => c.m).length * 1000 + dentro.length;
+        if (!melhor || nota > melhor.nota) melhor = { nota, x0, y0 };
+      });
+      const todos = cy.nodes().boundingBox({ includeLabels: false }), cabeX = todos.w * z <= cy.width() - 2 * MARGEM, cabeY = todos.h * z <= cy.height() - 2 * MARGEM;
+      cy.zoom(z);
+      cy.pan({ x: cabeX ? (cy.width() - todos.w * z) / 2 - todos.x1 * z : MARGEM - melhor.x0 * z,
+               y: cabeY ? (cy.height() - todos.h * z) / 2 - todos.y1 * z : MARGEM - melhor.y0 * z });
     }
     $('tlDica').hidden = !corte; $('tlDica').textContent = corte ? t('tlDica') : '';
   }
-  function disposicao() {
-    let dagre = false; try { dagre = !!window.cytoscape('layout', 'dagre'); } catch (e) { /* dagre não carregou */ }
-    const larga = $('tlGrafo').clientWidth >= 640;
-    return dagre ? { name: 'dagre', rankDir: larga ? 'LR' : 'TB', nodeSep: 24, rankSep: 56, fit: false, animate: false } : { name: 'grid', fit: false, padding: MARGEM };
+  const temDagre = () => { try { return !!window.cytoscape('layout', 'dagre'); } catch (e) { return false; /* dagre não carregou */ } };
+  const disposicao = dir => temDagre() ? { name: 'dagre', rankDir: dir, nodeSep: 24, rankSep: 56, fit: false, animate: false } : { name: 'grid', fit: false, padding: MARGEM };
+  // Da esquerda para a direita ou de cima para baixo: a que deixa o grafo no maior zoom dentro da área (um nó com muitos filhos
+  // fica largo demais de cima para baixo, e alto, mas estreito, da esquerda para a direita).
+  function direcao() {
+    if (!cy || !temDagre()) return 'TB';
+    const zoomDe = d => { cy.layout(disposicao(d)).run(); const bb = cy.elements().boundingBox(); return Math.min((cy.width() - 2 * MARGEM) / Math.max(1, bb.w), (cy.height() - 2 * MARGEM) / Math.max(1, bb.h)); };
+    return zoomDe('LR') > zoomDe('TB') ? 'LR' : 'TB';
   }
 
   function indisponivel() {
@@ -198,7 +218,11 @@
     const edges = atuais.concat(fantasmas).filter(r => elements[r.de] && elements[r.para]).map((r, j) => ({ data: { id: 'r:' + j, source: 'n:' + r.de, target: 'n:' + r.para, label: r.desc || '' }, classes: r.removida ? 'rel-saiu' : r.nova ? 'rel-entrou' : r.resposta ? 'rel-resposta' : '' }));
     if (cy) cy.destroy();
     cy = window.cytoscape({ container: $('tlGrafo'), elements: nodes.concat(edges), style: estilo(), minZoom: 0.3, maxZoom: 3 });
-    cy.layout({ ...disposicao(), stop: enquadrar }).run();
+    cy.layout({ ...disposicao(direcao()), stop: () => {
+      // Ligação que passaria por trás de um nó que não é ponta dela ganha uma barriga (o mesmo desvio do mapa principal).
+      if (window.LodemapDesvio) window.LodemapDesvio.desviar(cy, estreito() ? { w: cy.width(), zoom: zoomLegivel() } : null);
+      medida = medidaDoGrafo(); enquadrar();
+    } }).run();
     cy.on('tap', 'node', ev => inspecionar(ev.target.data('ident')));
     if (inspecionado && elements[inspecionado]) inspecionar(inspecionado); else { inspecionado = ''; inspe.textContent = t('tlInspVazio'); }
   }
@@ -241,6 +265,8 @@
     $('tlTocar').textContent = t('tlPausar');
     timer = setInterval(() => { if (atual >= versoes.length - 1) return parar(); selecionar(atual + 1); }, 1600);
   });
+  // O painel pode ganhar seu tamanho final depois do layout (grade, inspetor, rotação do aparelho): enquadra de novo quando o tamanho muda.
+  if (window.ResizeObserver) new ResizeObserver(() => { if (!cy || sec.hidden || medidaDoGrafo() === medida) return; medida = medidaDoGrafo(); enquadrar(); }).observe($('tlGrafo'));
   document.addEventListener('lm:tema', () => { if (cy) { cy.style(estilo()); } });
   document.addEventListener('lm:idioma', () => {
     textoFixo();

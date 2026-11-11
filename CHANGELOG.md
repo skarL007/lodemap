@@ -4,6 +4,20 @@ Todas as mudanças relevantes do Lodemap. As datas são de quando a mudança ent
 
 ## Unreleased
 
+- **Explorador: polimento 4 (celular, foco e linha do tempo):**
+  - Fluxo longo (3 ou mais passos) no celular vira uma coluna única, no zoom legível, com o passo 1 à vista e livre do
+    título e da Legenda; o resto se alcança arrastando.
+  - Ligação cuja reta passaria por trás de um nó que não é ponta dela ganha uma curva que o contorna (mapa principal e
+    linha do tempo). Na demo do axios, no celular: Containers 4 para 2 interseções aresta x nó, fluxo de 14 passos 0,
+    foco 10 para 8; no desktop, foco 1 para 0. Ligações longas com os dois lados bloqueados ainda podem cruzar um nó.
+  - Com um nó em foco, o celular enquadra o nó e o máximo de vizinhos inteiros na faixa acima da folha; no desktop o
+    rótulo das ligações em foco fica em 12 px (nunca abaixo de 10 px na tela).
+  - Linha do tempo: grafo com dagre, nós retangulares do tamanho do rótulo, direção LR ou TB conforme o encaixe, zoom
+    mínimo legível (0,85) com o mesmo aviso do mapa e reenquadre quando o painel muda de tamanho.
+  - Toque e janela estreita: "Ctrl K" some em toque ou até 720 px; a Legenda e os itens da navegação do leitor têm
+    44 px de altura no toque.
+  - Testes de interface cobrem cada um desses comportamentos (zoom, fonte, caixas, interseções); `?lang=en` com o
+    painel da linha do tempo aberto não mostra mais texto em português.
 - **Observabilidade da arquitetura para pessoas:** apresentação centrada em fluxos, evolução do mapa no Git e
   evidências locais por componente; o gate aparece como verificação estrutural, sem promessa de verdade semântica.
 - **Linha do tempo:** snapshots históricos no explorador, comparação com a versão-base, entradas, saídas e

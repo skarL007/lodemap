@@ -75,6 +75,7 @@ def workspace(grande: int = 60) -> dict:
         return {"id": str(rid[0])}
 
     rels_nucleo = [liga(nucleo[i], nucleo[i + 1], f"passa para {i + 2}") for i in range(9)]
+    atalho = liga(nucleo[0], nucleo[3], "atalho")             # pula dois nós da cadeia: reta, passaria por trás deles
     rels_adapt = [liga(adaptadores[i], nucleo[i], "usa") for i in range(6)]
     rels_plug = [liga(plugins[i], plugins[i + 1], "encadeia") for i in range(grande - 1)] + \
                 [liga(plugins[i], nucleo[i % 10], "usa") for i in range(0, grande, 3)]
@@ -96,8 +97,8 @@ def workspace(grande: int = 60) -> dict:
         return [{"id": e["id"]} for g in grupos for e in g]
 
     todos = nucleo + adaptadores + plugins
-    fluxo = lambda chave, titulo, rels: {"key": chave, "title": titulo, "description": f"Percurso {titulo}.",
-                                         "elements": ids(nucleo[:6]),
+    fluxo = lambda chave, titulo, rels, nos=nucleo[:6]: {"key": chave, "title": titulo, "description": f"Percurso {titulo}.",
+                                         "elements": ids(nos),
                                          "relationships": [{"id": r["id"], "order": str(i + 1), "description": f"passo {i + 1}"}
                                                            for i, r in enumerate(rels)]}
     return {"name": "Mapa de teste", "model": {"people": [pessoa], "softwareSystems": [sistema]}, "views": {
@@ -106,13 +107,14 @@ def workspace(grande: int = 60) -> dict:
         "containerViews": [{"key": "Containers", "title": "Containers", "elements": ids([pessoa], sistema["containers"]),
                             "relationships": []}],
         "componentViews": [
-            {"key": "Nucleo", "title": "Núcleo: componentes", "elements": ids(nucleo), "relationships": rels_nucleo},
+            {"key": "Nucleo", "title": "Núcleo: componentes", "elements": ids(nucleo), "relationships": rels_nucleo + [atalho]},
             {"key": "Hub", "title": "Hub: adaptadores", "elements": ids(adaptadores[1:5], nucleo[:2]),
              "relationships": rels_hub + [rels_nucleo[0]]},
             {"key": "Plugins", "title": "Plugins: componentes", "elements": ids(plugins, nucleo),
              "relationships": rels_plug},
             {"key": "Tudo", "title": "Tudo junto", "elements": ids(todos), "relationships": rels_nucleo + rels_adapt + rels_plug}],
-        "dynamicViews": [fluxo("FluxoA", "Fluxo A", rels_nucleo[:5]), fluxo("FluxoB", "Fluxo B", rels_nucleo[4:8])]}}
+        "dynamicViews": [fluxo("FluxoA", "Fluxo A", rels_nucleo[:5]), fluxo("FluxoB", "Fluxo B", rels_nucleo[4:8]),
+                         fluxo("FluxoLongo", "Fluxo longo", rels_nucleo[:3] + [atalho] + rels_nucleo[3:], nucleo)]}}
 
 
 def _snapshot(ws: dict, ate: int) -> dict:

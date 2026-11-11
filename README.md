@@ -74,12 +74,12 @@ mostra a saída real de cada comando (caminhos longos cortados).
 | `pytest tests/test_arquitetura_cobertura.py` | script | falha: 3 módulos fora do modelo |
 | `esqueleto.py rascunho` | script, 0 tokens | 3 módulos novos, 16 dos 24 arquivos alterados com superfície pública diferente, 12 relações novas |
 | `descrever.py` | uma chamada ao Haiku, 26.029 tokens, 34 s (a repetição na gravação: 26.660 tokens, 37 s) | descreve os 3 módulos novos e revisa os 16; 15 frases mantidas palavra por palavra, 1 alterada (o helper de cookies ganhou um caminho pela Cookie Store API); a repetição manteve 14 |
-| `lodemap-modelador` | Sonnet, 19 chamadas, 129 s, US$ 0,45 equivalente em API | contêiner e status dos 3 componentes novos, verbos das 12 relações |
+| `lodemap-modelador` | Sonnet, 19 chamadas, 129 s | contêiner e status dos 3 componentes novos, verbos das 12 relações |
 | `atualizar.py --incremental` | scripts, 17 s | exportação do DSL, explorador, leitor, docs derivados |
 | `pytest tests/test_arquitetura_cobertura.py` | script | passa |
 
 A sessão orquestradora não entra na conta. A atualização foi repetida depois, duas vezes, a partir do mesmo commit:
-a etapa de scripts deu o mesmo lote, a etapa do modelo custou US$ 0,35 e US$ 0,28 (13 e 9 chamadas), e o mapa saiu
+a etapa de scripts deu o mesmo lote, a etapa do modelo fez 13 e 9 chamadas, e o mapa saiu
 com os mesmos 72 componentes e 188 relações. Um dos três módulos novos caiu numa área diferente na primeira
 execução, e a redação de verbos e frases varia entre execuções.
 
@@ -253,24 +253,22 @@ As medições desta seção são históricas, com os modelos e as condições de
 da execução atual com modelos nativos do Codex. Reduzir revisões de arquivos não demonstra economia de tokens;
 o experimento com e sem mapa abaixo não encontrou essa economia.
 
-### Custo de um mapa completo
+### Chamadas e tempo de um mapa completo
 
-Tokens lidos das transcrições dos subagentes (uso deduplicado por id de mensagem), precificados pelas tarifas públicas
-da API mesmo que as execuções tenham usado uma assinatura do Claude Code. Os quatro tipos de token contam: entrada,
-escrita de cache, leitura de cache, saída.
+Chamadas e tokens lidos das transcrições dos subagentes (uso deduplicado por id de mensagem). As execuções usaram uma
+assinatura do Claude Code.
 
-| Execução | Modelo | Chamadas | Tempo | Custo equivalente em API |
-|---|---|---:|---:|---:|
-| Mapa completo, repositório de 63 módulos, um agente | Sonnet | 93 | 25 min | US$ 3,61 |
-| Mesmo repositório e commit, esqueleto por script + agente novo por fase | Sonnet (+ verificador Haiku) | 98 | 14 min | US$ 2,84 |
-| Atualização num commit sem mudança estrutural | só scripts | 0 | 11–17 s | US$ 0 |
-| Mapa completo do axios v1.20.0 (69 módulos), esqueleto + fases + descrições enxutas | Sonnet (+ uma chamada ao Haiku) | 51 | 10 min | no máximo US$ 1,74 |
-| Atualização desse mapa para o axios v1.21.1 (3 módulos novos, 16 revisões, 12 relações novas), três execuções | Sonnet (+ uma chamada ao Haiku) | 20, 14, 10 | 1 a 3 min | no máximo US$ 0,47, 0,36, 0,29 |
-| Mapa completo do go-chi/chi v5.4.0 (Go, 35 módulos), com cada descrição conferida contra o código | Sonnet (+ uma chamada ao Haiku) | 67 | 9 min | no máximo US$ 1,92 |
-| Atualização desse mapa para o chi v5.5.0 (1 módulo novo, 1 revisão) | Sonnet (+ uma chamada ao Haiku) | 8 | 1 min | no máximo US$ 0,22 |
+| Execução | Modelo | Chamadas | Tempo |
+|---|---|---:|---:|
+| Mapa completo, repositório de 63 módulos, um agente | Sonnet | 93 | 25 min |
+| Mesmo repositório e commit, esqueleto por script + agente novo por fase | Sonnet (+ verificador Haiku) | 98 | 14 min |
+| Atualização num commit sem mudança estrutural | só scripts | 0 | 11–17 s |
+| Mapa completo do axios v1.20.0 (69 módulos), esqueleto + fases + descrições enxutas | Sonnet (+ uma chamada ao Haiku) | 51 | 10 min |
+| Atualização desse mapa para o axios v1.21.1 (3 módulos novos, 16 revisões, 12 relações novas), três execuções | Sonnet (+ uma chamada ao Haiku) | 20, 14, 10 | 1 a 3 min |
+| Mapa completo do go-chi/chi v5.4.0 (Go, 35 módulos), com cada descrição conferida contra o código | Sonnet (+ uma chamada ao Haiku) | 67 | 9 min |
+| Atualização desse mapa para o chi v5.5.0 (1 módulo novo, 1 revisão) | Sonnet (+ uma chamada ao Haiku) | 8 | 1 min |
 
-As linhas do axios e do chi são de repositórios públicos e podem ser refeitas: as chamadas ao Sonnet são contadas
-como acima e a chamada ao Haiku é precificada como se todo token fosse de saída, o que a limita a US$ 0,03 ou menos.
+As linhas do axios e do chi são de repositórios públicos e podem ser refeitas.
 O tempo é tempo de modelo; os scripts somam menos de um minuto. A menor atualização ainda paga o contexto de uma
 sessão do Sonnet: cerca de 37.000 tokens de escrita de cache para decidir um módulo no chi.
 

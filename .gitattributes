@@ -1,0 +1,2 @@
+# Os .dsl sao comparados byte a byte entre o template e o exemplo; LF em qualquer sistema.
+*.dsl text eol=lf

@@ -225,6 +225,42 @@ def test_sem_nenhuma_tag_o_campo_e_nulo(tmp_path):
     commit(repo, "docs: mapa", "2026-01-11T10:00:00-03:00")
     v = lt().construir(repo / PASTA)["versoes"][0]
     assert v["tag"] is None and v["tag_distancia"] is None
+    assert v["data_tag"] is None  # sem tag não há data de release: o painel mostra só a data do mapa
+
+
+def test_data_tag_e_a_data_do_commit_marcado_pela_tag_nao_a_do_mapa(historico):
+    vs = lt().construir(historico.mapa)["versoes"]
+    # v1.0.0 marca o código de 10/01, v1.1.0 o de 01/02; a v3 do mapa só tem a tag mais próxima (v1.1.0)
+    assert [v["data_tag"] for v in vs] == ["2026-01-10", "2026-02-01", "2026-02-01"]
+    assert [v["data"] for v in vs] == ["2026-01-11", "2026-02-02", "2026-03-02"]  # a data do mapa continua lá
+
+
+def test_versoes_do_mapa_gravadas_no_mesmo_dia_ganham_datas_de_release_diferentes(tmp_path):
+    """Item 18 da auditoria: as 5 versões do demo tinham a mesma `data` (o dia em que o mapa foi regerado)."""
+    repo = tmp_path / "mesmo-dia"
+    repo.mkdir()
+    git(repo, "init", "-q")
+    (repo / "codigo.txt").write_text("a\n", encoding="utf-8")
+    commit(repo, "feat: a", "2026-03-01T10:00:00-03:00")
+    git(repo, "tag", "-a", "-m", "release a", "v1.0.0")                      # tag anotada: o objeto da tag não é o commit
+    escrever_mapa(repo, *modelo_v1(), [R1])
+    commit(repo, "docs(arq): mapa v1", "2026-11-10T09:00:00-03:00")
+    (repo / "codigo.txt").write_text("b\n", encoding="utf-8")
+    commit(repo, "feat: b", "2026-05-20T10:00:00-03:00", tag="v1.1.0")
+    escrever_mapa(repo, *modelo_v2(), [R2, R1])
+    commit(repo, "docs(arq): mapa v2", "2026-11-10T09:30:00-03:00")
+    vs = lt().construir(repo / PASTA)["versoes"]
+    assert [v["data"] for v in vs] == ["2026-11-10", "2026-11-10"]            # o mapa foi gravado no mesmo dia...
+    assert [v["tag"] for v in vs] == ["v1.0.0", "v1.1.0"]
+    assert [v["data_tag"] for v in vs] == ["2026-03-01", "2026-05-20"]         # ...mas cada release tem a sua data
+
+
+def test_gravar_leva_data_tag_para_o_js_e_o_json(historico, tmp_path):
+    mod = lt()
+    js, js_json = mod.gravar(mod.construir(historico.mapa), tmp_path / "saida")
+    lido = json.loads(js_json.read_text(encoding="utf-8"))
+    assert [v["data_tag"] for v in lido["versoes"]] == ["2026-01-10", "2026-02-01", "2026-02-01"]
+    assert '"data_tag":"2026-01-10"' in js.read_text(encoding="utf-8")
 
 
 # ------------------------------------------------------------------------------------------------ diff por versão

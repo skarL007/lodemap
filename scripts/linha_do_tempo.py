@@ -9,7 +9,8 @@ versiona a cada rodada, e (3) tem o identificador estável do DSL (`ident`) em c
 é versionado, e ler o DSL de novo exigiria o Structurizr CLI em cada commit. O id numérico do Structurizr muda
 quando o modelo muda, por isso o diff compara sempre pelo `ident`, nunca pelo `id`.
 
-Para cada versão: sha curto, data, assunto, a tag mais próxima do código (`git describe --tags`), componentes
+Para cada versão: sha curto, data, assunto, a tag mais próxima do código (`git describe --tags`) e `data_tag`, a data
+do commit que a tag marca (a da release; `data` é a do commit do mapa e pode ser a mesma em várias versões), componentes
 adicionados, removidos e alterados (nome, tipo, descrição, status, container, tecnologia, área, código), relações
 novas e removidas, fluxos adicionados, removidos e alterados (com os passos) e as linhas novas do registro de
 atualizações (`docs/99-registro-de-atualizacoes.md`). Uma alteração do mapa ainda não commitada vira a última
@@ -98,6 +99,23 @@ def _tag(topo: Path, sha: str) -> tuple[str | None, int | None]:
     r = _git(topo, "describe", "--tags", "--long", sha)
     m = _DESCRIBE.match(r.stdout.strip()) if r.returncode == 0 else None
     return (m.group(1), int(m.group(2))) if m else (None, None)
+
+
+def _data_tag(topo: Path, tag: str | None, memo: dict) -> str | None:
+    """Data (AAAA-MM-DD, a mesma de `data`) do commit que a tag marca: a da release, não a do commit do mapa.
+
+    As versões do mapa podem ser gravadas todas no mesmo dia; a tag é o que diz quando a release saiu. Sem tag, ou com a
+    tag ilegível, devolve None e o painel mostra só a data do mapa."""
+    if not tag:
+        return None
+    if tag not in memo:
+        memo[tag] = None
+        for ref in (f"refs/tags/{tag}", tag):
+            r = _git(topo, "log", "-1", "--format=%as", f"{ref}^{{commit}}", "--")
+            if r.returncode == 0 and r.stdout.strip():
+                memo[tag] = r.stdout.strip().splitlines()[0]
+                break
+    return memo[tag]
 
 
 # ------------------------------------------------------------------------------------------------------------ leitura
@@ -382,6 +400,7 @@ def construir(mapa, max_versoes: int | None = None, rev: str | None = None, omit
     ant_registro: list = []
     ultimo_blob: bytes | None = None
     objetos = _Objetos(topo)
+    datas_tag: dict = {}
     try:
         for sha, data, assunto in commits:
             blob = objetos.ler(sha, prefixo + DADOS)
@@ -389,7 +408,8 @@ def construir(mapa, max_versoes: int | None = None, rev: str | None = None, omit
             tag, dist = _tag(topo, sha)
             v, ant_modelo, ant_sha = _versao(blob, reg, ant_registro, ant_modelo, ant_sha,
                                              dict(sha=sha[:7], sha_completo=sha, data=data, assunto=assunto,
-                                                  tag=tag, tag_distancia=dist, commitado=True))
+                                                  tag=tag, tag_distancia=dist, data_tag=_data_tag(topo, tag, datas_tag),
+                                                  commitado=True))
             versoes.append(v)
             ant_registro, ultimo_blob = reg, blob
     finally:
@@ -405,7 +425,7 @@ def construir(mapa, max_versoes: int | None = None, rev: str | None = None, omit
                 data = datetime.fromtimestamp(arq_dados.stat().st_mtime).date().isoformat()
                 v, _, _ = _versao(blob, reg, ant_registro, ant_modelo, ant_sha,
                                   dict(sha=None, sha_completo=None, data=data, assunto=None, tag=None,
-                                       tag_distancia=None, commitado=False))
+                                       tag_distancia=None, data_tag=None, commitado=False))
                 if not (v["dados"] and v["resumo"]["total"] == 0 and not v["registro"]):
                     versoes.append(v)
 

@@ -65,6 +65,21 @@ def test_links_entre_documentos_e_mapa():
     assert '<a class="ref-mapa" href="../explorador/index.html#orqEscala"' in h
 
 
+@pytest.mark.parametrize("destino", [
+    "javascript:alert",
+    "JaVaScRiPt:alert",
+    "data:text/html,bad",
+    "file:///etc/passwd",
+    "//example.org",
+    "../../secret.txt",
+    "../explorador/%2e%2e/%2e%2e/secret.txt",
+])
+def test_markdown_does_not_link_unsafe_destinations(destino):
+    ctx = _ctx()
+    assert ctx.href(destino) == ("", False)
+    assert gl._link(destino, "Texto", ctx, "docs") == "Texto"
+
+
 def test_frontmatter_simples():
     meta, corpo = gl.ler_frontmatter('---\nid: "0007"\nelementos: [a, b]\nevidencia:\n  - x.md\n  - "y z"\nsubstitui:\n---\n\n# T\n')
     assert meta == {"id": "0007", "elementos": ["a", "b"], "evidencia": ["x.md", "y z"], "substitui": ""}

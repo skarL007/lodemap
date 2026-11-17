@@ -285,7 +285,7 @@ class Contexto:
         """(href, externo). Links para .md viram âncoras do leitor; caminhos relativos apontam para a pasta de origem."""
         url = url.strip()
         # Documentos e ADRs são conteúdo do projeto: nunca confiar em esquemas de links.
-        if not url or any(ord(c) < 32 or ord(c) == 127 for c in url):
+        if not url or any(c.isspace() or ord(c) < 32 or ord(c) == 127 for c in url):
             return "", False
         if url.startswith(("/", "\\")) or "\\" in url:
             return "", False

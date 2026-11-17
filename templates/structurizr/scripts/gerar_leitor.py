@@ -19,12 +19,14 @@ from __future__ import annotations
 import html
 import json
 import os
+import posixpath
 import re
 import subprocess
 import sys
 import unicodedata
 from datetime import datetime
 from pathlib import Path
+from urllib.parse import unquote
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import arq_comum as ac  # noqa: E402
@@ -282,11 +284,29 @@ class Contexto:
     def href(self, url: str, origem: str = "docs") -> tuple[str, bool]:
         """(href, externo). Links para .md viram âncoras do leitor; caminhos relativos apontam para a pasta de origem."""
         url = url.strip()
-        if re.match(r"^[a-z][a-z0-9+.-]*:", url, re.I):
-            return url, url.lower().startswith(("http:", "https:"))
+        # Documentos e ADRs são conteúdo do projeto: nunca confiar em esquemas de links.
+        if not url or any(ord(c) < 32 or ord(c) == 127 for c in url):
+            return "", False
+        if url.startswith(("/", "\\")) or "\\" in url:
+            return "", False
+        esquema = re.match(r"^([a-z][a-z0-9+.-]*):", url, re.I)
+        if esquema:
+            protocolo = esquema.group(1).lower()
+            if protocolo in ("http", "https") and re.match(r"^https?://[^/\\\s]+", url, re.I):
+                return url, True
+            if protocolo == "mailto" and url[len(esquema.group(0)):]:
+                return url, False
+            return "", False
         if url.startswith("#"):
             return f"#{self.prefixo}--{slug(url[1:])}", False
         caminho, _, frag = url.partition("#")
+        # Bloquear travessia da raiz do mapa, inclusive segmentos percent-encoded.
+        caminho_decodificado = unquote(caminho)
+        if "\\" in caminho_decodificado or caminho_decodificado.startswith("/"):
+            return "", False
+        destino = posixpath.normpath(posixpath.join(origem, caminho_decodificado))
+        if destino == ".." or destino.startswith("../"):
+            return "", False
         nome = caminho.rsplit("/", 1)[-1]
         if nome.endswith(".md"):
             base = nome[:-3]
@@ -360,6 +380,8 @@ def inline(texto: str, ctx: Contexto, origem: str = "docs") -> str:
 
 def _link(url: str, rotulo_html: str, ctx: Contexto, origem: str) -> str:
     href, externo = ctx.href(url, origem)
+    if not href:
+        return rotulo_html  # Link inválido permanece legível, nunca clicável.
     if externo:
         return f'<a href="{esc(href)}" rel="noopener noreferrer" target="_blank" class="externo">{rotulo_html}</a>'
     classe = ' class="ref-mapa"' if href.startswith(MAPA) else ""

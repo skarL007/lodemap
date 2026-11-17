@@ -34,11 +34,12 @@ EXEMPLO = RAIZ / "exemplos" / "axios"
 TEMPLATE = RAIZ / "templates" / "structurizr"
 EXIGIR = os.environ.get("LODEMAP_EXIGIR_PIPELINE") == "1"
 # Detectar caminhos locais sem codificar nomes reais de pessoas ou projetos.
-PRIVADO = re.compile(r"(?i)(?:(?<![A-Za-z])[A-Z]:[\\/]|/(?:home|Users)/[^/\\s]+/)")
+PRIVADO = re.compile(r"(?i)(?:(?<![A-Za-z])[A-Z]:[\\/]|/(?:home|Users)/[^/\s]+/)")
 
 
 def test_detector_generico_de_caminhos_locais():
-    assert PRIVADO.search(r"C:\\Users\\example\\workspace")
+    assert PRIVADO.search(r"C:\Users\example\workspace")
+    assert PRIVADO.search("/home/susan/workspace/")
     assert PRIVADO.search("/home/example/workspace/")
     assert not PRIVADO.search("lib/adapters/http.js")
 
